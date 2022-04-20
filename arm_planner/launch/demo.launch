@@ -1,0 +1,7 @@
+<launch>
+
+
+<node name="path_planner" pkg="arm_planner" type="path_planner" output="screen"/>
+
+
+</launch>
