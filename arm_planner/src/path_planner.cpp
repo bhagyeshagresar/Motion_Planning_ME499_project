@@ -80,9 +80,9 @@ int main(int argc, char** argv){
     ROS_INFO_NAMED("planner", "default planner: %s", move_group_interface.getDefaultPlannerId().c_str());
     geometry_msgs::Pose start_pose;
     start_pose.orientation.x = 1.0;
-    start_pose.position.x = 0.432281;
-    start_pose.position.y = 0.00348;
-    start_pose.position.z = 0.391869;
+    start_pose.position.x = 0.425424;
+    start_pose.position.y = 0.0707545;
+    start_pose.position.z = 0.389979;
     move_group_interface.setPoseTarget(start_pose);
 
 
