@@ -29,7 +29,7 @@ int main(int argc, char** argv){
 
     moveit::planning_interface::MoveGroupInterface::Plan my_plan;
 
-    move_group_interface.setPlannerId("RRT");
+    // move_group_interface.setPlannerId("RRT");
 
     // Raw pointers are frequently used to refer to the planning group for improved performance.
     const moveit::core::JointModelGroup* joint_model_group = move_group_interface.getCurrentState()->getJointModelGroup(PLANNING_GROUP);
@@ -80,9 +80,9 @@ int main(int argc, char** argv){
     ROS_INFO_NAMED("planner", "default planner: %s", move_group_interface.getDefaultPlannerId().c_str());
     geometry_msgs::Pose start_pose;
     start_pose.orientation.x = 1.0;
-    start_pose.position.x = 0.425424;
-    start_pose.position.y = 0.0707545;
-    start_pose.position.z = 0.389979;
+    start_pose.position.x = 0.4;
+    start_pose.position.y = 0.1;
+    start_pose.position.z = 0.4;
     move_group_interface.setPoseTarget(start_pose);
 
 
