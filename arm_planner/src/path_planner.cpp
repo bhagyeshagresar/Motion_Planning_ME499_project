@@ -29,6 +29,9 @@ int main(int argc, char** argv){
 
     moveit::planning_interface::MoveGroupInterface::Plan my_plan;
 
+    move_group_interface.setMaxVelocityScalingFactor(1.0);
+    move_group_interface.setMaxAccelerationScalingFactor(1.0);
+
     // move_group_interface.setPlannerId("RRT");
 
     // Raw pointers are frequently used to refer to the planning group for improved performance.

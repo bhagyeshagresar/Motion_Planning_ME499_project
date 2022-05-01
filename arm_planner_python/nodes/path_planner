@@ -101,9 +101,9 @@ class Control:
         """
         self.pose_goal = geometry_msgs.msg.Pose()
         self.pose_goal.orientation.w = 1.0
-        self.pose_goal.position.x = 0.4
-        self.pose_goal.position.y = 0.1
-        self.pose_goal.position.z = 0.4
+        self.pose_goal.position.x = 0.405747
+        self.pose_goal.position.y = 0.0554532
+        self.pose_goal.position.z = 0.426331
         self.group.set_pose_target(self.pose_goal)
         self.plan = self.group.go(wait=True)
         self.group.stop()
