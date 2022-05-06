@@ -39,35 +39,93 @@ int main(int argc, char** argv)
 
 
   //add brick 1
-  moveit_msgs::CollisionObject collision_object;
-  collision_object.header.frame_id = move_group_interface.getPlanningFrame();
-  collision_object.id = "brick1";
-
-  //define the brick shape
-  shape_msgs::SolidPrimitive primitive;
-  primitive.type = primitive.BOX;
-  primitive.dimensions.resize(3);
-  primitive.dimensions[primitive.BOX_X] = 0.24;
-  primitive.dimensions[primitive.BOX_Y] = 0.07;//0.07
-  primitive.dimensions[primitive.BOX_Z] = 0.112;
-
-  //define pose for the brick
-  geometry_msgs::Pose brick_pose;
-  brick_pose.orientation.w = 1.0;
-  brick_pose.position.x = 0.0;
-  brick_pose.position.y = 0.5;
-  brick_pose.position.z = 0.056;
-
-  collision_object.primitives.push_back(primitive);
-  collision_object.primitive_poses.push_back(brick_pose);
-  collision_object.operation = collision_object.ADD;
 
   std::vector<moveit_msgs::CollisionObject> collision_objects;
-  collision_objects.push_back(collision_object);
+  // std::vector<shape_msgs::SolidPrimitive> primitives;
+  // std::vector<geometry_msgs::Pose> brick_poses;
 
-  // ROS_INFO_NAMED("add object into world");
+  // moveit_msgs::CollisionObject collision_object1;
+
+  // collision_object1.header.frame_id = move_group_interface.getPlanningFrame();
+  // collision_object1.id = "brick1";
+
+  // //define the brick shape
+  // shape_msgs::SolidPrimitive primitive1;
+  // primitive1.type = primitive1.BOX;
+  // primitive1.dimensions.resize(3);
+  // primitive1.dimensions[primitive1.BOX_X] = 0.24;
+  // primitive1.dimensions[primitive1.BOX_Y] = 0.07;//0.07
+  // primitive1.dimensions[primitive1.BOX_Z] = 0.112;
+
+  // //define pose for the brick
+  // geometry_msgs::Pose brick_pose1;
+  // brick_pose1.orientation.w = 1.0;
+  // brick_pose1.position.x = 0.0;
+  // brick_pose1.position.y = 0.5;
+  // brick_pose1.position.z = 0.056;
+
+  // collision_object1.primitives.push_back(primitive1);
+  // collision_object1.primitive_poses.push_back(brick_pose1);
+  // collision_object1.operation = collision_object1.ADD;
+
+  // collision_objects.push_back(collision_object1);
+
+
+  for (int i = 0; i < 8; i++){
+    moveit_msgs::CollisionObject collision_object;
+    
+    // std::cout << "header1" << std::endl;
+
+    collision_object.header.frame_id = "base_link";
+    // std::cout << "header" << collision_object << std::endl;
+    collision_object.id = i;
+    // std::cout << "header" << collision_objects.at(i) << std::endl;
+
+    shape_msgs::SolidPrimitive primitive;
+
+    primitive.type = primitive.BOX;
+    primitive.dimensions.resize(3);
+    primitive.dimensions[primitive.BOX_X] = 0.24;
+    primitive.dimensions[primitive.BOX_Y] = 0.07;//0.07
+    primitive.dimensions[primitive.BOX_Z] = 0.112;
+
+  //   std::cout << "primitives" << primitives.at(i) << std::endl;
+
+    geometry_msgs::Pose brick_pose;
+
+    if(i % 2 == 0){
+      brick_pose.orientation.w = 1.0;
+      brick_pose.position.x = 0.5;
+      brick_pose.position.y = 0.5 + i/2.0;
+      brick_pose.position.z = 0.056;
+      collision_object.primitive_poses.push_back(brick_pose);
+
+    }
+
+    else{
+      brick_pose.orientation.w = 1.0;
+      brick_pose.position.x = -0.5;
+      brick_pose.position.y = 0.5 + i/2.0;
+      brick_pose.position.z = 0.056;
+      collision_object.primitive_poses.push_back(brick_pose);
+
+    }
+    collision_object.primitives.push_back(primitive);
+    // collision_object.primitive_poses.push_back(brick_pose);
+    collision_object.operation = collision_object.ADD;
+
+    collision_objects.push_back(collision_object);
+
+
+
+  }
+
+  // // ROS_INFO_NAMED("add object into world");
   planning_scene_interface.addCollisionObjects(collision_objects);
 
+
+  //add brick2
+  
 
 
 
