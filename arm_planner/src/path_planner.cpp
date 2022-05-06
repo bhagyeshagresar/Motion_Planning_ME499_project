@@ -38,7 +38,7 @@ int main(int argc, char** argv)
             move_group_interface.getJointModelGroupNames().end(), std::ostream_iterator<std::string>(std::cout, ", "));
 
 
-  //add collision objects
+  //add brick 1
   moveit_msgs::CollisionObject collision_object;
   collision_object.header.frame_id = move_group_interface.getPlanningFrame();
   collision_object.id = "brick1";
@@ -47,16 +47,16 @@ int main(int argc, char** argv)
   shape_msgs::SolidPrimitive primitive;
   primitive.type = primitive.BOX;
   primitive.dimensions.resize(3);
-  primitive.dimensions[primitive.BOX_X] = 0.2;
-  primitive.dimensions[primitive.BOX_Y] = 0.06;
-  primitive.dimensions[primitive.BOX_Z] = 0.04;
+  primitive.dimensions[primitive.BOX_X] = 0.24;
+  primitive.dimensions[primitive.BOX_Y] = 0.07;//0.07
+  primitive.dimensions[primitive.BOX_Z] = 0.112;
 
   //define pose for the brick
   geometry_msgs::Pose brick_pose;
   brick_pose.orientation.w = 1.0;
-  brick_pose.position.x = 0.5;
-  brick_pose.position.y = 0.0;
-  brick_pose.position.z = 0.25;
+  brick_pose.position.x = 0.0;
+  brick_pose.position.y = 0.5;
+  brick_pose.position.z = 0.056;
 
   collision_object.primitives.push_back(primitive);
   collision_object.primitive_poses.push_back(brick_pose);
