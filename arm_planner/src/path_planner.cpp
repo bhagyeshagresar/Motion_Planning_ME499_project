@@ -11,8 +11,7 @@
 #include <std_srvs/Empty.h>
 
 
-// const double tau = 2*M_PI;
-// static float pincer_angle{0.8};
+
 static int flag{0};
 
 
@@ -63,36 +62,56 @@ int main(int argc, char** argv)
   ROS_INFO_NAMED("tutorial", "End effector link: %s", move_group_interface.getEndEffectorLink().c_str());
 
 
-  // ROS_INFO_NAMED("Available Planning Groups:");
 
   std::copy(move_group_interface.getJointModelGroupNames().begin(),
             move_group_interface.getJointModelGroupNames().end(), std::ostream_iterator<std::string>(std::cout, ", "));
 
 
-  //add brick 1
 
   std::vector<moveit_msgs::CollisionObject> collision_objects;
   
 
-  for (int i = 0; i < 8; i++){
+ //Add Ground
+
+  moveit_msgs::CollisionObject ground_collision;
+  ground_collision.header.frame_id = "base_link";
+  
+  shape_msgs::SolidPrimitive ground;
+  ground.type = ground.BOX;
+  ground.dimensions.resize(3);
+  ground.dimensions[ground.BOX_X] = 1.0;
+  ground.dimensions[ground.BOX_Y] = 1.0;
+  ground.dimensions[ground.BOX_Z] = 0.0;
+
+  geometry_msgs::Pose ground_pose;
+  ground_pose.orientation.w = 1.0;
+  ground_pose.orientation.x = 0.0;
+  ground_pose.orientation.y = 0.0;
+  ground_pose.orientation.z = -1.0;
+  ground_collision.primitive_poses.push_back(ground_pose);
+
+  ground_collision.primitives.push_back(ground);
+  ground_collision.operation = ground_collision.ADD;
+  collision_objects.push_back(ground_collision);
+
+
+
+  //Add bricks
+  for (int i = 0; i < 1; i++){
     moveit_msgs::CollisionObject collision_object;
     
-    // std::cout << "header1" << std::endl;
 
     collision_object.header.frame_id = "base_link";
-    // std::cout << "header" << collision_object << std::endl;
     collision_object.id = i;
-    // std::cout << "header" << collision_objects.at(i) << std::endl;
 
     shape_msgs::SolidPrimitive primitive;
 
     primitive.type = primitive.BOX;
     primitive.dimensions.resize(3);
     primitive.dimensions[primitive.BOX_X] = 0.24;
-    primitive.dimensions[primitive.BOX_Y] = 0.07;//0.07
+    primitive.dimensions[primitive.BOX_Y] = 0.07;
     primitive.dimensions[primitive.BOX_Z] = 0.112;
 
-  //   std::cout << "primitives" << primitives.at(i) << std::endl;
 
     geometry_msgs::Pose brick_pose;
 
@@ -114,18 +133,15 @@ int main(int argc, char** argv)
 
     }
     collision_object.primitives.push_back(primitive);
-    // collision_object.primitive_poses.push_back(brick_pose);
     collision_object.operation = collision_object.ADD;
-
     collision_objects.push_back(collision_object);
-
-
-
   }
 
+  
+  //Add objects to planning scene
   planning_scene_interface.addCollisionObjects(collision_objects);
 
- 
+
   ros::Rate r(120);
 
   while(ros::ok()){
