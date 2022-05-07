@@ -5,16 +5,53 @@
 #include <moveit_msgs/AttachedCollisionObject.h>
 #include <moveit_msgs/CollisionObject.h>
 #include <moveit_visual_tools/moveit_visual_tools.h>
+#include <ros/ros.h>
+#include "std_msgs/Float64.h"
+#include "arm_planner/Gripper.h"
 
-const double tau = 2*M_PI;
+// const double tau = 2*M_PI;
+// static float pincer_angle{0.8};
+
+
+
+
+bool gripper_fn(arm_planner::Gripper::Request &req, arm_planner::Gripper::Response &res){
+
+  if(req.state == 1){
+    std_msgs::Float64 msg;
+
+    msg.data = 0.8;
+    std::cout << "gripper opened" << std::endl;
+
+    pub.publish(msg);
+
+  }
+  else{
+    std_msgs::Float64 msg;
+
+    msg.data = 0.1;
+    std::cout << "gripper closed" << std::endl;
+
+    pub.publish(msg);
+
+  }
+
+  return true;
+}
+
 
 int main(int argc, char** argv)
 {
   ros::init(argc, argv, "path_planner");
-  ros::NodeHandle node_handle;
+  ros::NodeHandle nh;
 
-  ros::AsyncSpinner spinner(1);
-  spinner.start();
+  // ros::AsyncSpinner spinner(1);
+  // spinner.start();
+
+  // ros::Publisher pub = nh.advertise<std_msgs::Float64>("/pincer_joint_position_controller/command", 10);
+
+  ros::ServiceServer gripper_service = nh.advertiseService("gripper", gripper_fn);
+
 
   static const std::string PLANNING_GROUP = "arm";
 
@@ -41,35 +78,7 @@ int main(int argc, char** argv)
   //add brick 1
 
   std::vector<moveit_msgs::CollisionObject> collision_objects;
-  // std::vector<shape_msgs::SolidPrimitive> primitives;
-  // std::vector<geometry_msgs::Pose> brick_poses;
-
-  // moveit_msgs::CollisionObject collision_object1;
-
-  // collision_object1.header.frame_id = move_group_interface.getPlanningFrame();
-  // collision_object1.id = "brick1";
-
-  // //define the brick shape
-  // shape_msgs::SolidPrimitive primitive1;
-  // primitive1.type = primitive1.BOX;
-  // primitive1.dimensions.resize(3);
-  // primitive1.dimensions[primitive1.BOX_X] = 0.24;
-  // primitive1.dimensions[primitive1.BOX_Y] = 0.07;//0.07
-  // primitive1.dimensions[primitive1.BOX_Z] = 0.112;
-
-  // //define pose for the brick
-  // geometry_msgs::Pose brick_pose1;
-  // brick_pose1.orientation.w = 1.0;
-  // brick_pose1.position.x = 0.0;
-  // brick_pose1.position.y = 0.5;
-  // brick_pose1.position.z = 0.056;
-
-  // collision_object1.primitives.push_back(primitive1);
-  // collision_object1.primitive_poses.push_back(brick_pose1);
-  // collision_object1.operation = collision_object1.ADD;
-
-  // collision_objects.push_back(collision_object1);
-
+  
 
   for (int i = 0; i < 8; i++){
     moveit_msgs::CollisionObject collision_object;
@@ -123,10 +132,32 @@ int main(int argc, char** argv)
   // // ROS_INFO_NAMED("add object into world");
   planning_scene_interface.addCollisionObjects(collision_objects);
 
+  // pub.publish(pincer_angle);
 
-  //add brick2
   
+  ros::Rate r(120);
 
+  while(ros::ok()){
+
+    // std_msgs::Float64 msg;
+
+    // msg.data = pincer_angle;
+    // std::cout << "state reached" << std::endl;
+
+    // pub.publish(msg);
+
+    ros::spinOnce();
+
+    r.sleep();
+
+
+
+  }
+
+
+
+
+  return 0;
 
 
 }

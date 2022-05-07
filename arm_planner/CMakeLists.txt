@@ -14,6 +14,7 @@ moveit_ros_planning_interface
 #message_runtime
 moveit_visual_tools
 rviz_visual_tools
+std_msgs
 
 )
 

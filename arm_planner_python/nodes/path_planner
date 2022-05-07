@@ -1,8 +1,5 @@
 #!/usr/bin/env python
 
-
-
-
 import sys
 import copy
 import rospy
@@ -15,28 +12,39 @@ from std_msgs.msg import String
 from std_srvs.srv import Empty, EmptyResponse
 from moveit_commander.conversions import pose_to_list
 from std_msgs.msg   import Float32,Float64
-from arm_planner_python.srv import Pose_Control
 
+"""
+This node provides a tutorial to use the Adroit arm. This will show you 3 following things
+    1) joint control of the arm
+    2) pose control of the arm
+    3) pincer control
+"""
 
+# Let's start with constructing a class
 class Control:
 
     def __init__(self):
+        """
+        Initialize and setup the Motion Planning Scence
+        """
 
+        #######################################
+        ### Basic Initialization For Moveit ###
+        #######################################
+    
         moveit_commander.roscpp_initialize(sys.argv)
         self.robot = moveit_commander.RobotCommander()
         self.scene = moveit_commander.PlanningSceneInterface()
         self.broadcaster = tf2_ros.TransformBroadcaster()
-
-
+        
         group_name = 'arm'
         self.group = moveit_commander.MoveGroupCommander(group_name)
         pincer_group_name = 'pincer'
-        self.pincer_group  = moveit_commander.MoveGroupCommander(pincer_group_name)
+        self.pincer_group = moveit_commander.MoveGroupCommander(pincer_group_name)
 
         self.scene = moveit_commander.PlanningSceneInterface()
         display_trajectory_publisher = rospy.Publisher("move_group/display_planned_path", moveit_msgs.msg.DisplayTrajectory, queue_size=20)
         self.display_trajectory_publisher = display_trajectory_publisher
-
 
         rospy.init_node('path_planner', anonymous=True)
         self.rate = rospy.Rate(120)
@@ -53,7 +61,15 @@ class Control:
 
 
 
+        #################
+        ### Publisher ###
+        #################
+
+        # This pubsliher will send a message to the pincer controller
+        # By simply publishing a std_msg to pincer_joint_position_controller, you can control the pincer
         self.pincer_pub = rospy.Publisher("/hdt_arm/pincer_joint_position_controller/command", Float64,queue_size=10)
+
+
 
         ###############
         ### Service ###
@@ -63,14 +79,16 @@ class Control:
         # whenever you want as long as you are running this node
         
         # let's define a ROS service that we can call using `rosservice call`
-        # self.service_joint_control = rospy.Service("joint_control", Empty, self.joint_control)
+        self.service_joint_control = rospy.Service("joint_control", Empty, self.joint_control)
 
-        # # It would be convinient if you can call rosservice in the code too
-        # joint_control = rospy.ServiceProxy("joint_control",Empty)
+        # It would be convinient if you can call rosservice in the code too
+        joint_control = rospy.ServiceProxy("joint_control",Empty)
 
         # Let's define more services
-        self.service_pose_control = rospy.Service("pose_control", Pose_Control, self.pose_control)
-        # pose_control = rospy.ServiceProxy("pose_control",Pose_Control)
+        self.service_pose_control = rospy.Service("pose_control", Empty, self.pose_control)
+        pose_control = rospy.ServiceProxy("pose_control",Empty)
+
+
 
 
         #######################
@@ -83,16 +101,37 @@ class Control:
         # For example, let's say you want the Adroit to start in a certain position
         # Let's call the `joint control` service
         # this command will control the robot however you set the parameters in the `joint control`function 
-        # joint_control() 
-        # pose_control()
+        joint_control() 
        
 
         # What about the pincer? Let's say you want the pincer to be wide open when you start the Adorit
-        pincer_angle = 0.4 # you can change this however you want!
+        pincer_angle = 0.8 # you can change this however you want!
         self.pincer_pub.publish(pincer_angle)
+        print("pincer_angle published")
+    
 
+    def joint_control(self,val):
+        """
+        This function is used to control joint position of the robot
+        """
 
-       
+        # Let's get current joint positions of the Adorit first, and we will call them `joint_goal`
+        self.joint_goal = self.group.get_current_joint_values()
+
+        # There are total 6 joints for the Adroit arm
+        # Let's put desidred angle (radian) for each joints
+        self.joint_goal[0] = 0
+        self.joint_goal[1] = 0
+        self.joint_goal[2] = 0
+        self.joint_goal[3] = - 90*pi/180
+        self.joint_goal[4] = -85*pi/180
+        self.joint_goal[5] = 95*pi/180
+
+        # Then let's acutally move the arm
+        self.group.go(self.joint_goal, wait=True)
+        self.group.stop()
+        self.group.clear_pose_targets()
+        return []
     
 
     def pose_control(self,val):
@@ -101,14 +140,13 @@ class Control:
         """
         self.pose_goal = geometry_msgs.msg.Pose()
         self.pose_goal.orientation.w = 1.0
-        self.pose_goal.position.x = 0.405747
-        self.pose_goal.position.y = 0.0554532
-        self.pose_goal.position.z = 0.426331
+        self.pose_goal.position.x = 0.4
+        self.pose_goal.position.y = 0.1
+        self.pose_goal.position.z = 0.4
         self.group.set_pose_target(self.pose_goal)
         self.plan = self.group.go(wait=True)
         self.group.stop()
         self.group.clear_pose_targets()
-
 
 if __name__ == "__main__":
   

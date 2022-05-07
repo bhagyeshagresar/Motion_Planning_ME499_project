@@ -1,17 +1,15 @@
 <launch>
- <!-- By default, we do not start a database (it can be large) -->
+
+  <!-- By default, we do not start a database (it can be large) -->
   <arg name="db" default="false" />
   <!-- Allow user to specify database location -->
   <arg name="db_path" default="$(find hdt_6dof_a24_pincer_moveit)/default_warehouse_mongo_db" />
 
   <!-- By default, we are not in debug mode -->
   <arg name="debug" default="false" />
-  <arg name="pipeline" default="ompl" />
-
 
   <!--
   By default, hide joint_state_publisher's GUI
-
   MoveIt!'s "demo" mode replaces the real robot driver with the joint_state_publisher.
   The latter one maintains and publishes the current joint configuration of the simulated robot.
   It also provides a GUI to move the simulated robot around "manually".
@@ -42,8 +40,6 @@
     <arg name="fake_execution" value="true"/>
     <arg name="info" value="true"/>
     <arg name="debug" value="$(arg debug)"/>
-    <arg name="pipeline" value="$(arg pipeline)"  />
-
   </include>
 
   <!-- Run Rviz and load the default config to see the state of the move_group node -->
@@ -57,6 +53,4 @@
     <arg name="moveit_warehouse_database_path" value="$(arg db_path)"/>
   </include>
 
-
-  
 </launch>
