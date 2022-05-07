@@ -10,11 +10,12 @@ project(arm_planner)
 find_package(catkin REQUIRED COMPONENTS
 roscpp
 moveit_ros_planning_interface
-#essage_generation
+message_generation
 #message_runtime
 moveit_visual_tools
 rviz_visual_tools
 std_msgs
+std_srvs
 
 )
 
@@ -59,11 +60,10 @@ std_msgs
 # )
 
 ## Generate services in the 'srv' folder
-# add_service_files(
-#   FILES
-#   Service1.srv
-#   Service2.srv
-# )
+ add_service_files(
+   FILES
+   Gripper.srv
+ )
 
 ## Generate actions in the 'action' folder
 # add_action_files(
@@ -73,10 +73,11 @@ std_msgs
 # )
 
 ## Generate added messages and services with any dependencies listed here
-# generate_messages(
-#   DEPENDENCIES
-#   std_msgs  # Or other packages containing msgs
-# )
+generate_messages(
+  DEPENDENCIES
+   std_msgs  # Or other packages containing msgs
+   std_srvs
+ )
 
 ################################################
 ## Declare ROS dynamic reconfigure parameters ##
@@ -113,9 +114,11 @@ catkin_package(
 #  CATKIN_DEPENDS other_catkin_pkg
 #  DEPENDS system_lib
    CATKIN_DEPENDS
-   #message_generation
-   #message_runtime
+   message_generation
+   message_runtime
    roscpp
+   std_msgs
+   std_srvs
 )
 
 ###########

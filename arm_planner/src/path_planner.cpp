@@ -8,6 +8,8 @@
 #include <ros/ros.h>
 #include "std_msgs/Float64.h"
 #include "arm_planner/Gripper.h"
+#include <std_srvs/Empty.h>
+
 
 // const double tau = 2*M_PI;
 // static float pincer_angle{0.8};
@@ -15,29 +17,29 @@
 
 
 
-bool gripper_fn(arm_planner::Gripper::Request &req, arm_planner::Gripper::Response &res){
+// bool gripper_fn(arm_planner::Gripper::Request &req, std_srvs::Empty::Response &res){
 
-  if(req.state == 1){
-    std_msgs::Float64 msg;
+//   if(req.state == 1){
+//     std_msgs::Float64 msg;
 
-    msg.data = 0.8;
-    std::cout << "gripper opened" << std::endl;
+//     msg.data = 0.8;
+//     std::cout << "gripper opened" << std::endl;
 
-    pub.publish(msg);
+//     pub.publish(msg);
 
-  }
-  else{
-    std_msgs::Float64 msg;
+//   }
+//   else{
+//     std_msgs::Float64 msg;
 
-    msg.data = 0.1;
-    std::cout << "gripper closed" << std::endl;
+//     msg.data = 0.1;
+//     std::cout << "gripper closed" << std::endl;
 
-    pub.publish(msg);
+//     pub.publish(msg);
 
-  }
+//   }
 
-  return true;
-}
+//   return true;
+// }
 
 
 int main(int argc, char** argv)
@@ -48,9 +50,9 @@ int main(int argc, char** argv)
   // ros::AsyncSpinner spinner(1);
   // spinner.start();
 
-  // ros::Publisher pub = nh.advertise<std_msgs::Float64>("/pincer_joint_position_controller/command", 10);
+  ros::Publisher pub = nh.advertise<std_msgs::Float64>("/pincer_joint_position_controller/command", 10);
 
-  ros::ServiceServer gripper_service = nh.advertiseService("gripper", gripper_fn);
+  // ros::ServiceServer gripper_service = nh.advertiseService("gripper", gripper_fn);
 
 
   static const std::string PLANNING_GROUP = "arm";
@@ -133,6 +135,13 @@ int main(int argc, char** argv)
   planning_scene_interface.addCollisionObjects(collision_objects);
 
   // pub.publish(pincer_angle);
+  std_msgs::Float64 msg;
+
+  msg.data = 0.8;
+  std::cout << "state reached" << std::endl;
+
+  pub.publish(msg);
+
 
   
   ros::Rate r(120);
