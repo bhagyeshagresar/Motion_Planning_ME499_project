@@ -79,8 +79,8 @@ int main(int argc, char** argv)
   shape_msgs::SolidPrimitive ground;
   ground.type = ground.BOX;
   ground.dimensions.resize(3);
-  ground.dimensions[ground.BOX_X] = 1.0;
-  ground.dimensions[ground.BOX_Y] = 1.0;
+  ground.dimensions[ground.BOX_X] = 1.5;
+  ground.dimensions[ground.BOX_Y] = 1.5;
   ground.dimensions[ground.BOX_Z] = 0.0;
 
   geometry_msgs::Pose ground_pose;
@@ -117,8 +117,8 @@ int main(int argc, char** argv)
 
     if(i % 2 == 0){
       brick_pose.orientation.w = 1.0;
-      brick_pose.position.x = 0.5;
-      brick_pose.position.y = 0.5 + i/2.0;
+      brick_pose.position.x = 0.2;
+      brick_pose.position.y = 0.2 + i/2.0;
       brick_pose.position.z = 0.056;
       collision_object.primitive_poses.push_back(brick_pose);
 
@@ -126,8 +126,8 @@ int main(int argc, char** argv)
 
     else{
       brick_pose.orientation.w = 1.0;
-      brick_pose.position.x = -0.5;
-      brick_pose.position.y = 0.5 + i/2.0;
+      brick_pose.position.x = -0.2;
+      brick_pose.position.y = 0.2 + i/2.0;
       brick_pose.position.z = 0.056;
       collision_object.primitive_poses.push_back(brick_pose);
 
@@ -137,7 +137,21 @@ int main(int argc, char** argv)
     collision_objects.push_back(collision_object);
   }
 
+  //Add cylinders
   
+  
+
+
+
+
+
+
+
+
+
+
+
+
   //Add objects to planning scene
   planning_scene_interface.addCollisionObjects(collision_objects);
 
