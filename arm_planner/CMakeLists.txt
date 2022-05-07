@@ -63,6 +63,7 @@ std_srvs
  add_service_files(
    FILES
    Gripper.srv
+   Reset.srv
  )
 
 ## Generate actions in the 'action' folder

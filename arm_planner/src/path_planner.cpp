@@ -9,10 +9,35 @@
 #include "std_msgs/Float64.h"
 #include "arm_planner/Gripper.h"
 #include <std_srvs/Empty.h>
+#include "arm_planner/Reset.h"
 
 
 
 static int flag{0};
+static bool reset_val{false};
+static std::vector<double> waypoints;
+// static const std::string PLANNING_GROUP = "arm";
+// static moveit::planning_interface::MoveGroupInterface move_group_interface(PLANNING_GROUP);
+// static moveit::planning_interface::PlanningSceneInterface planning_scene_interface;
+
+
+
+
+bool reset_fn(arm_planner::Reset::Request &req, arm_planner::Reset::Response &res){
+
+  
+
+  reset_val = req.restart;
+
+  if(reset_val == true){
+    waypoints.clear();
+
+  }
+
+
+  return true;
+}
+
 
 
 
@@ -44,31 +69,41 @@ int main(int argc, char** argv)
   ros::Publisher pub = nh.advertise<std_msgs::Float64>("/pincer_joint_position_controller/command", 10);
 
   ros::ServiceServer gripper_service = nh.advertiseService("gripper", gripper_fn);
-
+  ros::ServiceServer reset_service = nh.advertiseService("reset", reset_fn);
 
   static const std::string PLANNING_GROUP = "arm";
+  static moveit::planning_interface::MoveGroupInterface move_group_interface(PLANNING_GROUP);
+  static moveit::planning_interface::PlanningSceneInterface planning_scene_interface;
 
-  moveit::planning_interface::MoveGroupInterface move_group_interface(PLANNING_GROUP);
 
-  moveit::planning_interface::PlanningSceneInterface planning_scene_interface;
-
+  
   const moveit::core::JointModelGroup* joint_model_group =
       move_group_interface.getCurrentState()->getJointModelGroup(PLANNING_GROUP);
 
   
-  ROS_INFO_NAMED("tutorial", "Planning frame: %s", move_group_interface.getPlanningFrame().c_str());
+  ROS_INFO_NAMED("Planning frame: %s", move_group_interface.getPlanningFrame().c_str());
 
 
-  ROS_INFO_NAMED("tutorial", "End effector link: %s", move_group_interface.getEndEffectorLink().c_str());
+  ROS_INFO_NAMED("End effector link: %s", move_group_interface.getEndEffectorLink().c_str());
+
+  // ROS_INFO_NAMED("Get named targets: %s", move_group_interface.getNamedTargets());
+
+  // std::copy(move_group_interface.getNamedTargets().begin(),
+  //           move_group_interface.getNamedTargets().end(), std::ostream_iterator<std::string>(std::cout, ", "));
 
 
 
+  ROS_INFO_NAMED("tutorial", "Available Planning Groups:");
   std::copy(move_group_interface.getJointModelGroupNames().begin(),
             move_group_interface.getJointModelGroupNames().end(), std::ostream_iterator<std::string>(std::cout, ", "));
 
 
 
   std::vector<moveit_msgs::CollisionObject> collision_objects;
+
+  //get waypoints
+  nh.getParam("waypoints", waypoints);
+  std::cout << "first waypoints: " << waypoints.size() << std::endl;
   
 
  //Add Ground
@@ -138,7 +173,7 @@ int main(int argc, char** argv)
   }
 
   //Add cylinders
-  
+
   
 
 
@@ -164,26 +199,29 @@ int main(int argc, char** argv)
 
     if (flag == 1){
       std_msgs::Float64 msg;
-
       msg.data = 0.8;
       std::cout << "gripper openeed" << std::endl;
-
       pub.publish(msg);
+      flag = 0;
 
     }
 
     if (flag == 2){
-
       std_msgs::Float64 msg;
-
       msg.data = 0.1;
       std::cout << "gripper closed" << std::endl;
-
       pub.publish(msg);
-
-
+      flag = 0;
     }
 
+    if(reset_val == true){
+        std::cout << "reset waypoints: " << waypoints.size() << std::endl;
+        nh.setParam("waypoints", waypoints);
+        move_group_interface.setNamedTarget("ready");
+        move_group_interface.move();
+        reset_val = false;
+
+    }
 
 
 
