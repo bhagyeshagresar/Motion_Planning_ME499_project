@@ -78,7 +78,7 @@ bool step_fn(arm_planner::Step::Request &req, arm_planner::Step::Response &res){
   joint_group_positions.push_back(req.j4);;
   joint_group_positions.push_back(req.j5);;
   joint_group_positions.push_back(req.j6);;
-  // // set_gripper = req.gripper_status;
+  set_gripper = (double)req.gripper_status;
 
   std::cout << "start filing waypoints" << std::endl;
   waypoints_list.push_back(joint_group_positions.at(0));
@@ -87,10 +87,10 @@ bool step_fn(arm_planner::Step::Request &req, arm_planner::Step::Response &res){
   waypoints_list.push_back(joint_group_positions.at(3));
   waypoints_list.push_back(joint_group_positions.at(4));
   waypoints_list.push_back(joint_group_positions.at(5));
-  // // waypoints_list.push_back(set_gripper);
+  waypoints_list.push_back(set_gripper);
   std::cout << "waypoints filled" << std::endl;
 
-  set_gripper = req.gripper_status;
+  // set_gripper = req.gripper_status;
   std::cout << "inside the service fn" << std::endl;
   
 
@@ -278,6 +278,8 @@ int main(int argc, char** argv)
         waypoints.push_back(waypoints_list.at(3));
         waypoints.push_back(waypoints_list.at(4));
         waypoints.push_back(waypoints_list.at(5));
+        waypoints.push_back(waypoints_list.at(6));
+
 
         for(int i = 0; i < waypoints.size(); i++){
           std::cout << "waypoints at: " << i << "is: " << waypoints.at(i) << std::endl;
