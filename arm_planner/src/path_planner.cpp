@@ -18,6 +18,9 @@ static bool reset_val{false};
 static std::vector<double> waypoints;
 static bool step_val{false};
 static std::vector<double> joint_group_positions;
+static bool set_gripper{false};
+static std::vector<double> waypoints_list;
+
 // static bool gripper_step{false};
 
 // static const std::string PLANNING_GROUP = "arm";
@@ -71,7 +74,20 @@ bool step_fn(arm_planner::Step::Request &req, arm_planner::Step::Response &res){
   joint_group_positions.at(3) = req.j4;
   joint_group_positions.at(4) = req.j5;
   joint_group_positions.at(5) = req.j6;
-  if(req.gripper_status == true){
+  set_gripper = req.gripper_status;
+
+  
+  waypoints_list.push_back(joint_group_positions.at(0));
+  waypoints_list.push_back(joint_group_positions.at(1));
+  waypoints_list.push_back(joint_group_positions.at(2));
+  waypoints_list.push_back(joint_group_positions.at(3));
+  waypoints_list.push_back(joint_group_positions.at(4));
+  waypoints_list.push_back(joint_group_positions.at(5));
+  waypoints_list.push_back(set_gripper);
+
+
+
+  if(set_gripper == true){
     flag = 1;
   }
   else{
@@ -203,17 +219,6 @@ int main(int argc, char** argv)
 
   //Add cylinders
 
-  
-
-
-
-
-
-
-
-
-
-
 
 
   //Add objects to planning scene
@@ -253,16 +258,25 @@ int main(int argc, char** argv)
     }
 
 
-    // if(step_val == true){
+    if(step_val == true){
       
-    //   moveit::core::RobotStatePtr current_state = move_group_interface.getCurrentState();
-    //   std::vector<double> joint_group_positions;
-    //   current_state->copyJointGroupPositions(joint_model_group, joint_group_positions);
-    // }
+      // moveit::core::RobotStatePtr current_state = move_group_interface.getCurrentState();
+      // std::vector<double> joint_group_positions;
+      // current_state->copyJointGroupPositions(joint_model_group, joint_group_positions);
+      
+      move_group_interface.setJointValueTarget(joint_group_positions);
+      bool error_code = move_group_interface.plan();
+      if(error_code.val == 1){
+        move_group_interface.move();
+        nh.setParam("waypoints", waypoints);
+      }
 
-    // if (gripper_step == true){
 
-    // }
+    }
+
+    if (gripper_step == true){
+
+    }
 
 
 
