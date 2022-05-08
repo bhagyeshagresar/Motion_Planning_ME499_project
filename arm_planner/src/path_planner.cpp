@@ -38,6 +38,8 @@ bool reset_fn(arm_planner::Reset::Request &req, arm_planner::Reset::Response &re
 
   if(reset_val == true){
     waypoints.clear();
+    waypoints_list.clear();
+    joint_group_positions.clear();
 
   }
 
@@ -68,25 +70,28 @@ bool gripper_fn(arm_planner::Gripper::Request &req, arm_planner::Gripper::Respon
 bool step_fn(arm_planner::Step::Request &req, arm_planner::Step::Response &res){
   
   step_val = true;
-  joint_group_positions.at(0) = req.j1;
-  joint_group_positions.at(1) = req.j2;
-  joint_group_positions.at(2) = req.j3;
-  joint_group_positions.at(3) = req.j4;
-  joint_group_positions.at(4) = req.j5;
-  joint_group_positions.at(5) = req.j6;
-  set_gripper = req.gripper_status;
+  std::cout << "step value reached" << std::endl;
+  joint_group_positions.push_back(req.j1);
+  std::cout << "filled first joint state" << std::endl;
+  joint_group_positions.push_back(req.j2);
+  joint_group_positions.push_back(req.j3);
+  joint_group_positions.push_back(req.j4);;
+  joint_group_positions.push_back(req.j5);;
+  joint_group_positions.push_back(req.j6);;
+  // // set_gripper = req.gripper_status;
 
-  
+  std::cout << "start filing waypoints" << std::endl;
   waypoints_list.push_back(joint_group_positions.at(0));
   waypoints_list.push_back(joint_group_positions.at(1));
   waypoints_list.push_back(joint_group_positions.at(2));
   waypoints_list.push_back(joint_group_positions.at(3));
   waypoints_list.push_back(joint_group_positions.at(4));
   waypoints_list.push_back(joint_group_positions.at(5));
-  waypoints_list.push_back(set_gripper);
+  // // waypoints_list.push_back(set_gripper);
+  std::cout << "waypoints filled" << std::endl;
 
-
-
+  set_gripper = req.gripper_status;
+  std::cout << "inside the service fn" << std::endl;
   
 
 
@@ -113,25 +118,20 @@ int main(int argc, char** argv)
 
   //add planning group "arm"
   static const std::string PLANNING_GROUP = "arm";
-  static moveit::planning_interface::MoveGroupInterface move_group_interface(PLANNING_GROUP);
-  static moveit::planning_interface::PlanningSceneInterface planning_scene_interface;
+  moveit::planning_interface::MoveGroupInterface move_group_interface(PLANNING_GROUP);
+  moveit::planning_interface::PlanningSceneInterface planning_scene_interface;
 
   //add planning group "pincer"
   static const std::string PLANNING_GROUP_2 = "pincer";
-  static moveit::planning_interface::MoveGroupInterface move_group_interface_2(PLANNING_GROUP_2);
-  static moveit::planning_interface::PlanningSceneInterface planning_scene_interface_2;
+  moveit::planning_interface::MoveGroupInterface move_group_interface_2(PLANNING_GROUP_2);
+  moveit::planning_interface::PlanningSceneInterface planning_scene_interface_2;
   
   const moveit::core::JointModelGroup* joint_model_group =
       move_group_interface.getCurrentState()->getJointModelGroup(PLANNING_GROUP);
 
   
   ROS_INFO_NAMED("Planning frame: %s", move_group_interface.getPlanningFrame().c_str());
-
-
   ROS_INFO_NAMED("End effector link: %s", move_group_interface.getEndEffectorLink().c_str());
-
- 
-
   ROS_INFO_NAMED("tutorial", "Available Planning Groups:");
   std::copy(move_group_interface.getJointModelGroupNames().begin(),
             move_group_interface.getJointModelGroupNames().end(), std::ostream_iterator<std::string>(std::cout, ", "));
@@ -141,8 +141,8 @@ int main(int argc, char** argv)
   std::vector<moveit_msgs::CollisionObject> collision_objects;
 
   //get waypoints
-  nh.getParam("waypoints", waypoints);
-  std::cout << "first waypoints: " << waypoints.size() << std::endl;
+  // nh.getParam("waypoints", waypoints);
+  // std::cout << "first waypoints: " << waypoints.size() << std::endl;
   
 
  //Add Ground
@@ -244,7 +244,7 @@ int main(int argc, char** argv)
 
     if(reset_val == true){
         std::cout << "reset waypoints: " << waypoints.size() << std::endl;
-        nh.setParam("waypoints", waypoints);
+        // nh.setParam("waypoints", waypoints);
         move_group_interface.setNamedTarget("ready");
         move_group_interface.move();
         reset_val = false;
@@ -253,33 +253,61 @@ int main(int argc, char** argv)
 
 
     if(step_val == true){
+      std::cout << "outside the service fn" << std::endl;
       
-      // moveit::core::RobotStatePtr current_state = move_group_interface.getCurrentState();
+      moveit::core::RobotStatePtr current_state = move_group_interface.getCurrentState();
       // std::vector<double> joint_group_positions;
-      // current_state->copyJointGroupPositions(joint_model_group, joint_group_positions);
+      current_state->copyJointGroupPositions(joint_model_group, joint_group_positions);
       
       move_group_interface.setJointValueTarget(joint_group_positions);
+      std::cout << "set joint" << std::endl;
+      
       moveit::planning_interface::MoveGroupInterface::Plan my_plan;
+      std::cout << "my_plan" << std::endl;
+      
       bool success = (move_group_interface.plan(my_plan) == moveit::planning_interface::MoveItErrorCode::SUCCESS);
+      std::cout << "success" << std::endl;
+      
       if(success == true){
+        std::cout << "success reached" << std::endl;
         move_group_interface.move();
-        nh.setParam("waypoints", waypoints);
+        
+        waypoints.push_back(waypoints_list.at(0));
+        waypoints.push_back(waypoints_list.at(1));
+        waypoints.push_back(waypoints_list.at(2));
+        waypoints.push_back(waypoints_list.at(3));
+        waypoints.push_back(waypoints_list.at(4));
+        waypoints.push_back(waypoints_list.at(5));
+
+        for(int i = 0; i < waypoints.size(); i++){
+          std::cout << "waypoints at: " << i << "is: " << waypoints.at(i) << std::endl;
+        }
+
         if(set_gripper == true){
           std_msgs::Float64 msg;
           msg.data = 0.8;
           std::cout << "gripper openeed" << std::endl;
           pub.publish(msg);
         }
+        
         else{
           std_msgs::Float64 msg;
           msg.data = 0.1;
           std::cout << "gripper closed" << std::endl;
           pub.publish(msg);
+        
+        
       }
+      // nh.setParam("waypoints", waypoints);
+      waypoints_list.clear();
+      joint_group_positions.clear();
+      
+
       }
-      else{
-        move_group_interface.stop();
-      }
+    else{
+      move_group_interface.stop();
+    }
+      step_val = false;
 
 
     }
