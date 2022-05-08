@@ -111,11 +111,15 @@ int main(int argc, char** argv)
   ros::ServiceServer reset_service = nh.advertiseService("reset", reset_fn);
   ros::ServiceServer step_service = nh.advertiseService("step", step_fn);
 
+  //add planning group "arm"
   static const std::string PLANNING_GROUP = "arm";
   static moveit::planning_interface::MoveGroupInterface move_group_interface(PLANNING_GROUP);
   static moveit::planning_interface::PlanningSceneInterface planning_scene_interface;
 
-
+  //add planning group "pincer"
+  static const std::string PLANNING_GROUP_2 = "pincer";
+  static moveit::planning_interface::MoveGroupInterface move_group_interface_2(PLANNING_GROUP_2);
+  static moveit::planning_interface::PlanningSceneInterface planning_scene_interface_2;
   
   const moveit::core::JointModelGroup* joint_model_group =
       move_group_interface.getCurrentState()->getJointModelGroup(PLANNING_GROUP);
@@ -126,12 +130,7 @@ int main(int argc, char** argv)
 
   ROS_INFO_NAMED("End effector link: %s", move_group_interface.getEndEffectorLink().c_str());
 
-  // ROS_INFO_NAMED("Get named targets: %s", move_group_interface.getNamedTargets());
-
-  // std::copy(move_group_interface.getNamedTargets().begin(),
-  //           move_group_interface.getNamedTargets().end(), std::ostream_iterator<std::string>(std::cout, ", "));
-
-
+ 
 
   ROS_INFO_NAMED("tutorial", "Available Planning Groups:");
   std::copy(move_group_interface.getJointModelGroupNames().begin(),
