@@ -87,12 +87,7 @@ bool step_fn(arm_planner::Step::Request &req, arm_planner::Step::Response &res){
 
 
 
-  if(set_gripper == true){
-    flag = 1;
-  }
-  else{
-    flag = 2;
-  }
+  
 
 
 
@@ -265,18 +260,34 @@ int main(int argc, char** argv)
       // current_state->copyJointGroupPositions(joint_model_group, joint_group_positions);
       
       move_group_interface.setJointValueTarget(joint_group_positions);
-      bool error_code = move_group_interface.plan();
-      if(error_code.val == 1){
+      moveit::planning_interface::MoveGroupInterface::Plan my_plan;
+      bool success = (move_group_interface.plan(my_plan) == moveit::planning_interface::MoveItErrorCode::SUCCESS);
+      if(success == true){
         move_group_interface.move();
         nh.setParam("waypoints", waypoints);
+        if(set_gripper == true){
+          std_msgs::Float64 msg;
+          msg.data = 0.8;
+          std::cout << "gripper openeed" << std::endl;
+          pub.publish(msg);
+        }
+        else{
+          std_msgs::Float64 msg;
+          msg.data = 0.1;
+          std::cout << "gripper closed" << std::endl;
+          pub.publish(msg);
+      }
+      }
+      else{
+        move_group_interface.stop();
       }
 
 
     }
 
-    if (gripper_step == true){
+    // if (gripper_step == true){
 
-    }
+    // }
 
 
 
