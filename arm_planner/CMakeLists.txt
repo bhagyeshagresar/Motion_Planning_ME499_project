@@ -64,6 +64,7 @@ std_srvs
    FILES
    Gripper.srv
    Reset.srv
+   Step.srv
  )
 
 ## Generate actions in the 'action' folder

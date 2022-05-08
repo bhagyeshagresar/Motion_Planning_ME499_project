@@ -10,12 +10,16 @@
 #include "arm_planner/Gripper.h"
 #include <std_srvs/Empty.h>
 #include "arm_planner/Reset.h"
-
+#include "arm_planner/Step.h"
 
 
 static int flag{0};
 static bool reset_val{false};
 static std::vector<double> waypoints;
+static bool step_val{false};
+static std::vector<double> joint_group_positions;
+// static bool gripper_step{false};
+
 // static const std::string PLANNING_GROUP = "arm";
 // static moveit::planning_interface::MoveGroupInterface move_group_interface(PLANNING_GROUP);
 // static moveit::planning_interface::PlanningSceneInterface planning_scene_interface;
@@ -58,6 +62,30 @@ bool gripper_fn(arm_planner::Gripper::Request &req, arm_planner::Gripper::Respon
 }
 
 
+bool step_fn(arm_planner::Step::Request &req, arm_planner::Step::Response &res){
+  
+  step_val = true;
+  joint_group_positions.at(0) = req.j1;
+  joint_group_positions.at(1) = req.j2;
+  joint_group_positions.at(2) = req.j3;
+  joint_group_positions.at(3) = req.j4;
+  joint_group_positions.at(4) = req.j5;
+  joint_group_positions.at(5) = req.j6;
+  if(req.gripper_status == true){
+    flag = 1;
+  }
+  else{
+    flag = 2;
+  }
+
+
+
+  return true;
+
+
+}
+
+
 int main(int argc, char** argv)
 {
   ros::init(argc, argv, "path_planner");
@@ -70,6 +98,7 @@ int main(int argc, char** argv)
 
   ros::ServiceServer gripper_service = nh.advertiseService("gripper", gripper_fn);
   ros::ServiceServer reset_service = nh.advertiseService("reset", reset_fn);
+  ros::ServiceServer step_service = nh.advertiseService("step", step_fn);
 
   static const std::string PLANNING_GROUP = "arm";
   static moveit::planning_interface::MoveGroupInterface move_group_interface(PLANNING_GROUP);
@@ -224,6 +253,16 @@ int main(int argc, char** argv)
     }
 
 
+    // if(step_val == true){
+      
+    //   moveit::core::RobotStatePtr current_state = move_group_interface.getCurrentState();
+    //   std::vector<double> joint_group_positions;
+    //   current_state->copyJointGroupPositions(joint_model_group, joint_group_positions);
+    // }
+
+    // if (gripper_step == true){
+
+    // }
 
 
 
