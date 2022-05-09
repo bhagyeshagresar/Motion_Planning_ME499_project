@@ -333,6 +333,15 @@ int main(int argc, char** argv)
         //   }
         // }
 
+        // for(int z = 0; z < waypoints.size(); z++){
+        //   for(int j = 0; j < waypoints[z].size(); j++){
+        //     std::cout << "waypoints for 2d" << waypoints[z][j] << std::endl;
+        //   }
+        //   std::cout << std::endl;
+        // }
+
+        std::cout << "waypoints size: " << waypoints.size() << std::endl;
+
 
         if(set_gripper == true){
           std_msgs::Float64 msg;
