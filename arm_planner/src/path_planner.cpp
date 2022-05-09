@@ -11,15 +11,22 @@
 #include <std_srvs/Empty.h>
 #include "arm_planner/Reset.h"
 #include "arm_planner/Step.h"
+#include "arm_planner/Follow.h"
+#include "arm_planner/Test.h"
 
 
 static int flag{0};
 static bool reset_val{false};
-static std::vector<double> waypoints;
 static bool step_val{false};
 static std::vector<double> joint_group_positions;
 static bool set_gripper{false};
+static std::vector<std::vector<double>> waypoints;
 static std::vector<double> waypoints_list;
+static bool set_follow{false};
+static bool test_val{false};
+
+const double tau = 2 * M_PI;
+
 
 // static bool gripper_step{false};
 
@@ -40,6 +47,7 @@ bool reset_fn(arm_planner::Reset::Request &req, arm_planner::Reset::Response &re
     waypoints.clear();
     waypoints_list.clear();
     joint_group_positions.clear();
+
 
   }
 
@@ -66,6 +74,11 @@ bool gripper_fn(arm_planner::Gripper::Request &req, arm_planner::Gripper::Respon
   return true;
 }
 
+// bool test_fn(arm_planner::Test::Request &req, arm_planner::Test::Response &res){
+//   test_val = true;
+
+// }
+
 
 bool step_fn(arm_planner::Step::Request &req, arm_planner::Step::Response &res){
   
@@ -75,9 +88,9 @@ bool step_fn(arm_planner::Step::Request &req, arm_planner::Step::Response &res){
   std::cout << "filled first joint state" << std::endl;
   joint_group_positions.push_back(req.j2);
   joint_group_positions.push_back(req.j3);
-  joint_group_positions.push_back(req.j4);;
-  joint_group_positions.push_back(req.j5);;
-  joint_group_positions.push_back(req.j6);;
+  joint_group_positions.push_back(req.j4);
+  joint_group_positions.push_back(req.j5);
+  joint_group_positions.push_back(req.j6);
   set_gripper = (double)req.gripper_status;
 
   std::cout << "start filing waypoints" << std::endl;
@@ -102,6 +115,26 @@ bool step_fn(arm_planner::Step::Request &req, arm_planner::Step::Response &res){
 }
 
 
+
+// bool follow_fn(arm_planner::Follow::Request &req, arm_planner::Follow::Response &res){
+
+//   set_follow = req.follow;
+
+//   if (set_follow == true){
+//     while(1){
+//       for(int i = 0; i < waypoints.size(); i++){
+        
+//         joint_group_positions.push_back()
+//       }
+//     }
+//   }
+
+
+
+
+// }
+
+
 int main(int argc, char** argv)
 {
   ros::init(argc, argv, "path_planner");
@@ -115,6 +148,7 @@ int main(int argc, char** argv)
   ros::ServiceServer gripper_service = nh.advertiseService("gripper", gripper_fn);
   ros::ServiceServer reset_service = nh.advertiseService("reset", reset_fn);
   ros::ServiceServer step_service = nh.advertiseService("step", step_fn);
+  // ros::ServiceServer test_service = nh.advertiseService("test", test_fn);
 
   //add planning group "arm"
   static const std::string PLANNING_GROUP = "arm";
@@ -132,9 +166,9 @@ int main(int argc, char** argv)
   
   ROS_INFO_NAMED("Planning frame: %s", move_group_interface.getPlanningFrame().c_str());
   ROS_INFO_NAMED("End effector link: %s", move_group_interface.getEndEffectorLink().c_str());
-  ROS_INFO_NAMED("tutorial", "Available Planning Groups:");
-  std::copy(move_group_interface.getJointModelGroupNames().begin(),
-            move_group_interface.getJointModelGroupNames().end(), std::ostream_iterator<std::string>(std::cout, ", "));
+  // ROS_INFO_NAMED("tutorial", "Available Planning Groups:");
+  // std::copy(move_group_interface.getJointModelGroupNames().begin(),
+  //           move_group_interface.getJointModelGroupNames().end(), std::ostream_iterator<std::string>(std::cout, ", "));
 
 
 
@@ -219,6 +253,13 @@ int main(int argc, char** argv)
   planning_scene_interface.addCollisionObjects(collision_objects);
 
 
+  std::vector <double> joints_check_1 = move_group_interface.getCurrentJointValues();
+
+  for(int a = 0; a < joints_check_1.size(); a++){
+    std::cout << "joint angle at: " << a << "is: " << joints_check_1.at(a) << std::endl;
+  }
+
+
   ros::Rate r(120);
 
   while(ros::ok()){
@@ -266,24 +307,32 @@ int main(int argc, char** argv)
       std::cout << "my_plan" << std::endl;
       
       bool success = (move_group_interface.plan(my_plan) == moveit::planning_interface::MoveItErrorCode::SUCCESS);
-      std::cout << "success" << std::endl;
+      std::cout << "success: " << success << std::endl;
       
       if(success == true){
         std::cout << "success reached" << std::endl;
-        move_group_interface.move();
-        
-        waypoints.push_back(waypoints_list.at(0));
-        waypoints.push_back(waypoints_list.at(1));
-        waypoints.push_back(waypoints_list.at(2));
-        waypoints.push_back(waypoints_list.at(3));
-        waypoints.push_back(waypoints_list.at(4));
-        waypoints.push_back(waypoints_list.at(5));
-        waypoints.push_back(waypoints_list.at(6));
+        move_group_interface.execute(my_plan);
+        std::vector <double> joints_check = move_group_interface.getCurrentJointValues();
 
-
-        for(int i = 0; i < waypoints.size(); i++){
-          std::cout << "waypoints at: " << i << "is: " << waypoints.at(i) << std::endl;
+        for(int a = 0; a < joints_check.size(); a++){
+          std::cout << "joint angle at: " << a << "is: " << joints_check.at(a) << std::endl;
         }
+        
+
+        
+        waypoints.push_back(waypoints_list);
+        
+
+        // for(int i = 0; i < waypoints.size(); i++){
+        //   std::cout << "waypoints at: " << i << "is: " << waypoints.at(i) << std::endl;
+        // }
+        // if (waypoints.size() != 0){
+        //   for(int i = 0; i < waypoints.size(); i++){
+            
+        //     std::cout << "waypoints at: " << i << "is: " << waypoints.at(i) << std::endl;
+        //   }
+        // }
+
 
         if(set_gripper == true){
           std_msgs::Float64 msg;
@@ -314,11 +363,22 @@ int main(int argc, char** argv)
 
     }
 
-    // if (gripper_step == true){
+    // if(test_val == true){
+    //     moveit::core::RobotStatePtr current_state = move_group_interface.getCurrentState();
+    //     current_state->copyJointGroupPositions(joint_model_group, joint_group_positions);
+    //     joint_group_positions[4] = -1.5708;
+    //     move_group_interface.setJointValueTarget(joint_group_positions);
+    //     moveit::planning_interface::MoveGroupInterface::Plan my_plan2;
+    //     bool success_2 = (move_group_interface.plan(my_plan2) == moveit::planning_interface::MoveItErrorCode::SUCCESS);
+        
+    //     test_val = false;
 
-    // }
 
 
+
+    
+
+   
 
     ros::spinOnce();
 
@@ -331,7 +391,6 @@ int main(int argc, char** argv)
 
 
 
+
   return 0;
-
-
 }
