@@ -74,10 +74,12 @@ bool gripper_fn(arm_planner::Gripper::Request &req, arm_planner::Gripper::Respon
   return true;
 }
 
-// bool test_fn(arm_planner::Test::Request &req, arm_planner::Test::Response &res){
-//   test_val = true;
+bool test_fn(arm_planner::Test::Request &req, arm_planner::Test::Response &res){
+  test_val = true;
 
-// }
+  return true;
+
+}
 
 
 bool step_fn(arm_planner::Step::Request &req, arm_planner::Step::Response &res){
@@ -135,6 +137,7 @@ bool step_fn(arm_planner::Step::Request &req, arm_planner::Step::Response &res){
 // }
 
 
+
 int main(int argc, char** argv)
 {
   ros::init(argc, argv, "path_planner");
@@ -148,7 +151,9 @@ int main(int argc, char** argv)
   ros::ServiceServer gripper_service = nh.advertiseService("gripper", gripper_fn);
   ros::ServiceServer reset_service = nh.advertiseService("reset", reset_fn);
   ros::ServiceServer step_service = nh.advertiseService("step", step_fn);
-  // ros::ServiceServer test_service = nh.advertiseService("test", test_fn);
+  // ros::ServiceServer joints_service = nh.advertiseService("joint_control", joint_control_fn);
+  // ros::ServiceClient joints_client = nh.serviceClient()
+  ros::ServiceServer test_service = nh.advertiseService("test", test_fn);
 
   //add planning group "arm"
   static const std::string PLANNING_GROUP = "arm";
@@ -297,7 +302,7 @@ int main(int argc, char** argv)
       std::cout << "outside the service fn" << std::endl;
       
       moveit::core::RobotStatePtr current_state = move_group_interface.getCurrentState();
-      std::vector<double> joint_group_positions;
+      // std::vector<double> joint_group_positions;
       current_state->copyJointGroupPositions(joint_model_group, joint_group_positions);
       
       move_group_interface.setJointValueTarget(joint_group_positions);
@@ -376,15 +381,37 @@ int main(int argc, char** argv)
 
     }
 
-    // if(test_val == true){
-    //     moveit::core::RobotStatePtr current_state = move_group_interface.getCurrentState();
-    //     current_state->copyJointGroupPositions(joint_model_group, joint_group_positions);
-    //     joint_group_positions[4] = -1.5708;
-    //     move_group_interface.setJointValueTarget(joint_group_positions);
-    //     moveit::planning_interface::MoveGroupInterface::Plan my_plan2;
-    //     bool success_2 = (move_group_interface.plan(my_plan2) == moveit::planning_interface::MoveItErrorCode::SUCCESS);
+    if(test_val == true){
+
+      std::vector <double> joint_test = move_group_interface.getCurrentJointValues();
+
+
+      joint_test.push_back(0.0);
+      joint_test.push_back(0.0);
+      joint_test.push_back(0.0);
+      joint_test.push_back(-1.57079);
+      joint_test.push_back(-1.4835);
+      joint_test.push_back(1.65806);
+
+      move_group_interface.setJointValueTarget(joint_test);
+
+
+
+      move_group_interface.move();
+
+
+      std::vector <double> joints_move = move_group_interface.getCurrentJointValues();
+
+      for(int a = 0; a < joints_move.size(); a++){
+        std::cout << "joint angle at: " << a << "is: " << joints_move.at(a) << std::endl;
+      }
+
+
+
         
-    //     test_val = false;
+      test_val = false;
+    }
+
 
 
 
