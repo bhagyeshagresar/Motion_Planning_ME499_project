@@ -297,7 +297,7 @@ int main(int argc, char** argv)
       std::cout << "outside the service fn" << std::endl;
       
       moveit::core::RobotStatePtr current_state = move_group_interface.getCurrentState();
-      // std::vector<double> joint_group_positions;
+      std::vector<double> joint_group_positions;
       current_state->copyJointGroupPositions(joint_model_group, joint_group_positions);
       
       move_group_interface.setJointValueTarget(joint_group_positions);
@@ -308,10 +308,13 @@ int main(int argc, char** argv)
       
       bool success = (move_group_interface.plan(my_plan) == moveit::planning_interface::MoveItErrorCode::SUCCESS);
       std::cout << "success: " << success << std::endl;
+
+
       
       if(success == true){
         std::cout << "success reached" << std::endl;
         move_group_interface.execute(my_plan);
+        // move_group_interface.move();
         std::vector <double> joints_check = move_group_interface.getCurrentJointValues();
 
         for(int a = 0; a < joints_check.size(); a++){
@@ -341,6 +344,7 @@ int main(int argc, char** argv)
         // }
 
         std::cout << "waypoints size: " << waypoints.size() << std::endl;
+
 
 
         if(set_gripper == true){
