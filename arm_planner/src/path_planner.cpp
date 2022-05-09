@@ -13,6 +13,7 @@
 #include "arm_planner/Step.h"
 #include "arm_planner/Follow.h"
 #include "arm_planner/Test.h"
+#include <math.h>
 
 
 static int flag{0};
@@ -265,6 +266,42 @@ int main(int argc, char** argv)
   }
 
 
+
+  // std::vector <double> joint_test = move_group_interface.getCurrentJointValues();
+  // move_group_interface.setStartStateToCurrentState();
+  // move_group_interface.setMaxVelocityScalingFactor(1.0);
+  // joint_test.push_back(0.0);
+  // joint_test.push_back(0.0);
+  // joint_test.push_back(0.0);
+  // joint_test.push_back(-1.57079);
+  // joint_test.push_back(-1.4835);
+  // joint_test.push_back(1.65806);
+  // moveit::planning_interface::MoveGroupInterface::Plan my_plan;
+  // move_group_interface.setPlanningTime(5.0);
+  // bool success_2 = (move_group_interface.plan(my_plan) == moveit::planning_interface::MoveItErrorCode::SUCCESS);
+
+  // if ( !success_2 )
+  //   throw std::runtime_error("No plan found");
+
+  // ROS_INFO_STREAM("Plan found in " << my_plan.planning_time_ << " seconds");
+
+  // ros::Time start = ros::Time::now();
+
+  // move_group_interface.move();
+
+  // ROS_INFO_STREAM("Motion duration: " << (ros::Time::now() - start).toSec());
+
+  // std::vector <double> joints_move = move_group_interface.getCurrentJointValues();
+
+  // for(int a = 0; a < joints_move.size(); a++){
+  //   std::cout << "joint angle at: " << a << "is: " << joints_move.at(a) << std::endl;
+  // }
+  
+  // double goal_tolerance = move_group_interface.getGoalJointTolerance();
+
+  // std::cout << "goal tolerance is: " << goal_tolerance << std::endl;
+
+
   ros::Rate r(120);
 
   while(ros::ok()){
@@ -383,30 +420,63 @@ int main(int argc, char** argv)
 
     if(test_val == true){
 
+      // std::vector <double> joint_test = move_group_interface.getCurrentJointValues();
+
+
+      // joint_test.push_back(0.0);
+      // joint_test.push_back(0.0);
+      // joint_test.push_back(0.0);
+      // joint_test.push_back(-1.57079);
+      // joint_test.push_back(-1.4835);
+      // joint_test.push_back(1.65806);
+
+      // move_group_interface.setJointValueTarget(joint_test);
+
+
+
+      // move_group_interface.move();
+
+
+      // std::vector <double> joints_move = move_group_interface.getCurrentJointValues();
+
+      // for(int a = 0; a < joints_move.size(); a++){
+      //   std::cout << "joint angle at: " << a << "is: " << joints_move.at(a) << std::endl;
+      // }
+
+      
       std::vector <double> joint_test = move_group_interface.getCurrentJointValues();
-
-
+      move_group_interface.setStartStateToCurrentState();
+      move_group_interface.setMaxVelocityScalingFactor(1.0);
       joint_test.push_back(0.0);
       joint_test.push_back(0.0);
       joint_test.push_back(0.0);
       joint_test.push_back(-1.57079);
       joint_test.push_back(-1.4835);
       joint_test.push_back(1.65806);
+      moveit::planning_interface::MoveGroupInterface::Plan my_plan;
+      move_group_interface.setPlanningTime(5.0);
+      bool success_2 = (move_group_interface.plan(my_plan) == moveit::planning_interface::MoveItErrorCode::SUCCESS);
 
-      move_group_interface.setJointValueTarget(joint_test);
+      if ( !success_2 )
+        throw std::runtime_error("No plan found");
+  
+      ROS_INFO_STREAM("Plan found in " << my_plan.planning_time_ << " seconds");
 
-
+      ros::Time start = ros::Time::now();
 
       move_group_interface.move();
 
+      ROS_INFO_STREAM("Motion duration: " << (ros::Time::now() - start).toSec());
 
       std::vector <double> joints_move = move_group_interface.getCurrentJointValues();
 
       for(int a = 0; a < joints_move.size(); a++){
         std::cout << "joint angle at: " << a << "is: " << joints_move.at(a) << std::endl;
       }
+      
+      double goal_tolerance = move_group_interface.getGoalJointTolerance();
 
-
+      std::cout << "goal tolerance is: " << goal_tolerance << std::endl;
 
         
       test_val = false;
@@ -429,7 +499,7 @@ int main(int argc, char** argv)
   }
 
 
-
+  spinner.stop();
 
 
   return 0;
