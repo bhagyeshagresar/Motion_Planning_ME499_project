@@ -201,46 +201,259 @@ int main(int argc, char** argv)
 
 
 
-  //Add bricks
-  for (int i = 0; i < 1; i++){
-    moveit_msgs::CollisionObject collision_object;
+  //brick1
+  moveit_msgs::CollisionObject collision_object;
+  
+
+  collision_object.header.frame_id = "base_link";
+  collision_object.id = 1;
+
+  shape_msgs::SolidPrimitive primitive;
+
+  primitive.type = primitive.BOX;
+  primitive.dimensions.resize(3);
+  primitive.dimensions[primitive.BOX_X] = 0.24;
+  primitive.dimensions[primitive.BOX_Y] = 0.07;
+  primitive.dimensions[primitive.BOX_Z] = 0.112;
+
+
+  geometry_msgs::Pose brick_pose;
+
+  brick_pose.orientation.w = 1.0;
+  brick_pose.position.x = 0.0;
+  brick_pose.position.y = 0.28;
+  brick_pose.position.z = 0.056;
+  collision_object.primitive_poses.push_back(brick_pose);
+
+
+  
+  collision_object.primitives.push_back(primitive);
+  collision_object.operation = collision_object.ADD;
+  collision_objects.push_back(collision_object);
+
+
+  //brick2
+  moveit_msgs::CollisionObject collision_object_2;
     
 
-    collision_object.header.frame_id = "base_link";
-    collision_object.id = i;
+  collision_object_2.header.frame_id = "base_link";
+  collision_object_2.id = 2;
 
-    shape_msgs::SolidPrimitive primitive;
+  shape_msgs::SolidPrimitive primitive_2;
 
-    primitive.type = primitive.BOX;
-    primitive.dimensions.resize(3);
-    primitive.dimensions[primitive.BOX_X] = 0.24;
-    primitive.dimensions[primitive.BOX_Y] = 0.07;
-    primitive.dimensions[primitive.BOX_Z] = 0.112;
+  primitive_2.type = primitive_2.BOX;
+  primitive_2.dimensions.resize(3);
+  primitive_2.dimensions[primitive_2.BOX_X] = 0.24;
+  primitive_2.dimensions[primitive_2.BOX_Y] = 0.07;
+  primitive_2.dimensions[primitive_2.BOX_Z] = 0.112;
 
 
-    geometry_msgs::Pose brick_pose;
+  geometry_msgs::Pose brick_pose_2;
 
-    if(i % 2 == 0){
-      brick_pose.orientation.w = 1.0;
-      brick_pose.position.x = 0.2;
-      brick_pose.position.y = 0.2 + i/2.0;
-      brick_pose.position.z = 0.056;
-      collision_object.primitive_poses.push_back(brick_pose);
+  brick_pose_2.orientation.w = 1.0;
+  brick_pose_2.position.x = 0.0;
+  brick_pose_2.position.y = 0.28;
+  brick_pose_2.position.z = (0.112);
+  collision_object_2.primitive_poses.push_back(brick_pose_2);
 
-    }
 
-    else{
-      brick_pose.orientation.w = 1.0;
-      brick_pose.position.x = -0.2;
-      brick_pose.position.y = 0.2 + i/2.0;
-      brick_pose.position.z = 0.056;
-      collision_object.primitive_poses.push_back(brick_pose);
+  
+  collision_object_2.primitives.push_back(primitive_2);
+  collision_object_2.operation = collision_object_2.ADD;
+  collision_objects.push_back(collision_object_2);
 
-    }
-    collision_object.primitives.push_back(primitive);
-    collision_object.operation = collision_object.ADD;
-    collision_objects.push_back(collision_object);
-  }
+
+  //brick3
+  moveit_msgs::CollisionObject collision_object_3;
+    
+
+  collision_object_3.header.frame_id = "base_link";
+  collision_object_3.id = 3;
+
+  shape_msgs::SolidPrimitive primitive_3;
+
+  primitive_3.type = primitive_3.BOX;
+  primitive_3.dimensions.resize(3);
+  primitive_3.dimensions[primitive_3.BOX_X] = 0.24;
+  primitive_3.dimensions[primitive_3.BOX_Y] = 0.07;
+  primitive_3.dimensions[primitive_3.BOX_Z] = 0.112;
+
+
+  geometry_msgs::Pose brick_pose_3;
+
+  brick_pose_3.orientation.w = 1.0;
+  brick_pose_3.position.x = 0.0;
+  brick_pose_3.position.y = 0.28;
+  brick_pose_3.position.z = (0.168);
+  collision_object_3.primitive_poses.push_back(brick_pose_3);
+
+
+  
+  collision_object_3.primitives.push_back(primitive_3);
+  collision_object_3.operation = collision_object_3.ADD;
+  collision_objects.push_back(collision_object_3);
+
+
+  //brick4
+  moveit_msgs::CollisionObject collision_object_4;
+    
+
+  collision_object_4.header.frame_id = "base_link";
+  collision_object_4.id = 4;
+
+  shape_msgs::SolidPrimitive primitive_4;
+
+  primitive_4.type = primitive_4.BOX;
+  primitive_4.dimensions.resize(3);
+  primitive_4.dimensions[primitive_4.BOX_X] = 0.24;
+  primitive_4.dimensions[primitive_4.BOX_Y] = 0.07;
+  primitive_4.dimensions[primitive_4.BOX_Z] = 0.112;
+
+
+  geometry_msgs::Pose brick_pose_4;
+
+  brick_pose_4.orientation.w = 1.0;
+  brick_pose_4.position.x = 0.0;
+  brick_pose_4.position.y = 0.28;
+  brick_pose_4.position.z = (0.224);
+  collision_object_4.primitive_poses.push_back(brick_pose_4);
+
+
+  
+  collision_object_4.primitives.push_back(primitive_4);
+  collision_object_4.operation = collision_object_4.ADD;
+  collision_objects.push_back(collision_object_4);
+
+
+
+  //brick5
+  moveit_msgs::CollisionObject collision_object_5;
+    
+
+  collision_object_5.header.frame_id = "base_link";
+  collision_object_5.id = 5;
+
+  shape_msgs::SolidPrimitive primitive_5;
+
+  primitive_5.type = primitive_5.BOX;
+  primitive_5.dimensions.resize(3);
+  primitive_5.dimensions[primitive_5.BOX_X] = 0.24;
+  primitive_5.dimensions[primitive_5.BOX_Y] = 0.07;
+  primitive_5.dimensions[primitive_5.BOX_Z] = 0.112;
+
+
+  geometry_msgs::Pose brick_pose_5;
+
+  brick_pose_5.orientation.w = 1.0;
+  brick_pose_5.position.x = 0.0;
+  brick_pose_5.position.y = -0.28;
+  brick_pose_5.position.z = (0.056);
+  collision_object_5.primitive_poses.push_back(brick_pose_5);
+
+
+  
+  collision_object_5.primitives.push_back(primitive_5);
+  collision_object_5.operation = collision_object_5.ADD;
+  collision_objects.push_back(collision_object_5);
+
+
+  //brick6
+  moveit_msgs::CollisionObject collision_object_6;
+    
+
+  collision_object_6.header.frame_id = "base_link";
+  collision_object_6.id = 6;
+
+  shape_msgs::SolidPrimitive primitive_6;
+
+  primitive_6.type = primitive_6.BOX;
+  primitive_6.dimensions.resize(3);
+  primitive_6.dimensions[primitive_6.BOX_X] = 0.24;
+  primitive_6.dimensions[primitive_6.BOX_Y] = 0.07;
+  primitive_6.dimensions[primitive_6.BOX_Z] = 0.112;
+
+
+  geometry_msgs::Pose brick_pose_6;
+
+  brick_pose_6.orientation.w = 1.0;
+  brick_pose_6.position.x = 0.0;
+  brick_pose_6.position.y = -0.28;
+  brick_pose_6.position.z = (0.112);
+  collision_object_6.primitive_poses.push_back(brick_pose_6);
+
+
+  
+  collision_object_6.primitives.push_back(primitive_6);
+  collision_object_6.operation = collision_object_6.ADD;
+  collision_objects.push_back(collision_object_6);
+
+
+  //brick7
+  moveit_msgs::CollisionObject collision_object_7;
+    
+
+  collision_object_7.header.frame_id = "base_link";
+  collision_object_7.id = 7;
+
+  shape_msgs::SolidPrimitive primitive_7;
+
+  primitive_7.type = primitive_7.BOX;
+  primitive_7.dimensions.resize(3);
+  primitive_7.dimensions[primitive_7.BOX_X] = 0.24;
+  primitive_7.dimensions[primitive_7.BOX_Y] = 0.07;
+  primitive_7.dimensions[primitive_7.BOX_Z] = 0.112;
+
+
+  geometry_msgs::Pose brick_pose_7;
+
+  brick_pose_7.orientation.w = 1.0;
+  brick_pose_7.position.x = 0.0;
+  brick_pose_7.position.y = -0.28;
+  brick_pose_7.position.z = (0.168);
+  collision_object_7.primitive_poses.push_back(brick_pose_7);
+
+
+  
+  collision_object_7.primitives.push_back(primitive_7);
+  collision_object_7.operation = collision_object_7.ADD;
+  collision_objects.push_back(collision_object_7);
+
+
+  //brick8
+  moveit_msgs::CollisionObject collision_object_8;
+    
+
+  collision_object_8.header.frame_id = "base_link";
+  collision_object_8.id = 7;
+
+  shape_msgs::SolidPrimitive primitive_8;
+
+  primitive_8.type = primitive_8.BOX;
+  primitive_8.dimensions.resize(3);
+  primitive_8.dimensions[primitive_8.BOX_X] = 0.24;
+  primitive_8.dimensions[primitive_8.BOX_Y] = 0.07;
+  primitive_8.dimensions[primitive_8.BOX_Z] = 0.112;
+
+
+  geometry_msgs::Pose brick_pose_8;
+
+  brick_pose_8.orientation.w = 1.0;
+  brick_pose_8.position.x = 0.0;
+  brick_pose_8.position.y = -0.28;
+  brick_pose_8.position.z = (0.224);
+  collision_object_8.primitive_poses.push_back(brick_pose_8);
+
+
+  
+  collision_object_8.primitives.push_back(primitive_8);
+  collision_object_8.operation = collision_object_8.ADD;
+  collision_objects.push_back(collision_object_8);
+
+
+
+
+
+
 
   //Add cylinders
 
