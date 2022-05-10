@@ -25,6 +25,8 @@ static std::vector<std::vector<double>> waypoints;
 static std::vector<double> waypoints_list;
 static bool set_follow{false};
 static bool test_val{false};
+static std::vector <double> joints_seq;
+
 
 const double tau = 2 * M_PI;
 
@@ -119,23 +121,12 @@ bool step_fn(arm_planner::Step::Request &req, arm_planner::Step::Response &res){
 
 
 
-// bool follow_fn(arm_planner::Follow::Request &req, arm_planner::Follow::Response &res){
+bool follow_fn(arm_planner::Follow::Request &req, arm_planner::Follow::Response &res){
 
-//   set_follow = req.follow;
+  set_follow = req.follow;
 
-//   if (set_follow == true){
-//     while(1){
-//       for(int i = 0; i < waypoints.size(); i++){
-        
-//         joint_group_positions.push_back()
-//       }
-//     }
-//   }
-
-
-
-
-// }
+  
+}
 
 
 
@@ -267,40 +258,7 @@ int main(int argc, char** argv)
 
 
 
-  // std::vector <double> joint_test = move_group_interface.getCurrentJointValues();
-  // move_group_interface.setStartStateToCurrentState();
-  // move_group_interface.setMaxVelocityScalingFactor(1.0);
-  // joint_test.push_back(0.0);
-  // joint_test.push_back(0.0);
-  // joint_test.push_back(0.0);
-  // joint_test.push_back(-1.57079);
-  // joint_test.push_back(-1.4835);
-  // joint_test.push_back(1.65806);
-  // moveit::planning_interface::MoveGroupInterface::Plan my_plan;
-  // move_group_interface.setPlanningTime(5.0);
-  // bool success_2 = (move_group_interface.plan(my_plan) == moveit::planning_interface::MoveItErrorCode::SUCCESS);
-
-  // if ( !success_2 )
-  //   throw std::runtime_error("No plan found");
-
-  // ROS_INFO_STREAM("Plan found in " << my_plan.planning_time_ << " seconds");
-
-  // ros::Time start = ros::Time::now();
-
-  // move_group_interface.move();
-
-  // ROS_INFO_STREAM("Motion duration: " << (ros::Time::now() - start).toSec());
-
-  // std::vector <double> joints_move = move_group_interface.getCurrentJointValues();
-
-  // for(int a = 0; a < joints_move.size(); a++){
-  //   std::cout << "joint angle at: " << a << "is: " << joints_move.at(a) << std::endl;
-  // }
   
-  // double goal_tolerance = move_group_interface.getGoalJointTolerance();
-
-  // std::cout << "goal tolerance is: " << goal_tolerance << std::endl;
-
 
   ros::Rate r(120);
 
@@ -368,15 +326,7 @@ int main(int argc, char** argv)
         waypoints.push_back(waypoints_list);
         
 
-        // for(int i = 0; i < waypoints.size(); i++){
-        //   std::cout << "waypoints at: " << i << "is: " << waypoints.at(i) << std::endl;
-        // }
-        // if (waypoints.size() != 0){
-        //   for(int i = 0; i < waypoints.size(); i++){
-            
-        //     std::cout << "waypoints at: " << i << "is: " << waypoints.at(i) << std::endl;
-        //   }
-        // }
+        
 
         // for(int z = 0; z < waypoints.size(); z++){
         //   for(int j = 0; j < waypoints[z].size(); j++){
@@ -386,7 +336,6 @@ int main(int argc, char** argv)
         // }
 
         std::cout << "waypoints size: " << waypoints.size() << std::endl;
-
 
 
         if(set_gripper == true){
@@ -419,30 +368,7 @@ int main(int argc, char** argv)
     }
 
     if(test_val == true){
-
-      // std::vector <double> joint_test = move_group_interface.getCurrentJointValues();
-
-
-      // joint_test.push_back(0.0);
-      // joint_test.push_back(0.0);
-      // joint_test.push_back(0.0);
-      // joint_test.push_back(-1.57079);
-      // joint_test.push_back(-1.4835);
-      // joint_test.push_back(1.65806);
-
-      // move_group_interface.setJointValueTarget(joint_test);
-
-
-
-      // move_group_interface.move();
-
-
-      // std::vector <double> joints_move = move_group_interface.getCurrentJointValues();
-
-      // for(int a = 0; a < joints_move.size(); a++){
-      //   std::cout << "joint angle at: " << a << "is: " << joints_move.at(a) << std::endl;
-      // }
-
+      //reference - Tiago - planning joint space
       
       std::vector <double> joint_test = move_group_interface.getCurrentJointValues();
       move_group_interface.setStartStateToCurrentState();
@@ -453,6 +379,7 @@ int main(int argc, char** argv)
       joint_test.push_back(-1.57079);
       joint_test.push_back(-1.4835);
       joint_test.push_back(1.65806);
+      move_group_interface.setJointValueTarget(joint_test);
       moveit::planning_interface::MoveGroupInterface::Plan my_plan;
       move_group_interface.setPlanningTime(5.0);
       bool success_2 = (move_group_interface.plan(my_plan) == moveit::planning_interface::MoveItErrorCode::SUCCESS);
@@ -482,13 +409,39 @@ int main(int argc, char** argv)
       test_val = false;
     }
 
+    
+    if(set_follow == true){
+      
+      while(1){
+        for(int z = 0; z < waypoints.size(); z++){
+            joints_seq.push_back(waypoints[z][0]);
+            joints_seq.push_back(waypoints[z][1]);
+            joints_seq.push_back(waypoints[z][2]);
+            joints_seq.push_back(waypoints[z][3]);
+            joints_seq.push_back(waypoints[z][4]);
+            joints_seq.push_back(waypoints[z][5]);
+            bool gripper_value = waypoints[z][6];
+          }
+        }
+
+        move_group_interface.setJointValueTarget(joints_seq);
+        moveit::planning_interface::MoveGroupInterface::Plan my_plan;
+        move_group_interface.setPlanningTime(5.0);
+        move_group_interface.move();
+
+
+      }
+
+
+      
+
 
 
 
 
     
 
-   
+
 
     ros::spinOnce();
 
