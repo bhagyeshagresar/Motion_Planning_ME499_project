@@ -4,4 +4,6 @@
 <node name="path_planner" pkg="arm_planner_python" type="path_planner" output="screen"/>
 
 
+
+
 </launch>

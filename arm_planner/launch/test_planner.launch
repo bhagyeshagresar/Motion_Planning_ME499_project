@@ -1,0 +1,6 @@
+<launch>
+    
+    <node name="test_planning" pkg="arm_planner" type="test_planning" output="screen"/>
+
+
+</launch>

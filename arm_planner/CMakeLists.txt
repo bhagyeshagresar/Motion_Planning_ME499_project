@@ -150,6 +150,8 @@ ${catkin_INCLUDE_DIRS}
 ## With catkin_make all packages are built within a single CMake context
 ## The recommended prefix ensures that target names across packages don't collide
 add_executable(path_planner src/path_planner.cpp)
+add_executable(test_planning src/test_planning.cpp)
+
 #add_executable(test_constraints src/test_constraints.cpp)
 
 
@@ -164,11 +166,13 @@ add_executable(path_planner src/path_planner.cpp)
 # add_dependencies(${PROJECT_NAME}_node ${${PROJECT_NAME}_EXPORTED_TARGETS} ${catkin_EXPORTED_TARGETS})
 
 ## Specify libraries to link a library or executable target against
-target_link_libraries(path_planner 
+target_link_libraries(path_planner
    ${catkin_LIBRARIES}
 )
 
-
+target_link_libraries(test_planning
+   ${catkin_LIBRARIES}
+)
 
 
 
@@ -194,9 +198,18 @@ target_link_libraries(path_planner
 # install(TARGETS ${PROJECT_NAME}_node
 #   RUNTIME DESTINATION ${CATKIN_PACKAGE_BIN_DESTINATION}
 # )
+
 install(TARGETS path_planner
   RUNTIME DESTINATION ${CATKIN_PACKAGE_BIN_DESTINATION}
 )
+
+
+
+install(TARGETS test_planning
+  RUNTIME DESTINATION ${CATKIN_PACKAGE_BIN_DESTINATION}
+)
+
+
 
 ## Mark libraries for installation
 ## See http://docs.ros.org/melodic/api/catkin/html/howto/format1/building_libraries.html
