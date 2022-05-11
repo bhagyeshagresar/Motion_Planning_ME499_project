@@ -58,6 +58,10 @@ class Control:
         print("============ Printing robot state")
         print(self.robot.get_current_state())
         print("")
+        planner_id = self.group.get_planner_id()
+        planning_pipeline_id = self.group.get_planning_pipeline_id()
+        print(planner_id)
+        print(planning_pipeline_id)
 
 
 
