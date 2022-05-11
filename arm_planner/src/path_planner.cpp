@@ -89,23 +89,24 @@ bool step_fn(arm_planner::Step::Request &req, arm_planner::Step::Response &res){
   
   step_val = true;
   std::cout << "step value reached" << std::endl;
-  joint_group_positions.push_back(req.j1);
+  joint_group_positions[0] = req.j1;
   std::cout << "filled first joint state" << std::endl;
-  joint_group_positions.push_back(req.j2);
-  joint_group_positions.push_back(req.j3);
-  joint_group_positions.push_back(req.j4);
-  joint_group_positions.push_back(req.j5);
-  joint_group_positions.push_back(req.j6);
+  joint_group_positions[1] = req.j2;
+  joint_group_positions[2] = req.j3);
+  joint_group_positions[3] = req.j4;
+  joint_group_positions[4] = req.j5;
+  joint_group_positions[5] = req.j6;
   set_gripper = (double)req.gripper_status;
+  std::cout << "joint_group_pos: " << joint_group_positions.size() << std::endl;
 
   std::cout << "start filing waypoints" << std::endl;
-  waypoints_list.push_back(joint_group_positions.at(0));
-  waypoints_list.push_back(joint_group_positions.at(1));
-  waypoints_list.push_back(joint_group_positions.at(2));
-  waypoints_list.push_back(joint_group_positions.at(3));
-  waypoints_list.push_back(joint_group_positions.at(4));
-  waypoints_list.push_back(joint_group_positions.at(5));
-  waypoints_list.push_back(set_gripper);
+  waypoints_list[0] = joint_group_positions.at(0));
+  waypoints_list[1] = joint_group_positions.at(1);
+  waypoints_list[2] = joint_group_positions.at(2);
+  waypoints_list[3] = joint_group_positions.at(3);
+  waypoints_list[4] = joint_group_positions.at(4);
+  waypoints_list[5] = joint_group_positions.at(5);
+  waypoints_list[0] = set_gripper;
   std::cout << "waypoints filled" << std::endl;
 
   // set_gripper = req.gripper_status;
@@ -138,7 +139,10 @@ int main(int argc, char** argv)
   ros::AsyncSpinner spinner(1);
   spinner.start();
 
-  ros::Publisher pub = nh.advertise<std_msgs::Float64>("/pincer_joint_position_controller/command", 10);
+  // ros::Publisher pub = nh.advertise<std_msgs::Float64>("/pincer_joint/position_controllers/JointPositionController", 10);
+  // ros::Publisher pub = nh.advertise<std_msgs::Float64>("/pincer_joint_position_controller/command", 10);
+  ros::Publisher pub = nh.advertise<std_msgs::Float64>("hdt_arm/pincer_joint/fake_pincer_controller", 10);
+
 
   ros::ServiceServer gripper_service = nh.advertiseService("gripper", gripper_fn);
   ros::ServiceServer reset_service = nh.advertiseService("reset", reset_fn);
@@ -578,9 +582,9 @@ int main(int argc, char** argv)
     if(step_val == true){
       std::cout << "outside the service fn" << std::endl;
       
-      moveit::core::RobotStatePtr current_state = move_group_interface.getCurrentState();
+      // moveit::core::RobotStatePtr current_state = move_group_interface.getCurrentState();
       // std::vector<double> joint_group_positions;
-      current_state->copyJointGroupPositions(joint_model_group, joint_group_positions);
+      // current_state->copyJointGroupPositions(joint_model_group, joint_group_positions);
       
       move_group_interface.setJointValueTarget(joint_group_positions);
       std::cout << "set joint" << std::endl;
@@ -597,11 +601,11 @@ int main(int argc, char** argv)
         std::cout << "success reached" << std::endl;
         move_group_interface.execute(my_plan);
         // move_group_interface.move();
-        std::vector <double> joints_check = move_group_interface.getCurrentJointValues();
+        // std::vector <double> joints_check = move_group_interface.getCurrentJointValues();
 
-        for(int a = 0; a < joints_check.size(); a++){
-          std::cout << "joint angle at: " << a << "is: " << joints_check.at(a) << std::endl;
-        }
+        // for(int a = 0; a < joints_check.size(); a++){
+        //   std::cout << "joint angle at: " << a << "is: " << joints_check.at(a) << std::endl;
+        // }
         
 
         
@@ -655,12 +659,12 @@ int main(int argc, char** argv)
       std::vector <double> joint_test = move_group_interface.getCurrentJointValues();
       move_group_interface.setStartStateToCurrentState();
       move_group_interface.setMaxVelocityScalingFactor(1.0);
-      joint_test.push_back(0.0);
-      joint_test.push_back(0.0);
-      joint_test.push_back(0.0);
-      joint_test.push_back(-1.57079);
-      joint_test.push_back(-1.4835);
-      joint_test.push_back(1.65806);
+      joint_test[0] = 0.0;
+      joint_test[1] = 0.0;
+      joint_test[2] = 0.0;
+      joint_test[3] = -1.57079;
+      joint_test[4] = -1.4835;
+      joint_test[5] = 1.65806;
       move_group_interface.setJointValueTarget(joint_test);
       moveit::planning_interface::MoveGroupInterface::Plan my_plan;
       move_group_interface.setPlanningTime(5.0);
