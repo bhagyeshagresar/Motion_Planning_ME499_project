@@ -105,7 +105,8 @@ class Control:
         # For example, let's say you want the Adroit to start in a certain position
         # Let's call the `joint control` service
         # this command will control the robot however you set the parameters in the `joint control`function 
-        joint_control() 
+        # joint_control() 
+        pose_control()
        
 
         # What about the pincer? Let's say you want the pincer to be wide open when you start the Adorit
