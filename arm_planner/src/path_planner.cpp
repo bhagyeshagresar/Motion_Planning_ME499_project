@@ -25,7 +25,7 @@ static std::vector<std::vector <double>> waypoints;
 static std::vector<double> waypoints_list;
 static bool set_follow{false};
 static bool test_val{false};
-static std::vector <std::vector <double>> joints_seq;
+static std::vector <double> joints_seq;
 static double joint1{0.0}, joint2{0.0}, joint3{0.0}, joint4{0.0}, joint5{0.0}, joint6{0.0};
 static bool gripper_req{false};
 static bool bool_param{false};
@@ -50,7 +50,7 @@ bool reset_fn(arm_planner::Reset::Request &req, arm_planner::Reset::Response &re
   reset_val = req.restart;
 
   if(reset_val == true){
-    waypoints.clear();
+    // waypoints.clear();
     waypoints_list.clear();
     joint_group_positions.clear();
 
@@ -114,12 +114,12 @@ bool step_fn(arm_planner::Step::Request &req, arm_planner::Step::Response &res){
 
 
 
-// bool follow_fn(arm_planner::Follow::Request &req, arm_planner::Follow::Response &res){
+bool follow_fn(arm_planner::Follow::Request &req, arm_planner::Follow::Response &res){
 
-//   set_follow = req.follow;
-
+  set_follow = req.follow;
+  return true;
   
-// }
+}
 
 
 
@@ -142,7 +142,7 @@ int main(int argc, char** argv)
   // ros::ServiceServer joints_service = nh.advertiseService("joint_control", joint_control_fn);
   // ros::ServiceClient joints_client = nh.serviceClient()
   ros::ServiceServer test_service = nh.advertiseService("test", test_fn);
-  // ros::ServiceServer follow_service = nh.advertiseService("follow", follow_fn);
+  ros::ServiceServer follow_service = nh.advertiseService("follow", follow_fn);
 
   //add planning group "arm"
   static const std::string PLANNING_GROUP = "arm";
@@ -158,8 +158,8 @@ int main(int argc, char** argv)
       move_group_interface.getCurrentState()->getJointModelGroup(PLANNING_GROUP);
 
   
-  ROS_INFO_NAMED("Planning frame: %s", move_group_interface.getPlanningFrame().c_str());
-  ROS_INFO_NAMED("End effector link: %s", move_group_interface.getEndEffectorLink().c_str());
+  // ROS_INFO_NAMED("Planning frame: %s", move_group_interface.getPlanningFrame().c_str());
+  // ROS_INFO_NAMED("End effector link: %s", move_group_interface.getEndEffectorLink().c_str());
   // ROS_INFO_NAMED("tutorial", "Available Planning Groups:");
   // std::copy(move_group_interface.getJointModelGroupNames().begin(),
   //           move_group_interface.getJointModelGroupNames().end(), std::ostream_iterator<std::string>(std::cout, ", "));
@@ -169,7 +169,7 @@ int main(int argc, char** argv)
   std::vector<moveit_msgs::CollisionObject> collision_objects;
 
   //get waypoints
-  nh.getParam("/path_planner/waypoints", sample_waypoints);
+  // nh.getParam("/path_planner/waypoints", sample_waypoints);
   // std::cout << "first waypoints: " << waypoints.size() << std::endl;
   
 
@@ -720,13 +720,13 @@ int main(int argc, char** argv)
       if ( !success_2 )
         throw std::runtime_error("No plan found");
   
-      ROS_INFO_STREAM("Plan found in " << my_plan.planning_time_ << " seconds");
+      // ROS_INFO_STREAM("Plan found in " << my_plan.planning_time_ << " seconds");
 
       ros::Time start = ros::Time::now();
 
       move_group_interface.move();
 
-      ROS_INFO_STREAM("Motion duration: " << (ros::Time::now() - start).toSec());
+      // ROS_INFO_STREAM("Motion duration: " << (ros::Time::now() - start).toSec());
 
       std::vector <double> joints_move = move_group_interface.getCurrentJointValues();
 
@@ -743,27 +743,53 @@ int main(int argc, char** argv)
     }
 
     
-    // if(set_follow == true){
+    if(set_follow == true){
+      std::cout << "reached follow service" << std::endl;
       
-    //   while(1){
-    //     for(int z = 0; z < waypoints.size(); z++){
-    //         joints_seq.push_back(waypoints[z][0]);
-    //         joints_seq.push_back(waypoints[z][1]);
-    //         joints_seq.push_back(waypoints[z][2]);
-    //         joints_seq.push_back(waypoints[z][3]);
-    //         joints_seq.push_back(waypoints[z][4]);
-    //         joints_seq.push_back(waypoints[z][5]);
-    //         bool gripper_value = waypoints[z][6];
-    //       }
-    //     }
+      while(1){
+        for(int z = 0; z < waypoints.size(); z++){
+            joints_seq.push_back(waypoints[z][0]);
+            joints_seq.push_back(waypoints[z][1]);
+            joints_seq.push_back(waypoints[z][2]);
+            joints_seq.push_back(waypoints[z][3]);
+            joints_seq.push_back(waypoints[z][4]);
+            joints_seq.push_back(waypoints[z][5]);
+            double gripper_value = waypoints[z][6];
 
-    //     move_group_interface.setJointValueTarget(joints_seq);
-    //     moveit::planning_interface::MoveGroupInterface::Plan my_plan;
-    //     move_group_interface.setPlanningTime(5.0);
-    //     move_group_interface.move();
+            for(int a = 0; a < joints_seq.size(); a++){
+              std::cout << "joints_seq: " << a << joints_seq[a] << std::endl;
+
+            }
+
+            move_group_interface.setJointValueTarget(joints_seq);
+            moveit::planning_interface::MoveGroupInterface::Plan my_plan;
+            move_group_interface.setPlanningTime(5.0);
+            move_group_interface.move();
+
+          }
+        }
 
 
-    //   }
+
+        
+
+      }
+    else{
+      joints_seq.push_back(waypoints[z][0]);
+      joints_seq.push_back(waypoints[z][1]);
+      joints_seq.push_back(waypoints[z][2]);
+      joints_seq.push_back(waypoints[z][3]);
+      joints_seq.push_back(waypoints[z][4]);
+      joints_seq.push_back(waypoints[z][5]);
+      double gripper_value = waypoints[z][6];
+
+      move_group_interface.setJointValueTarget(joints_seq);
+      moveit::planning_interface::MoveGroupInterface::Plan my_plan;
+      move_group_interface.setPlanningTime(5.0);
+      move_group_interface.move();
+
+
+    }
 
 
       
