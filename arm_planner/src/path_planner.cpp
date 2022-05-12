@@ -21,13 +21,15 @@ static bool reset_val{false};
 static bool step_val{false};
 static std::vector<double> joint_group_positions;
 static bool set_gripper{false};
-static std::vector<std::vector<double>> waypoints;
+static std::vector<std::vector <double>> waypoints;
 static std::vector<double> waypoints_list;
 static bool set_follow{false};
 static bool test_val{false};
-static std::vector <double> joints_seq;
+static std::vector <std::vector <double>> joints_seq;
 static double joint1{0.0}, joint2{0.0}, joint3{0.0}, joint4{0.0}, joint5{0.0}, joint6{0.0};
 static bool gripper_req{false};
+static bool bool_param{false};
+static std::vector<double> sample_waypoints;
 
 const double tau = 2 * M_PI;
 
@@ -94,7 +96,7 @@ bool step_fn(arm_planner::Step::Request &req, arm_planner::Step::Response &res){
   joint4 = req.j4;
   joint5 = req.j5;
   joint6 = req.j6;
-  gripper_req = (double)req.gripper_status;
+  gripper_req = req.gripper_status;
 
   std::cout << "j1: %d" << std::endl;
   std::cout << "j2: %d" << std::endl;
@@ -112,12 +114,12 @@ bool step_fn(arm_planner::Step::Request &req, arm_planner::Step::Response &res){
 
 
 
-bool follow_fn(arm_planner::Follow::Request &req, arm_planner::Follow::Response &res){
+// bool follow_fn(arm_planner::Follow::Request &req, arm_planner::Follow::Response &res){
 
-  set_follow = req.follow;
+//   set_follow = req.follow;
 
   
-}
+// }
 
 
 
@@ -140,6 +142,7 @@ int main(int argc, char** argv)
   // ros::ServiceServer joints_service = nh.advertiseService("joint_control", joint_control_fn);
   // ros::ServiceClient joints_client = nh.serviceClient()
   ros::ServiceServer test_service = nh.advertiseService("test", test_fn);
+  // ros::ServiceServer follow_service = nh.advertiseService("follow", follow_fn);
 
   //add planning group "arm"
   static const std::string PLANNING_GROUP = "arm";
@@ -166,7 +169,7 @@ int main(int argc, char** argv)
   std::vector<moveit_msgs::CollisionObject> collision_objects;
 
   //get waypoints
-  // nh.getParam("waypoints", waypoints);
+  nh.getParam("/path_planner/waypoints", sample_waypoints);
   // std::cout << "first waypoints: " << waypoints.size() << std::endl;
   
 
@@ -503,7 +506,10 @@ int main(int argc, char** argv)
 
 
 
-
+  for(int z = 0; z < sample_waypoints.size(); z++){
+    std::cout << "sample_waypoints: " << sample_waypoints[z] << std::endl;
+            // std::cout << std::endl;
+          }
 
 
 
@@ -561,7 +567,7 @@ int main(int argc, char** argv)
 
     if(reset_val == true){
         std::cout << "reset waypoints: " << waypoints.size() << std::endl;
-        // nh.setParam("waypoints", waypoints);
+        // nh.setParam("/waypoints", waypoints);
         move_group_interface.setNamedTarget("ready");
         move_group_interface.move();
         reset_val = false;
@@ -571,6 +577,7 @@ int main(int argc, char** argv)
 
     if(step_val == true){
       std::cout << "outside the service fn" << std::endl;
+
 
       joint_group_positions = move_group_interface.getCurrentJointValues();
       move_group_interface.setStartStateToCurrentState();
@@ -584,13 +591,20 @@ int main(int argc, char** argv)
       joint_group_positions[3] = joint4;
       joint_group_positions[4] = joint5;
       joint_group_positions[5] = joint6;
-      set_gripper = gripper_req;
+      // set_gripper = gripper_req;
+      if (gripper_req == true){
+        joint_group_positions[6] = 1.0;
+      }
+      else{
+        joint_group_positions[6] = 0.0;
+      }
       std::cout << "joint_group_pos 0: " << joint_group_positions[0] << std::endl;
       std::cout << "joint_group_pos 1: " << joint_group_positions[1] << std::endl;
       std::cout << "joint_group_pos 2: " << joint_group_positions[2] << std::endl;
       std::cout << "joint_group_pos 3: " << joint_group_positions[3] << std::endl;
       std::cout << "joint_group_pos 4: " << joint_group_positions[4] << std::endl;
       std::cout << "joint_group_pos 5: " << joint_group_positions[5] << std::endl;
+      std::cout << "joint_group_pos 6: " << joint_group_positions[6] << std::endl;
 
 
       std::cout << "start filing waypoints" << std::endl;
@@ -603,7 +617,7 @@ int main(int argc, char** argv)
       waypoints_list.push_back(joint_group_positions[3]);
       waypoints_list.push_back(joint_group_positions[4]);
       waypoints_list.push_back(joint_group_positions[5]);
-      waypoints_list[6] = set_gripper;
+      waypoints_list.push_back(joint_group_positions[6]);
       std::cout << "waypoints filled" << std::endl;
 
       // set_gripper = req.gripper_status;
@@ -639,18 +653,23 @@ int main(int argc, char** argv)
 
         
         waypoints.push_back(waypoints_list);
-        
+        // s
 
         
+        // std::cout << "waypoints: " << waypoints[0][0] << std::endl;
 
-        // for(int z = 0; z < waypoints.size(); z++){
-        //   for(int j = 0; j < waypoints[z].size(); j++){
-        //     std::cout << "waypoints for 2d" << waypoints[z][j] << std::endl;
-        //   }
-        //   std::cout << std::endl;
-        // }
+        
 
+        for(int z = 0; z < waypoints.size(); z++){
+          for(int j = 0; j < waypoints[z].size(); j++){
+            std::cout << "waypoints for 2d: " << waypoints[z][j] << std::endl;
+          }
+          // std::cout << std::endl;
+        }
+        // nh.setParam("/waypoints", {1.0, 2.0, 3.0, 4.0});
         std::cout << "waypoints size: " << waypoints.size() << std::endl;
+        // nh.setParam("/path_planner/waypoints", waypoints);
+
 
 
         if(set_gripper == true){
@@ -668,7 +687,6 @@ int main(int argc, char** argv)
         
         
       }
-      // nh.setParam("waypoints", waypoints);
       waypoints_list.clear();
       joint_group_positions.clear();
       
@@ -725,27 +743,27 @@ int main(int argc, char** argv)
     }
 
     
-    if(set_follow == true){
+    // if(set_follow == true){
       
-      while(1){
-        for(int z = 0; z < waypoints.size(); z++){
-            joints_seq.push_back(waypoints[z][0]);
-            joints_seq.push_back(waypoints[z][1]);
-            joints_seq.push_back(waypoints[z][2]);
-            joints_seq.push_back(waypoints[z][3]);
-            joints_seq.push_back(waypoints[z][4]);
-            joints_seq.push_back(waypoints[z][5]);
-            bool gripper_value = waypoints[z][6];
-          }
-        }
+    //   while(1){
+    //     for(int z = 0; z < waypoints.size(); z++){
+    //         joints_seq.push_back(waypoints[z][0]);
+    //         joints_seq.push_back(waypoints[z][1]);
+    //         joints_seq.push_back(waypoints[z][2]);
+    //         joints_seq.push_back(waypoints[z][3]);
+    //         joints_seq.push_back(waypoints[z][4]);
+    //         joints_seq.push_back(waypoints[z][5]);
+    //         bool gripper_value = waypoints[z][6];
+    //       }
+    //     }
 
-        move_group_interface.setJointValueTarget(joints_seq);
-        moveit::planning_interface::MoveGroupInterface::Plan my_plan;
-        move_group_interface.setPlanningTime(5.0);
-        move_group_interface.move();
+    //     move_group_interface.setJointValueTarget(joints_seq);
+    //     moveit::planning_interface::MoveGroupInterface::Plan my_plan;
+    //     move_group_interface.setPlanningTime(5.0);
+    //     move_group_interface.move();
 
 
-      }
+    //   }
 
 
       
