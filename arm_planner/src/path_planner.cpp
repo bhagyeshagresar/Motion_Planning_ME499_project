@@ -26,7 +26,8 @@ static std::vector<double> waypoints_list;
 static bool set_follow{false};
 static bool test_val{false};
 static std::vector <double> joints_seq;
-
+static double joint1{0.0}, joint2{0.0}, joint3{0.0}, joint4{0.0}, joint5{0.0}, joint6{0.0};
+static bool gripper_req{false};
 
 const double tau = 2 * M_PI;
 
@@ -86,32 +87,21 @@ bool test_fn(arm_planner::Test::Request &req, arm_planner::Test::Response &res){
 
 
 bool step_fn(arm_planner::Step::Request &req, arm_planner::Step::Response &res){
-  
   step_val = true;
-  std::cout << "step value reached" << std::endl;
-  joint_group_positions[0] = req.j1;
-  std::cout << "filled first joint state" << std::endl;
-  joint_group_positions[1] = req.j2;
-  joint_group_positions[2] = req.j3);
-  joint_group_positions[3] = req.j4;
-  joint_group_positions[4] = req.j5;
-  joint_group_positions[5] = req.j6;
-  set_gripper = (double)req.gripper_status;
-  std::cout << "joint_group_pos: " << joint_group_positions.size() << std::endl;
+  joint1 = req.j1;
+  joint2 = req.j2;
+  joint3 = req.j3;
+  joint4 = req.j4;
+  joint5 = req.j5;
+  joint6 = req.j6;
+  gripper_req = (double)req.gripper_status;
 
-  std::cout << "start filing waypoints" << std::endl;
-  waypoints_list[0] = joint_group_positions.at(0));
-  waypoints_list[1] = joint_group_positions.at(1);
-  waypoints_list[2] = joint_group_positions.at(2);
-  waypoints_list[3] = joint_group_positions.at(3);
-  waypoints_list[4] = joint_group_positions.at(4);
-  waypoints_list[5] = joint_group_positions.at(5);
-  waypoints_list[0] = set_gripper;
-  std::cout << "waypoints filled" << std::endl;
-
-  // set_gripper = req.gripper_status;
-  std::cout << "inside the service fn" << std::endl;
-  
+  std::cout << "j1: %d" << std::endl;
+  std::cout << "j2: %d" << std::endl;
+  std::cout << "j3: %d" << std::endl;
+  std::cout << "j4: %d" << std::endl;
+  std::cout << "j5: %d" << std::endl;
+  std::cout << "j6: %d" << std::endl;
 
 
 
@@ -581,6 +571,45 @@ int main(int argc, char** argv)
 
     if(step_val == true){
       std::cout << "outside the service fn" << std::endl;
+
+      joint_group_positions = move_group_interface.getCurrentJointValues();
+      move_group_interface.setStartStateToCurrentState();
+      move_group_interface.setMaxVelocityScalingFactor(1.0);
+
+      std::cout << "step value reached" << std::endl;
+      joint_group_positions[0] = joint1;
+      std::cout << "filled first joint state" << std::endl;
+      joint_group_positions[1] = joint2;
+      joint_group_positions[2] = joint3;
+      joint_group_positions[3] = joint4;
+      joint_group_positions[4] = joint5;
+      joint_group_positions[5] = joint6;
+      set_gripper = gripper_req;
+      std::cout << "joint_group_pos 0: " << joint_group_positions[0] << std::endl;
+      std::cout << "joint_group_pos 1: " << joint_group_positions[1] << std::endl;
+      std::cout << "joint_group_pos 2: " << joint_group_positions[2] << std::endl;
+      std::cout << "joint_group_pos 3: " << joint_group_positions[3] << std::endl;
+      std::cout << "joint_group_pos 4: " << joint_group_positions[4] << std::endl;
+      std::cout << "joint_group_pos 5: " << joint_group_positions[5] << std::endl;
+
+
+      std::cout << "start filing waypoints" << std::endl;
+      
+      std::cout << "filled temp: " << std::endl;
+
+      waypoints_list.push_back(joint_group_positions[0]);
+      waypoints_list.push_back(joint_group_positions[1]);
+      waypoints_list.push_back(joint_group_positions[2]);
+      waypoints_list.push_back(joint_group_positions[3]);
+      waypoints_list.push_back(joint_group_positions[4]);
+      waypoints_list.push_back(joint_group_positions[5]);
+      waypoints_list[6] = set_gripper;
+      std::cout << "waypoints filled" << std::endl;
+
+      // set_gripper = req.gripper_status;
+      std::cout << "inside the service fn" << std::endl;
+      
+
       
       // moveit::core::RobotStatePtr current_state = move_group_interface.getCurrentState();
       // std::vector<double> joint_group_positions;
