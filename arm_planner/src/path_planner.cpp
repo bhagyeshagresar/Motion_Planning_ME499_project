@@ -14,6 +14,7 @@
 #include "arm_planner/Follow.h"
 #include "arm_planner/Test.h"
 #include <math.h>
+#include <string.h>
 
 
 static int flag{0};
@@ -158,11 +159,20 @@ int main(int argc, char** argv)
       move_group_interface.getCurrentState()->getJointModelGroup(PLANNING_GROUP);
 
   
-  // ROS_INFO_NAMED("Planning frame: %s", move_group_interface.getPlanningFrame().c_str());
-  // ROS_INFO_NAMED("End effector link: %s", move_group_interface.getEndEffectorLink().c_str());
-  // ROS_INFO_NAMED("tutorial", "Available Planning Groups:");
+  // ROS_INFO_NAMED("Planner id: %s", move_group_interface.getDefaultPlannerId(PLANNING_GROUP).c_str());
+  // ROS_INFO_NAMED("Default planning pipeline id: %s", move_group_interface.getDefaultPlanningPipelineId().c_str());
+  // // ROS_INFO_NAMED("tutorial", "Available Planning Groups:");
   // std::copy(move_group_interface.getJointModelGroupNames().begin(),
   //           move_group_interface.getJointModelGroupNames().end(), std::ostream_iterator<std::string>(std::cout, ", "));
+
+  move_group_interface.setPlannerId(PLANNING_GROUP);
+  
+
+  std::string default_planner_id = move_group_interface.getPlannerId();
+  // std::string def_planning_pipe_id = move_group_interface.getPlanningPipelineId();
+
+  std::cout << "default planner id: " << default_planner_id << std::endl;
+  // std::cout << "default planning pipeline id: %s" << def_planning_pipe_id << std::endl;
 
 
 
