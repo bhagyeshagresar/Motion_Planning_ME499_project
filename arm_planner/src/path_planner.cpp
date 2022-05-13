@@ -31,7 +31,7 @@ static bool gripper_req{false};
 static bool bool_param{false};
 static std::vector<double> sample_waypoints;
 
-const double tau = 2 * M_PI;
+// const double tau = 2 * M_PI;
 
 
 // static bool gripper_step{false};
@@ -584,13 +584,13 @@ int main(int argc, char** argv)
       move_group_interface.setMaxVelocityScalingFactor(1.0);
 
       std::cout << "step value reached" << std::endl;
-      joint_group_positions[0] = joint1;
+      joint_group_positions[0] = (joint1*M_PI)/180.0;
       std::cout << "filled first joint state" << std::endl;
-      joint_group_positions[1] = joint2;
-      joint_group_positions[2] = joint3;
-      joint_group_positions[3] = joint4;
-      joint_group_positions[4] = joint5;
-      joint_group_positions[5] = joint6;
+      joint_group_positions[1] = (joint2*M_PI)/180.0;
+      joint_group_positions[2] = (joint3*M_PI)/180.0;
+      joint_group_positions[3] = (joint4*M_PI)/180.0;
+      joint_group_positions[4] = (joint5*M_PI)/180.0;
+      joint_group_positions[5] = (joint6*M_PI)/180.0;
       // set_gripper = gripper_req;
       if (gripper_req == true){
         joint_group_positions[6] = 1.0;
@@ -778,10 +778,14 @@ int main(int argc, char** argv)
             
             
           }
+          joints_seq.clear();
+
 
           }
+          set_follow = 0;
+
+
         }
-        set_follow = 0;
 
 
 
@@ -823,6 +827,7 @@ int main(int argc, char** argv)
         
         
       }
+      joints_seq.clear();
 
           }
       set_follow = 0;
