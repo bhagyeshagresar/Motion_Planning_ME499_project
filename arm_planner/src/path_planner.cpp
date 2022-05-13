@@ -23,7 +23,7 @@ static std::vector<double> joint_group_positions;
 static bool set_gripper{false};
 static std::vector<std::vector <double>> waypoints;
 static std::vector<double> waypoints_list;
-static bool set_follow{false};
+static int set_follow{0};
 static bool test_val{false};
 static std::vector <double> joints_seq;
 static double joint1{0.0}, joint2{0.0}, joint3{0.0}, joint4{0.0}, joint5{0.0}, joint6{0.0};
@@ -743,7 +743,7 @@ int main(int argc, char** argv)
     }
 
     
-    if(set_follow == true){
+    if(set_follow == 1){
       std::cout << "reached follow service" << std::endl;
       
       while(1){
@@ -756,38 +756,76 @@ int main(int argc, char** argv)
             joints_seq.push_back(waypoints[z][5]);
             double gripper_value = waypoints[z][6];
 
-            for(int a = 0; a < joints_seq.size(); a++){
-              std::cout << "joints_seq: " << a << joints_seq[a] << std::endl;
-
-            }
+            
 
             move_group_interface.setJointValueTarget(joints_seq);
             moveit::planning_interface::MoveGroupInterface::Plan my_plan;
             move_group_interface.setPlanningTime(5.0);
             move_group_interface.move();
 
+            if(gripper_value == 1.0){
+              std_msgs::Float64 msg;
+              msg.data = 0.8;
+              std::cout << "gripper openeed" << std::endl;
+              pub.publish(msg);
+              }
+        
+            else{
+              std_msgs::Float64 msg;
+              msg.data = 0.1;
+              std::cout << "gripper closed" << std::endl;
+              pub.publish(msg);
+            
+            
+          }
+
           }
         }
+        set_follow = 0;
 
 
 
         
 
       }
-    else{
-      joints_seq.push_back(waypoints[z][0]);
-      joints_seq.push_back(waypoints[z][1]);
-      joints_seq.push_back(waypoints[z][2]);
-      joints_seq.push_back(waypoints[z][3]);
-      joints_seq.push_back(waypoints[z][4]);
-      joints_seq.push_back(waypoints[z][5]);
-      double gripper_value = waypoints[z][6];
 
-      move_group_interface.setJointValueTarget(joints_seq);
-      moveit::planning_interface::MoveGroupInterface::Plan my_plan;
-      move_group_interface.setPlanningTime(5.0);
-      move_group_interface.move();
+    if (set_follow == 2){
+      std::cout << "follow else condition reached" << std::endl;
+      for(int z = 0; z < waypoints.size(); z++){
+        joints_seq.push_back(waypoints[z][0]);
+        joints_seq.push_back(waypoints[z][1]);
+        joints_seq.push_back(waypoints[z][2]);
+        joints_seq.push_back(waypoints[z][3]);
+        joints_seq.push_back(waypoints[z][4]);
+        joints_seq.push_back(waypoints[z][5]);
+        double gripper_value = waypoints[z][6];
 
+        
+
+        move_group_interface.setJointValueTarget(joints_seq);
+        moveit::planning_interface::MoveGroupInterface::Plan my_plan;
+        move_group_interface.setPlanningTime(5.0);
+        move_group_interface.move();
+
+
+        if(gripper_value == 1.0){
+              std_msgs::Float64 msg;
+              msg.data = 0.8;
+              std::cout << "gripper openeed" << std::endl;
+              pub.publish(msg);
+              }
+        
+        else{
+          std_msgs::Float64 msg;
+          msg.data = 0.1;
+          std::cout << "gripper closed" << std::endl;
+          pub.publish(msg);
+        
+        
+      }
+
+          }
+      set_follow = 0;
 
     }
 
