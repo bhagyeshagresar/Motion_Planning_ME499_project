@@ -134,7 +134,8 @@ int main(int argc, char** argv)
 
   // ros::Publisher pub = nh.advertise<std_msgs::Float64>("/pincer_joint/position_controllers/JointPositionController", 10);
   // ros::Publisher pub = nh.advertise<std_msgs::Float64>("/pincer_joint_position_controller/command", 10);
-  ros::Publisher pub = nh.advertise<std_msgs::Float64>("hdt_arm/pincer_joint/fake_pincer_controller", 10);
+  // ros::Publisher pub = nh.advertise<std_msgs::Float64>("hdt_arm/pincer_joint/fake_pincer_controller", 10);
+  ros::Publisher pub = nh.advertise<std_msgs::Float64>("/hdt_arm/pincer_joint_position_controller/command", 10);
 
 
   ros::ServiceServer gripper_service = nh.advertiseService("gripper", gripper_fn);
@@ -165,7 +166,7 @@ int main(int argc, char** argv)
   // std::copy(move_group_interface.getJointModelGroupNames().begin(),
   //           move_group_interface.getJointModelGroupNames().end(), std::ostream_iterator<std::string>(std::cout, ", "));
 
-  move_group_interface.setPlannerId(PLANNING_GROUP);
+  // move_group_interface.setPlannerId();
   
 
   std::string default_planner_id = move_group_interface.getPlannerId();

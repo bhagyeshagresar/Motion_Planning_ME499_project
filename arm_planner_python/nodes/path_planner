@@ -71,7 +71,7 @@ class Control:
 
         # This pubsliher will send a message to the pincer controller
         # By simply publishing a std_msg to pincer_joint_position_controller, you can control the pincer
-        self.pincer_pub = rospy.Publisher("/hdt_arm/pincer_joint_position_controller/command", Float64,queue_size=10)
+        self.pincer_pub = rospy.Publisher("/pincer_joint/fake_pincer_controller", Float64,queue_size=10)
 
 
 
@@ -106,7 +106,7 @@ class Control:
         # Let's call the `joint control` service
         # this command will control the robot however you set the parameters in the `joint control`function 
         # joint_control() 
-        pose_control()
+        # pose_control()
        
 
         # What about the pincer? Let's say you want the pincer to be wide open when you start the Adorit
