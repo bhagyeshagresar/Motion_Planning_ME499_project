@@ -538,7 +538,7 @@ int main(int argc, char** argv)
   while(ros::ok()){
 
   
-
+    //call gripper open service
     if (flag == 1){
       std_msgs::Float64 msg;
       msg.data = 0.8;
@@ -548,6 +548,7 @@ int main(int argc, char** argv)
 
     }
 
+    //call gripper close service
     if (flag == 2){
       std_msgs::Float64 msg;
       msg.data = 0.1;
@@ -556,6 +557,7 @@ int main(int argc, char** argv)
       flag = 0;
     }
 
+    //reset service - return to start configuration
     if(reset_val == true){
         std::cout << "reset waypoints: " << waypoints.size() << std::endl;
         // nh.setParam("/waypoints", waypoints);
@@ -566,6 +568,7 @@ int main(int argc, char** argv)
     }
 
 
+    //step service for joint goals
     if(step_val == true){
       std::cout << "outside the service fn" << std::endl;
 
@@ -597,9 +600,6 @@ int main(int argc, char** argv)
       std::cout << "joint_group_pos 5: " << joint_group_positions[5] << std::endl;
       std::cout << "joint_group_pos 6: " << joint_group_positions[6] << std::endl;
 
-
-      
-
       
       
       move_group_interface.setJointValueTarget(joint_group_positions);
@@ -622,8 +622,6 @@ int main(int argc, char** argv)
 
         
         waypoints.push_back(waypoints_list);
-
-        
 
         
 
@@ -667,7 +665,8 @@ int main(int argc, char** argv)
 
     }
 
-
+    
+    //test service
     if(test_val == true){
       //reference - Tiago - planning joint space
       
@@ -710,7 +709,9 @@ int main(int argc, char** argv)
       test_val = false;
     }
 
-    
+
+
+    //follow condition 1
     if(set_follow == 1){
       std::cout << "reached follow service" << std::endl;
       
@@ -753,14 +754,12 @@ int main(int argc, char** argv)
           set_follow = 0;
 
 
-        }
-
-
-
-        
+      }
 
       }
 
+
+    //follow condition 2
     if (set_follow == 2){
       std::cout << "follow else condition reached" << std::endl;
       for(int z = 0; z < waypoints.size(); z++){
@@ -802,8 +801,8 @@ int main(int argc, char** argv)
 
     }
 
-    //set pose target
 
+    //step service for pose goal
     if(step_pos_val == true){
       geometry_msgs::Pose target_pose;
       target_pose.orientation.w = 1.0;
@@ -879,20 +878,6 @@ int main(int argc, char** argv)
 
 
     }
-
-
-
-    
-
-
-      
-
-
-
-
-
-    
-
 
 
     ros::spinOnce();
