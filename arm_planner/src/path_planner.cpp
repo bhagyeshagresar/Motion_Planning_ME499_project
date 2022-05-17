@@ -16,6 +16,7 @@
 #include <math.h>
 #include <string.h>
 #include "arm_planner/StepPos.h"
+#include "arm_planner/FollowPos.h"
 
 
 static int flag{0};
@@ -32,6 +33,7 @@ static std::vector<double> waypoints_pos_list;
 static int set_follow{0};
 static bool test_val{false};
 static std::vector <double> joints_seq;
+static std::vector <double> pos_seq;
 static double joint1{0.0}, joint2{0.0}, joint3{0.0}, joint4{0.0}, joint5{0.0}, joint6{0.0};
 static double x_pos{0.0}, y_pos{0.0}, z_pos{0.0}, w_pos{0.0};
 static bool gripper_req{false};
@@ -39,6 +41,7 @@ static bool gripper_pos_req{false};
 static bool bool_param{false};
 static std::vector<double> sample_waypoints;
 static bool step_pos_val{false};
+static int set_follow_pos{0};
 
 
 
@@ -137,6 +140,13 @@ bool follow_fn(arm_planner::Follow::Request &req, arm_planner::Follow::Response 
 }
 
 
+bool follow_pos_fn(arm_planner::FollowPos::Request &req, arm_planner::FollowPos::Response &res){
+
+  set_follow_pos = req.follow_pos;
+  return true;
+  
+}
+
 
 int main(int argc, char** argv)
 {
@@ -158,6 +168,8 @@ int main(int argc, char** argv)
   ros::ServiceServer step_pos_service = nh.advertiseService("step_pos", step_pos_fn);
   ros::ServiceServer test_service = nh.advertiseService("test", test_fn);
   ros::ServiceServer follow_service = nh.advertiseService("follow", follow_fn);
+  ros::ServiceServer follow_pos_service = nh.advertiseService("follow_pos", follow_pos_fn);
+
 
   //add planning group "arm"
   static const std::string PLANNING_GROUP = "arm";
@@ -878,6 +890,97 @@ int main(int argc, char** argv)
 
 
     }
+
+
+
+    //follow pos goal condition 1
+    if(set_follow_pos == 1){
+      std::cout << "reached follow service pos goal" << std::endl;
+      
+      while(1){
+        for(int z = 0; z < waypoints_pos.size(); z++){
+            geometry_msgs::Pose follow_pose;
+            follow_pose.orientation.w = 1.0;
+            follow_pose.position.x = waypoints_pos[z][0];
+            follow_pose.position.y = waypoints_pos[z][1];
+            follow_pose.position.z = waypoints_pos[z][2];
+      
+            double gripper_value_pos = waypoints[z][3];
+
+            
+
+            move_group_interface.setPoseTarget(follow_pose);
+            moveit::planning_interface::MoveGroupInterface::Plan my_plan;
+            move_group_interface.setPlanningTime(5.0);
+            move_group_interface.move();
+
+            if(gripper_value_pos == 1.0){
+              std_msgs::Float64 msg;
+              msg.data = 0.8;
+              std::cout << "gripper openeed" << std::endl;
+              pub.publish(msg);
+              }
+        
+            else{
+              std_msgs::Float64 msg;
+              msg.data = 0.1;
+              std::cout << "gripper closed" << std::endl;
+              pub.publish(msg);
+            
+            
+          }
+
+
+          }
+          set_follow_pos = 0;
+
+
+      }
+
+      }
+
+
+    //follow pos goal condition 2
+    if (set_follow_pos == 2){
+      std::cout << "follow else condition reached pos" << std::endl;
+      for(int z = 0; z < waypoints_pos.size(); z++){
+        geometry_msgs::Pose follow_pose;
+        follow_pose.orientation.w = 1.0;
+        follow_pose.position.x = waypoints_pos[z][0];
+        follow_pose.position.y = waypoints_pos[z][1];
+        follow_pose.position.z = waypoints_pos[z][2];
+  
+        double gripper_value_pos = waypoints_pos[z][3];
+
+        
+
+        move_group_interface.setPoseTarget(follow_pose);
+        moveit::planning_interface::MoveGroupInterface::Plan my_plan;
+        move_group_interface.setPlanningTime(5.0);
+        move_group_interface.move();
+
+
+        if(gripper_value_pos == 1.0){
+              std_msgs::Float64 msg;
+              msg.data = 0.8;
+              std::cout << "gripper openeed" << std::endl;
+              pub.publish(msg);
+              }
+        
+        else{
+          std_msgs::Float64 msg;
+          msg.data = 0.1;
+          std::cout << "gripper closed" << std::endl;
+          pub.publish(msg);
+        
+        
+      }
+
+          }
+      set_follow_pos = 0;
+
+    }
+
 
 
     ros::spinOnce();

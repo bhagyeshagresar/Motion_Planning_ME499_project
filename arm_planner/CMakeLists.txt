@@ -66,6 +66,7 @@ std_srvs
    Reset.srv
    Step.srv
    Follow.srv
+   FollowPos.srv
    Test.srv
    StepPos.srv
  )
