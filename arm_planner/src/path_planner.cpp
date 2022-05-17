@@ -15,38 +15,36 @@
 #include "arm_planner/Test.h"
 #include <math.h>
 #include <string.h>
+#include "arm_planner/StepPos.h"
 
 
 static int flag{0};
 static bool reset_val{false};
 static bool step_val{false};
 static std::vector<double> joint_group_positions;
+static std::vector<double> pos_group_positions;
 static bool set_gripper{false};
+static bool set_pos_gripper{false};
 static std::vector<std::vector <double>> waypoints;
+static std::vector<std::vector <double>> waypoints_pos;
 static std::vector<double> waypoints_list;
+static std::vector<double> waypoints_pos_list;
 static int set_follow{0};
 static bool test_val{false};
 static std::vector <double> joints_seq;
 static double joint1{0.0}, joint2{0.0}, joint3{0.0}, joint4{0.0}, joint5{0.0}, joint6{0.0};
+static double x_pos{0.0}, y_pos{0.0}, z_pos{0.0}, w_pos{0.0};
 static bool gripper_req{false};
+static bool gripper_pos_req{false};
 static bool bool_param{false};
 static std::vector<double> sample_waypoints;
+static bool step_pos_val{false};
 
-// const double tau = 2 * M_PI;
-
-
-// static bool gripper_step{false};
-
-// static const std::string PLANNING_GROUP = "arm";
-// static moveit::planning_interface::MoveGroupInterface move_group_interface(PLANNING_GROUP);
-// static moveit::planning_interface::PlanningSceneInterface planning_scene_interface;
 
 
 
 
 bool reset_fn(arm_planner::Reset::Request &req, arm_planner::Reset::Response &res){
-
-  
 
   reset_val = req.restart;
 
@@ -81,12 +79,16 @@ bool gripper_fn(arm_planner::Gripper::Request &req, arm_planner::Gripper::Respon
   return true;
 }
 
+
+
 bool test_fn(arm_planner::Test::Request &req, arm_planner::Test::Response &res){
   test_val = true;
 
   return true;
 
 }
+
+
 
 
 bool step_fn(arm_planner::Step::Request &req, arm_planner::Step::Response &res){
@@ -99,19 +101,31 @@ bool step_fn(arm_planner::Step::Request &req, arm_planner::Step::Response &res){
   joint6 = req.j6;
   gripper_req = req.gripper_status;
 
-  std::cout << "j1: %d" << std::endl;
-  std::cout << "j2: %d" << std::endl;
-  std::cout << "j3: %d" << std::endl;
-  std::cout << "j4: %d" << std::endl;
-  std::cout << "j5: %d" << std::endl;
-  std::cout << "j6: %d" << std::endl;
-
+  
 
 
   return true;
 
 
 }
+
+
+bool step_pos_fn(arm_planner::StepPos::Request &req, arm_planner::StepPos::Response &res){
+  step_pos_val = true;
+  x_pos = req.x;
+  y_pos = req.y;
+  z_pos = req.z;
+  w_pos = req.w;
+  gripper_pos_req = req.gripper_pos_status;
+
+
+
+  return true;
+
+
+
+}
+
 
 
 
@@ -141,8 +155,7 @@ int main(int argc, char** argv)
   ros::ServiceServer gripper_service = nh.advertiseService("gripper", gripper_fn);
   ros::ServiceServer reset_service = nh.advertiseService("reset", reset_fn);
   ros::ServiceServer step_service = nh.advertiseService("step", step_fn);
-  // ros::ServiceServer joints_service = nh.advertiseService("joint_control", joint_control_fn);
-  // ros::ServiceClient joints_client = nh.serviceClient()
+  ros::ServiceServer step_pos_service = nh.advertiseService("step_pos", step_pos_fn);
   ros::ServiceServer test_service = nh.advertiseService("test", test_fn);
   ros::ServiceServer follow_service = nh.advertiseService("follow", follow_fn);
 
@@ -512,44 +525,11 @@ int main(int argc, char** argv)
   collision_objects.push_back(cylinder2);
 
 
-
-
-
-
-
-  for(int z = 0; z < sample_waypoints.size(); z++){
-    std::cout << "sample_waypoints: " << sample_waypoints[z] << std::endl;
-            // std::cout << std::endl;
-          }
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
   //Add objects to planning scene
   planning_scene_interface.addCollisionObjects(collision_objects);
 
 
   std::vector <double> joints_check_1 = move_group_interface.getCurrentJointValues();
-
-  for(int a = 0; a < joints_check_1.size(); a++){
-    std::cout << "joint angle at: " << a << "is: " << joints_check_1.at(a) << std::endl;
-  }
-
-
 
   
 
@@ -618,72 +598,45 @@ int main(int argc, char** argv)
       std::cout << "joint_group_pos 6: " << joint_group_positions[6] << std::endl;
 
 
-      std::cout << "start filing waypoints" << std::endl;
-      
-      std::cout << "filled temp: " << std::endl;
-
-      waypoints_list.push_back(joint_group_positions[0]);
-      waypoints_list.push_back(joint_group_positions[1]);
-      waypoints_list.push_back(joint_group_positions[2]);
-      waypoints_list.push_back(joint_group_positions[3]);
-      waypoints_list.push_back(joint_group_positions[4]);
-      waypoints_list.push_back(joint_group_positions[5]);
-      waypoints_list.push_back(joint_group_positions[6]);
-      std::cout << "waypoints filled" << std::endl;
-
-      // set_gripper = req.gripper_status;
-      std::cout << "inside the service fn" << std::endl;
       
 
       
-      // moveit::core::RobotStatePtr current_state = move_group_interface.getCurrentState();
-      // std::vector<double> joint_group_positions;
-      // current_state->copyJointGroupPositions(joint_model_group, joint_group_positions);
       
       move_group_interface.setJointValueTarget(joint_group_positions);
-      std::cout << "set joint" << std::endl;
-      
       moveit::planning_interface::MoveGroupInterface::Plan my_plan;
-      std::cout << "my_plan" << std::endl;
-      
       bool success = (move_group_interface.plan(my_plan) == moveit::planning_interface::MoveItErrorCode::SUCCESS);
-      std::cout << "success: " << success << std::endl;
 
 
       
       if(success == true){
         std::cout << "success reached" << std::endl;
         move_group_interface.execute(my_plan);
-        // move_group_interface.move();
-        // std::vector <double> joints_check = move_group_interface.getCurrentJointValues();
-
-        // for(int a = 0; a < joints_check.size(); a++){
-        //   std::cout << "joint angle at: " << a << "is: " << joints_check.at(a) << std::endl;
-        // }
         
+        waypoints_list.push_back(joint_group_positions[0]);
+        waypoints_list.push_back(joint_group_positions[1]);
+        waypoints_list.push_back(joint_group_positions[2]);
+        waypoints_list.push_back(joint_group_positions[3]);
+        waypoints_list.push_back(joint_group_positions[4]);
+        waypoints_list.push_back(joint_group_positions[5]);
+        waypoints_list.push_back(joint_group_positions[6]);
 
         
         waypoints.push_back(waypoints_list);
-        // s
 
         
-        // std::cout << "waypoints: " << waypoints[0][0] << std::endl;
 
         
 
         for(int z = 0; z < waypoints.size(); z++){
           for(int j = 0; j < waypoints[z].size(); j++){
-            std::cout << "waypoints for 2d: " << waypoints[z][j] << std::endl;
+            std::cout << "waypoints joint angles: " << waypoints[z][j] << std::endl;
           }
-          // std::cout << std::endl;
         }
-        // nh.setParam("/waypoints", {1.0, 2.0, 3.0, 4.0});
-        std::cout << "waypoints size: " << waypoints.size() << std::endl;
-        // nh.setParam("/path_planner/waypoints", waypoints);
+        std::cout << "waypoints size joint angles: " << waypoints.size() << std::endl;
 
 
 
-        if(set_gripper == true){
+        if(gripper_req == true){
           std_msgs::Float64 msg;
           msg.data = 0.8;
           std::cout << "gripper openeed" << std::endl;
@@ -703,13 +656,17 @@ int main(int argc, char** argv)
       
 
       }
+
     else{
+
       move_group_interface.stop();
+
     }
       step_val = false;
 
 
     }
+
 
     if(test_val == true){
       //reference - Tiago - planning joint space
@@ -844,6 +801,88 @@ int main(int argc, char** argv)
       set_follow = 0;
 
     }
+
+    //set pose target
+
+    if(step_pos_val == true){
+      geometry_msgs::Pose target_pose;
+      target_pose.orientation.w = 1.0;
+      target_pose.position.x = x_pos;
+      target_pose.position.y = y_pos;
+      target_pose.position.z = z_pos;
+      
+      
+
+
+
+      move_group_interface.setPoseTarget(target_pose);
+      moveit::planning_interface::MoveGroupInterface::Plan my_plan2;
+
+      bool success = (move_group_interface.plan(my_plan2) == moveit::planning_interface::MoveItErrorCode::SUCCESS);
+      std::cout << "success: " << success << std::endl;
+
+
+      
+      if(success == true){
+        std::cout << "pos success reached" << std::endl;
+        move_group_interface.execute(my_plan2);
+        
+
+        waypoints_pos_list.push_back(target_pose.position.x);
+        waypoints_pos_list.push_back(target_pose.position.y);
+        waypoints_pos_list.push_back(target_pose.position.z);
+        if (gripper_pos_req == true){
+          waypoints_pos_list.push_back(1.0);
+        }
+        else{
+          waypoints_pos_list.push_back(0.0);
+        }
+        
+
+        
+        waypoints_pos.push_back(waypoints_pos_list);
+       
+        
+
+        for(int z = 0; z < waypoints_pos.size(); z++){
+          for(int j = 0; j < waypoints_pos[z].size(); j++){
+            std::cout << "waypoints for 2d pos: " << waypoints_pos[z][j] << std::endl;
+          }
+        }
+        std::cout << "waypoints size pos: " << waypoints_pos.size() << std::endl;
+
+
+
+        if(gripper_pos_req == true){
+          std_msgs::Float64 msg;
+          msg.data = 0.8;
+          std::cout << "gripper openeed" << std::endl;
+          pub.publish(msg);
+        }
+        
+        else{
+          std_msgs::Float64 msg;
+          msg.data = 0.1;
+          std::cout << "gripper closed" << std::endl;
+          pub.publish(msg);
+        
+        
+      }
+      waypoints_pos_list.clear();
+      
+
+      }
+    else{
+      move_group_interface.stop();
+    }
+      step_pos_val = false;
+
+
+    }
+
+
+
+    
 
 
       

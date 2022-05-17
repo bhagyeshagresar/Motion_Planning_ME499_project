@@ -67,6 +67,7 @@ std_srvs
    Step.srv
    Follow.srv
    Test.srv
+   StepPos.srv
  )
 
 ## Generate actions in the 'action' folder
