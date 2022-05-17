@@ -296,66 +296,66 @@ int main(int argc, char** argv)
   collision_objects.push_back(collision_object_2);
 
 
-  //brick3
-  moveit_msgs::CollisionObject collision_object_3;
+  // //brick3
+  // moveit_msgs::CollisionObject collision_object_3;
     
 
-  collision_object_3.header.frame_id = "base_link";
-  collision_object_3.id = 3;
+  // collision_object_3.header.frame_id = "base_link";
+  // collision_object_3.id = 3;
 
-  shape_msgs::SolidPrimitive primitive_3;
+  // shape_msgs::SolidPrimitive primitive_3;
 
-  primitive_3.type = primitive_3.BOX;
-  primitive_3.dimensions.resize(3);
-  primitive_3.dimensions[primitive_3.BOX_X] = 0.24;
-  primitive_3.dimensions[primitive_3.BOX_Y] = 0.07;
-  primitive_3.dimensions[primitive_3.BOX_Z] = 0.112;
+  // primitive_3.type = primitive_3.BOX;
+  // primitive_3.dimensions.resize(3);
+  // primitive_3.dimensions[primitive_3.BOX_X] = 0.24;
+  // primitive_3.dimensions[primitive_3.BOX_Y] = 0.07;
+  // primitive_3.dimensions[primitive_3.BOX_Z] = 0.112;
 
 
-  geometry_msgs::Pose brick_pose_3;
+  // geometry_msgs::Pose brick_pose_3;
 
-  brick_pose_3.orientation.w = 1.0;
-  brick_pose_3.position.x = 0.0;
-  brick_pose_3.position.y = 0.28;
-  brick_pose_3.position.z = (0.168);
-  collision_object_3.primitive_poses.push_back(brick_pose_3);
+  // brick_pose_3.orientation.w = 1.0;
+  // brick_pose_3.position.x = 0.0;
+  // brick_pose_3.position.y = 0.28;
+  // brick_pose_3.position.z = (0.168);
+  // collision_object_3.primitive_poses.push_back(brick_pose_3);
 
 
   
-  collision_object_3.primitives.push_back(primitive_3);
-  collision_object_3.operation = collision_object_3.ADD;
-  collision_objects.push_back(collision_object_3);
+  // collision_object_3.primitives.push_back(primitive_3);
+  // collision_object_3.operation = collision_object_3.ADD;
+  // collision_objects.push_back(collision_object_3);
 
 
-  //brick4
-  moveit_msgs::CollisionObject collision_object_4;
+  // //brick4
+  // moveit_msgs::CollisionObject collision_object_4;
     
 
-  collision_object_4.header.frame_id = "base_link";
-  collision_object_4.id = 4;
+  // collision_object_4.header.frame_id = "base_link";
+  // collision_object_4.id = 4;
 
-  shape_msgs::SolidPrimitive primitive_4;
+  // shape_msgs::SolidPrimitive primitive_4;
 
-  primitive_4.type = primitive_4.BOX;
-  primitive_4.dimensions.resize(3);
-  primitive_4.dimensions[primitive_4.BOX_X] = 0.24;
-  primitive_4.dimensions[primitive_4.BOX_Y] = 0.07;
-  primitive_4.dimensions[primitive_4.BOX_Z] = 0.112;
+  // primitive_4.type = primitive_4.BOX;
+  // primitive_4.dimensions.resize(3);
+  // primitive_4.dimensions[primitive_4.BOX_X] = 0.24;
+  // primitive_4.dimensions[primitive_4.BOX_Y] = 0.07;
+  // primitive_4.dimensions[primitive_4.BOX_Z] = 0.112;
 
 
-  geometry_msgs::Pose brick_pose_4;
+  // geometry_msgs::Pose brick_pose_4;
 
-  brick_pose_4.orientation.w = 1.0;
-  brick_pose_4.position.x = 0.0;
-  brick_pose_4.position.y = 0.28;
-  brick_pose_4.position.z = (0.224);
-  collision_object_4.primitive_poses.push_back(brick_pose_4);
+  // brick_pose_4.orientation.w = 1.0;
+  // brick_pose_4.position.x = 0.0;
+  // brick_pose_4.position.y = 0.28;
+  // brick_pose_4.position.z = (0.224);
+  // collision_object_4.primitive_poses.push_back(brick_pose_4);
 
 
   
-  collision_object_4.primitives.push_back(primitive_4);
-  collision_object_4.operation = collision_object_4.ADD;
-  collision_objects.push_back(collision_object_4);
+  // collision_object_4.primitives.push_back(primitive_4);
+  // collision_object_4.operation = collision_object_4.ADD;
+  // collision_objects.push_back(collision_object_4);
 
 
 
@@ -421,66 +421,66 @@ int main(int argc, char** argv)
   collision_objects.push_back(collision_object_6);
 
 
-  //brick7
-  moveit_msgs::CollisionObject collision_object_7;
+  // //brick7
+  // moveit_msgs::CollisionObject collision_object_7;
     
 
-  collision_object_7.header.frame_id = "base_link";
-  collision_object_7.id = 7;
+  // collision_object_7.header.frame_id = "base_link";
+  // collision_object_7.id = 7;
 
-  shape_msgs::SolidPrimitive primitive_7;
+  // shape_msgs::SolidPrimitive primitive_7;
 
-  primitive_7.type = primitive_7.BOX;
-  primitive_7.dimensions.resize(3);
-  primitive_7.dimensions[primitive_7.BOX_X] = 0.24;
-  primitive_7.dimensions[primitive_7.BOX_Y] = 0.07;
-  primitive_7.dimensions[primitive_7.BOX_Z] = 0.112;
+  // primitive_7.type = primitive_7.BOX;
+  // primitive_7.dimensions.resize(3);
+  // primitive_7.dimensions[primitive_7.BOX_X] = 0.24;
+  // primitive_7.dimensions[primitive_7.BOX_Y] = 0.07;
+  // primitive_7.dimensions[primitive_7.BOX_Z] = 0.112;
 
 
-  geometry_msgs::Pose brick_pose_7;
+  // geometry_msgs::Pose brick_pose_7;
 
-  brick_pose_7.orientation.w = 1.0;
-  brick_pose_7.position.x = 0.0;
-  brick_pose_7.position.y = -0.28;
-  brick_pose_7.position.z = (0.168);
-  collision_object_7.primitive_poses.push_back(brick_pose_7);
+  // brick_pose_7.orientation.w = 1.0;
+  // brick_pose_7.position.x = 0.0;
+  // brick_pose_7.position.y = -0.28;
+  // brick_pose_7.position.z = (0.168);
+  // collision_object_7.primitive_poses.push_back(brick_pose_7);
 
 
   
-  collision_object_7.primitives.push_back(primitive_7);
-  collision_object_7.operation = collision_object_7.ADD;
-  collision_objects.push_back(collision_object_7);
+  // collision_object_7.primitives.push_back(primitive_7);
+  // collision_object_7.operation = collision_object_7.ADD;
+  // collision_objects.push_back(collision_object_7);
 
 
-  //brick8
-  moveit_msgs::CollisionObject collision_object_8;
+  // //brick8
+  // moveit_msgs::CollisionObject collision_object_8;
     
 
-  collision_object_8.header.frame_id = "base_link";
-  collision_object_8.id = 8;
+  // collision_object_8.header.frame_id = "base_link";
+  // collision_object_8.id = 8;
 
-  shape_msgs::SolidPrimitive primitive_8;
+  // shape_msgs::SolidPrimitive primitive_8;
 
-  primitive_8.type = primitive_8.BOX;
-  primitive_8.dimensions.resize(3);
-  primitive_8.dimensions[primitive_8.BOX_X] = 0.24;
-  primitive_8.dimensions[primitive_8.BOX_Y] = 0.07;
-  primitive_8.dimensions[primitive_8.BOX_Z] = 0.112;
+  // primitive_8.type = primitive_8.BOX;
+  // primitive_8.dimensions.resize(3);
+  // primitive_8.dimensions[primitive_8.BOX_X] = 0.24;
+  // primitive_8.dimensions[primitive_8.BOX_Y] = 0.07;
+  // primitive_8.dimensions[primitive_8.BOX_Z] = 0.112;
 
 
-  geometry_msgs::Pose brick_pose_8;
+  // geometry_msgs::Pose brick_pose_8;
 
-  brick_pose_8.orientation.w = 1.0;
-  brick_pose_8.position.x = 0.0;
-  brick_pose_8.position.y = -0.28;
-  brick_pose_8.position.z = (0.224);
-  collision_object_8.primitive_poses.push_back(brick_pose_8);
+  // brick_pose_8.orientation.w = 1.0;
+  // brick_pose_8.position.x = 0.0;
+  // brick_pose_8.position.y = -0.28;
+  // brick_pose_8.position.z = (0.224);
+  // collision_object_8.primitive_poses.push_back(brick_pose_8);
 
 
   
-  collision_object_8.primitives.push_back(primitive_8);
-  collision_object_8.operation = collision_object_8.ADD;
-  collision_objects.push_back(collision_object_8);
+  // collision_object_8.primitives.push_back(primitive_8);
+  // collision_object_8.operation = collision_object_8.ADD;
+  // collision_objects.push_back(collision_object_8);
 
 
 
