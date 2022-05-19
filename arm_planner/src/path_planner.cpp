@@ -212,26 +212,26 @@ int main(int argc, char** argv)
 
  //Add Ground
 
-  moveit_msgs::CollisionObject ground_collision;
-  ground_collision.header.frame_id = "base_link";
+  // moveit_msgs::CollisionObject ground_collision;
+  // ground_collision.header.frame_id = "base_link";
   
-  shape_msgs::SolidPrimitive ground;
-  ground.type = ground.BOX;
-  ground.dimensions.resize(3);
-  ground.dimensions[ground.BOX_X] = 1.5;
-  ground.dimensions[ground.BOX_Y] = 1.5;
-  ground.dimensions[ground.BOX_Z] = 0.0;
+  // shape_msgs::SolidPrimitive ground;
+  // ground.type = ground.BOX;
+  // ground.dimensions.resize(3);
+  // ground.dimensions[ground.BOX_X] = 1.5;
+  // ground.dimensions[ground.BOX_Y] = 1.5;
+  // ground.dimensions[ground.BOX_Z] = 0.0;
 
-  geometry_msgs::Pose ground_pose;
-  ground_pose.orientation.w = 1.0;
-  ground_pose.orientation.x = 0.0;
-  ground_pose.orientation.y = 0.0;
-  ground_pose.orientation.z = -1.0;
-  ground_collision.primitive_poses.push_back(ground_pose);
+  // geometry_msgs::Pose ground_pose;
+  // ground_pose.orientation.w = 1.0;
+  // ground_pose.orientation.x = 0.0;
+  // ground_pose.orientation.y = 0.0;
+  // ground_pose.orientation.z = -1.0;
+  // ground_collision.primitive_poses.push_back(ground_pose);
 
-  ground_collision.primitives.push_back(ground);
-  ground_collision.operation = ground_collision.ADD;
-  collision_objects.push_back(ground_collision);
+  // ground_collision.primitives.push_back(ground);
+  // ground_collision.operation = ground_collision.ADD;
+  // collision_objects.push_back(ground_collision);
 
 
 
@@ -361,65 +361,65 @@ int main(int argc, char** argv)
 
 
   //brick5
-  moveit_msgs::CollisionObject collision_object_5;
+  // moveit_msgs::CollisionObject collision_object_5;
     
 
-  collision_object_5.header.frame_id = "base_link";
-  collision_object_5.id = 5;
+  // collision_object_5.header.frame_id = "base_link";
+  // collision_object_5.id = 5;
 
-  shape_msgs::SolidPrimitive primitive_5;
+  // shape_msgs::SolidPrimitive primitive_5;
 
-  primitive_5.type = primitive_5.BOX;
-  primitive_5.dimensions.resize(3);
-  primitive_5.dimensions[primitive_5.BOX_X] = 0.24;
-  primitive_5.dimensions[primitive_5.BOX_Y] = 0.07;
-  primitive_5.dimensions[primitive_5.BOX_Z] = 0.112;
+  // primitive_5.type = primitive_5.BOX;
+  // primitive_5.dimensions.resize(3);
+  // primitive_5.dimensions[primitive_5.BOX_X] = 0.24;
+  // primitive_5.dimensions[primitive_5.BOX_Y] = 0.07;
+  // primitive_5.dimensions[primitive_5.BOX_Z] = 0.112;
 
 
-  geometry_msgs::Pose brick_pose_5;
+  // geometry_msgs::Pose brick_pose_5;
 
-  brick_pose_5.orientation.w = 1.0;
-  brick_pose_5.position.x = 0.0;
-  brick_pose_5.position.y = -0.28;
-  brick_pose_5.position.z = (0.056);
-  collision_object_5.primitive_poses.push_back(brick_pose_5);
+  // brick_pose_5.orientation.w = 1.0;
+  // brick_pose_5.position.x = 0.0;
+  // brick_pose_5.position.y = -0.28;
+  // brick_pose_5.position.z = (0.056);
+  // collision_object_5.primitive_poses.push_back(brick_pose_5);
 
 
   
-  collision_object_5.primitives.push_back(primitive_5);
-  collision_object_5.operation = collision_object_5.ADD;
-  collision_objects.push_back(collision_object_5);
+  // collision_object_5.primitives.push_back(primitive_5);
+  // collision_object_5.operation = collision_object_5.ADD;
+  // collision_objects.push_back(collision_object_5);
 
 
   //brick6
-  moveit_msgs::CollisionObject collision_object_6;
+  // moveit_msgs::CollisionObject collision_object_6;
     
 
-  collision_object_6.header.frame_id = "base_link";
-  collision_object_6.id = 6;
+  // collision_object_6.header.frame_id = "base_link";
+  // collision_object_6.id = 6;
 
-  shape_msgs::SolidPrimitive primitive_6;
+  // shape_msgs::SolidPrimitive primitive_6;
 
-  primitive_6.type = primitive_6.BOX;
-  primitive_6.dimensions.resize(3);
-  primitive_6.dimensions[primitive_6.BOX_X] = 0.24;
-  primitive_6.dimensions[primitive_6.BOX_Y] = 0.07;
-  primitive_6.dimensions[primitive_6.BOX_Z] = 0.112;
+  // primitive_6.type = primitive_6.BOX;
+  // primitive_6.dimensions.resize(3);
+  // primitive_6.dimensions[primitive_6.BOX_X] = 0.24;
+  // primitive_6.dimensions[primitive_6.BOX_Y] = 0.07;
+  // primitive_6.dimensions[primitive_6.BOX_Z] = 0.112;
 
 
-  geometry_msgs::Pose brick_pose_6;
+  // geometry_msgs::Pose brick_pose_6;
 
-  brick_pose_6.orientation.w = 1.0;
-  brick_pose_6.position.x = 0.0;
-  brick_pose_6.position.y = -0.28;
-  brick_pose_6.position.z = (0.112);
-  collision_object_6.primitive_poses.push_back(brick_pose_6);
+  // brick_pose_6.orientation.w = 1.0;
+  // brick_pose_6.position.x = 0.0;
+  // brick_pose_6.position.y = -0.28;
+  // brick_pose_6.position.z = (0.112);
+  // collision_object_6.primitive_poses.push_back(brick_pose_6);
 
 
   
-  collision_object_6.primitives.push_back(primitive_6);
-  collision_object_6.operation = collision_object_6.ADD;
-  collision_objects.push_back(collision_object_6);
+  // collision_object_6.primitives.push_back(primitive_6);
+  // collision_object_6.operation = collision_object_6.ADD;
+  // collision_objects.push_back(collision_object_6);
 
 
   // //brick7
@@ -486,56 +486,56 @@ int main(int argc, char** argv)
 
 
   //cylinder1
-  moveit_msgs::CollisionObject cylinder1;
+  // moveit_msgs::CollisionObject cylinder1;
 
-  cylinder1.header.frame_id = "base_link";
-  cylinder1.id = 9;
+  // cylinder1.header.frame_id = "base_link";
+  // cylinder1.id = 9;
 
-  shape_msgs::SolidPrimitive cylinder1_primitive;
+  // shape_msgs::SolidPrimitive cylinder1_primitive;
 
-  cylinder1_primitive.type = cylinder1_primitive.CYLINDER;
-  cylinder1_primitive.dimensions.resize(2);
-  cylinder1_primitive.dimensions[cylinder1_primitive.CYLINDER_HEIGHT] = 0.4;
-  cylinder1_primitive.dimensions[cylinder1_primitive.CYLINDER_RADIUS] = 0.025;
-
-
-  geometry_msgs::Pose cylinder1_pose;
-  cylinder1_pose.orientation.w = 1.0;
-  cylinder1_pose.position.x = 0.212;
-  cylinder1_pose.position.y = -0.2;
-  cylinder1_pose.position.z = 0.2;
-  cylinder1.primitive_poses.push_back(cylinder1_pose);
-
-  cylinder1.primitives.push_back(cylinder1_primitive);
-  cylinder1.operation = cylinder1.ADD;
-  collision_objects.push_back(cylinder1);
+  // cylinder1_primitive.type = cylinder1_primitive.CYLINDER;
+  // cylinder1_primitive.dimensions.resize(2);
+  // cylinder1_primitive.dimensions[cylinder1_primitive.CYLINDER_HEIGHT] = 0.4;
+  // cylinder1_primitive.dimensions[cylinder1_primitive.CYLINDER_RADIUS] = 0.025;
 
 
-  //cylinder2
+  // geometry_msgs::Pose cylinder1_pose;
+  // cylinder1_pose.orientation.w = 1.0;
+  // cylinder1_pose.position.x = 0.212;
+  // cylinder1_pose.position.y = -0.2;
+  // cylinder1_pose.position.z = 0.2;
+  // cylinder1.primitive_poses.push_back(cylinder1_pose);
 
-  moveit_msgs::CollisionObject cylinder2;
-
-  cylinder2.header.frame_id = "base_link";
-  cylinder2.id = 10;
-
-  shape_msgs::SolidPrimitive cylinder2_primitive;
-
-  cylinder2_primitive.type = cylinder2_primitive.CYLINDER;
-  cylinder2_primitive.dimensions.resize(2);
-  cylinder2_primitive.dimensions[cylinder2_primitive.CYLINDER_HEIGHT] = 0.4;
-  cylinder2_primitive.dimensions[cylinder2_primitive.CYLINDER_RADIUS] = 0.025;
+  // cylinder1.primitives.push_back(cylinder1_primitive);
+  // cylinder1.operation = cylinder1.ADD;
+  // collision_objects.push_back(cylinder1);
 
 
-  geometry_msgs::Pose cylinder2_pose;
-  cylinder2_pose.orientation.w = 1.0;
-  cylinder2_pose.position.x = 0.212;
-  cylinder2_pose.position.y = 0.2;
-  cylinder2_pose.position.z = 0.2;
-  cylinder2.primitive_poses.push_back(cylinder2_pose);
+  // //cylinder2
 
-  cylinder2.primitives.push_back(cylinder2_primitive);
-  cylinder2.operation = cylinder2.ADD;
-  collision_objects.push_back(cylinder2);
+  // moveit_msgs::CollisionObject cylinder2;
+
+  // cylinder2.header.frame_id = "base_link";
+  // cylinder2.id = 10;
+
+  // shape_msgs::SolidPrimitive cylinder2_primitive;
+
+  // cylinder2_primitive.type = cylinder2_primitive.CYLINDER;
+  // cylinder2_primitive.dimensions.resize(2);
+  // cylinder2_primitive.dimensions[cylinder2_primitive.CYLINDER_HEIGHT] = 0.4;
+  // cylinder2_primitive.dimensions[cylinder2_primitive.CYLINDER_RADIUS] = 0.025;
+
+
+  // geometry_msgs::Pose cylinder2_pose;
+  // cylinder2_pose.orientation.w = 1.0;
+  // cylinder2_pose.position.x = 0.212;
+  // cylinder2_pose.position.y = 0.2;
+  // cylinder2_pose.position.z = 0.2;
+  // cylinder2.primitive_poses.push_back(cylinder2_pose);
+
+  // cylinder2.primitives.push_back(cylinder2_primitive);
+  // cylinder2.operation = cylinder2.ADD;
+  // collision_objects.push_back(cylinder2);
 
 
   //Add objects to planning scene
