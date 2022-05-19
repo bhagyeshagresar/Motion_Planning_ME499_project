@@ -157,9 +157,10 @@ int main(int argc, char** argv)
   spinner.start();
 
   // ros::Publisher pub = nh.advertise<std_msgs::Float64>("/pincer_joint/position_controllers/JointPositionController", 10);
-  // ros::Publisher pub = nh.advertise<std_msgs::Float64>("/pincer_joint_position_controller/command", 10);
+  ros::Publisher pub = nh.advertise<std_msgs::Float64>("/pincer_joint_position_controller/command", 10);
+  // /hdt_arm/pincer_joint_position_controller/command
   // ros::Publisher pub = nh.advertise<std_msgs::Float64>("hdt_arm/pincer_joint/fake_pincer_controller", 10);
-  ros::Publisher pub = nh.advertise<std_msgs::Float64>("/hdt_arm/pincer_joint_position_controller/command", 10);
+  // ros::Publisher pub = nh.advertise<std_msgs::Float64>("/hdt_arm/pincer_joint_position_controller/command", 10);
 
 
   ros::ServiceServer gripper_service = nh.advertiseService("gripper", gripper_fn);
@@ -235,65 +236,65 @@ int main(int argc, char** argv)
 
 
   //brick1
-  moveit_msgs::CollisionObject collision_object;
+  // moveit_msgs::CollisionObject collision_object;
   
 
-  collision_object.header.frame_id = "base_link";
-  collision_object.id = 1;
+  // collision_object.header.frame_id = "base_link";
+  // collision_object.id = 1;
 
-  shape_msgs::SolidPrimitive primitive;
+  // shape_msgs::SolidPrimitive primitive;
 
-  primitive.type = primitive.BOX;
-  primitive.dimensions.resize(3);
-  primitive.dimensions[primitive.BOX_X] = 0.24;
-  primitive.dimensions[primitive.BOX_Y] = 0.07;
-  primitive.dimensions[primitive.BOX_Z] = 0.112;
+  // primitive.type = primitive.BOX;
+  // primitive.dimensions.resize(3);
+  // primitive.dimensions[primitive.BOX_X] = 0.24;
+  // primitive.dimensions[primitive.BOX_Y] = 0.07;
+  // primitive.dimensions[primitive.BOX_Z] = 0.112;
 
 
-  geometry_msgs::Pose brick_pose;
+  // geometry_msgs::Pose brick_pose;
 
-  brick_pose.orientation.w = 1.0;
-  brick_pose.position.x = 0.0;
-  brick_pose.position.y = 0.28;
-  brick_pose.position.z = 0.056;
-  collision_object.primitive_poses.push_back(brick_pose);
+  // brick_pose.orientation.w = 1.0;
+  // brick_pose.position.x = 0.0;
+  // brick_pose.position.y = 0.28;
+  // brick_pose.position.z = 0.056;
+  // collision_object.primitive_poses.push_back(brick_pose);
 
 
   
-  collision_object.primitives.push_back(primitive);
-  collision_object.operation = collision_object.ADD;
-  collision_objects.push_back(collision_object);
+  // collision_object.primitives.push_back(primitive);
+  // collision_object.operation = collision_object.ADD;
+  // collision_objects.push_back(collision_object);
 
 
-  //brick2
-  moveit_msgs::CollisionObject collision_object_2;
+  // //brick2
+  // moveit_msgs::CollisionObject collision_object_2;
     
 
-  collision_object_2.header.frame_id = "base_link";
-  collision_object_2.id = 2;
+  // collision_object_2.header.frame_id = "base_link";
+  // collision_object_2.id = 2;
 
-  shape_msgs::SolidPrimitive primitive_2;
+  // shape_msgs::SolidPrimitive primitive_2;
 
-  primitive_2.type = primitive_2.BOX;
-  primitive_2.dimensions.resize(3);
-  primitive_2.dimensions[primitive_2.BOX_X] = 0.24;
-  primitive_2.dimensions[primitive_2.BOX_Y] = 0.07;
-  primitive_2.dimensions[primitive_2.BOX_Z] = 0.112;
+  // primitive_2.type = primitive_2.BOX;
+  // primitive_2.dimensions.resize(3);
+  // primitive_2.dimensions[primitive_2.BOX_X] = 0.24;
+  // primitive_2.dimensions[primitive_2.BOX_Y] = 0.07;
+  // primitive_2.dimensions[primitive_2.BOX_Z] = 0.112;
 
 
-  geometry_msgs::Pose brick_pose_2;
+  // geometry_msgs::Pose brick_pose_2;
 
-  brick_pose_2.orientation.w = 1.0;
-  brick_pose_2.position.x = 0.0;
-  brick_pose_2.position.y = 0.28;
-  brick_pose_2.position.z = (0.112);
-  collision_object_2.primitive_poses.push_back(brick_pose_2);
+  // brick_pose_2.orientation.w = 1.0;
+  // brick_pose_2.position.x = 0.0;
+  // brick_pose_2.position.y = 0.28;
+  // brick_pose_2.position.z = (0.112);
+  // collision_object_2.primitive_poses.push_back(brick_pose_2);
 
 
   
-  collision_object_2.primitives.push_back(primitive_2);
-  collision_object_2.operation = collision_object_2.ADD;
-  collision_objects.push_back(collision_object_2);
+  // collision_object_2.primitives.push_back(primitive_2);
+  // collision_object_2.operation = collision_object_2.ADD;
+  // collision_objects.push_back(collision_object_2);
 
 
   // //brick3
