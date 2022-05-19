@@ -1,0 +1,31 @@
+<launch>
+    <arg name="run_sim" default="false" />
+
+
+    <include file="$(find arm_planner)/launch/path_planner.launch"/>
+
+
+    <include file="$(find hdt_6dof_a24_pincer_moveit)/launch/planning_context.launch"/>
+
+
+    <include file="$(find arm_planner)/launch/hdt_arm_bringup.launch">
+        <arg name="simulation" value="$(arg run_sim)"/>
+    </include>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+</launch>
