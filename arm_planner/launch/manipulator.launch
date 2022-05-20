@@ -1,0 +1,25 @@
+<launch>
+    <arg name="run_sim" default="false" />
+    <arg name="controller" default="xbox"/>
+
+
+    <include file="$(find arm_planner)/launch/path_planner.launch"/>
+
+
+    <include file="$(find hdt_6dof_a24_pincer_moveit)/launch/planning_context.launch"/>
+
+
+    <include file="$(find arm_planner)/launch/hdt_arm_bringup1.launch">
+        <arg name="simulation" value="$(arg run_sim)"/>
+        <arg name="controller_type" value="$(arg controller)"/>
+    </include>
+
+
+
+
+
+
+
+
+
+</launch>

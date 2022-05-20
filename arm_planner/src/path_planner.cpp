@@ -557,7 +557,7 @@ int main(int argc, char** argv)
       msg.data = 0.8;
       std::cout << "gripper openeed" << std::endl;
       pub.publish(msg);
-      // flag = 0;
+      flag = 0;
 
     }
 
@@ -567,7 +567,7 @@ int main(int argc, char** argv)
       msg.data = 0.1;
       std::cout << "gripper closed" << std::endl;
       pub.publish(msg);
-      // flag = 0;
+      flag = 0;
     }
 
     //reset service - return to start configuration
