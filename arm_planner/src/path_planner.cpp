@@ -210,28 +210,60 @@ int main(int argc, char** argv)
   // std::cout << "first waypoints: " << waypoints.size() << std::endl;
   
 
- //Add Ground
 
-  // moveit_msgs::CollisionObject ground_collision;
-  // ground_collision.header.frame_id = "base_link";
+  //Add stand
+  moveit_msgs::CollisionObject collision;
+  collision.header.frame_id = "base_link";
+  collision.id = 1;
   
-  // shape_msgs::SolidPrimitive ground;
-  // ground.type = ground.BOX;
-  // ground.dimensions.resize(3);
-  // ground.dimensions[ground.BOX_X] = 1.5;
-  // ground.dimensions[ground.BOX_Y] = 1.5;
-  // ground.dimensions[ground.BOX_Z] = 0.0;
+  shape_msgs::SolidPrimitive stand;
+  stand.type = stand.BOX;
+  stand.dimensions.resize(3);
+  stand.dimensions[stand.BOX_X] = 0.05;
+  stand.dimensions[stand.BOX_Y] = 0.05;
+  stand.dimensions[stand.BOX_Z] = 0.45;
 
-  // geometry_msgs::Pose ground_pose;
-  // ground_pose.orientation.w = 1.0;
-  // ground_pose.orientation.x = 0.0;
-  // ground_pose.orientation.y = 0.0;
-  // ground_pose.orientation.z = -1.0;
-  // ground_collision.primitive_poses.push_back(ground_pose);
+  geometry_msgs::Pose stand_pose;
+  stand_pose.orientation.w = 1.0;
+  stand_pose.position.x = 0.0;
+  stand_pose.position.y = 0.0;
+  stand_pose.position.z = -0.225;
+  collision.primitive_poses.push_back(stand_pose);
 
-  // ground_collision.primitives.push_back(ground);
-  // ground_collision.operation = ground_collision.ADD;
-  // collision_objects.push_back(ground_collision);
+  collision.primitives.push_back(stand);
+  collision.operation = collision.ADD;
+  collision_objects.push_back(collision);
+
+
+
+
+
+
+ //Add Ground
+  moveit_msgs::CollisionObject ground_collision;
+  ground_collision.header.frame_id = "base_link";
+  ground_collision.id = 2;
+  
+  shape_msgs::SolidPrimitive ground;
+  ground.type = ground.BOX;
+  ground.dimensions.resize(3);
+  ground.dimensions[ground.BOX_X] = 1.0;
+  ground.dimensions[ground.BOX_Y] = 1.0;
+  ground.dimensions[ground.BOX_Z] = 0.001;
+
+  geometry_msgs::Pose ground_pose;
+  ground_pose.orientation.w = 1.0;
+  ground_pose.position.x = 0.0;
+  ground_pose.position.y = 0.0;
+  ground_pose.position.z = -0.45;
+  ground_collision.primitive_poses.push_back(ground_pose);
+
+  ground_collision.primitives.push_back(ground);
+  ground_collision.operation = ground_collision.ADD;
+  collision_objects.push_back(ground_collision);
+
+
+  
 
 
 
