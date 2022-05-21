@@ -564,9 +564,9 @@ int main(int argc, char** argv)
       target_pose.position.z = z_pos;
       
       
-      // move_group_interface.setStartStateToCurrentState();
-      // move_group_interface.setMaxVelocityScalingFactor(1.0);
-      // move_group_interface.setMaxAccelerationScalingFactor(1.0);
+      move_group_interface.setStartStateToCurrentState();
+      move_group_interface.setMaxVelocityScalingFactor(1.0);
+      move_group_interface.setMaxAccelerationScalingFactor(1.0);
 
 
       move_group_interface.setPoseTarget(target_pose);
