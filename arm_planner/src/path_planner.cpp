@@ -247,8 +247,8 @@ int main(int argc, char** argv)
   shape_msgs::SolidPrimitive ground;
   ground.type = ground.BOX;
   ground.dimensions.resize(3);
-  ground.dimensions[ground.BOX_X] = 1.0;
-  ground.dimensions[ground.BOX_Y] = 1.0;
+  ground.dimensions[ground.BOX_X] = 2.0;
+  ground.dimensions[ground.BOX_Y] = 2.0;
   ground.dimensions[ground.BOX_Z] = 0.001;
 
   geometry_msgs::Pose ground_pose;
@@ -606,6 +606,9 @@ int main(int argc, char** argv)
     if(reset_val == true){
         std::cout << "reset waypoints: " << waypoints.size() << std::endl;
         // nh.setParam("/waypoints", waypoints);
+        move_group_interface.setMaxVelocityScalingFactor(1.0);
+        move_group_interface.setMaxAccelerationScalingFactor(1.0);
+
         move_group_interface.setNamedTarget("ready");
         move_group_interface.move();
         reset_val = false;
@@ -856,7 +859,9 @@ int main(int argc, char** argv)
       target_pose.position.z = z_pos;
       
       
-
+      move_group_interface.setStartStateToCurrentState();
+      move_group_interface.setMaxVelocityScalingFactor(1.0);
+      move_group_interface.setMaxAccelerationScalingFactor(1.0);
 
 
       move_group_interface.setPoseTarget(target_pose);
