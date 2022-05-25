@@ -306,9 +306,9 @@ int main(int argc, char** argv)
 
   primitive.type = primitive.BOX;
   primitive.dimensions.resize(3);
-  primitive.dimensions[primitive.BOX_X] = 0.5;
-  primitive.dimensions[primitive.BOX_Y] = 0.5;
-  primitive.dimensions[primitive.BOX_Z] = 0.45;
+  primitive.dimensions[primitive.BOX_X] = 0.58;
+  primitive.dimensions[primitive.BOX_Y] = 0.60;
+  primitive.dimensions[primitive.BOX_Z] = 0.54;
 
 
   geometry_msgs::Pose brick_pose;
@@ -338,7 +338,7 @@ int main(int argc, char** argv)
 
   cylinder_primitive.type = cylinder_primitive.CYLINDER;
   cylinder_primitive.dimensions.resize(2);
-  cylinder_primitive.dimensions[cylinder_primitive.CYLINDER_HEIGHT] = 0.26;
+  cylinder_primitive.dimensions[cylinder_primitive.CYLINDER_HEIGHT] = 0.257;
   cylinder_primitive.dimensions[cylinder_primitive.CYLINDER_RADIUS] = 0.04;
 
 
@@ -347,7 +347,7 @@ int main(int argc, char** argv)
   cylinder1_pose.orientation.w = 1.0;
   cylinder1_pose.position.x = 0.0968;
   cylinder1_pose.position.y = 0.4188;
-  cylinder1_pose.position.z = 0.225;
+  cylinder1_pose.position.z = 0.1285;
   collision_cylinder1.primitive_poses.push_back(cylinder1_pose);
 
 
