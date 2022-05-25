@@ -17,6 +17,8 @@
 #include <string.h>
 #include "arm_planner/StepPos.h"
 #include "arm_planner/FollowPos.h"
+#include "arm_planner/Cartesian.h"
+
 
 
 static int flag{0};
@@ -43,9 +45,14 @@ static std::vector<double> sample_waypoints;
 static bool step_pos_val{false};
 static int set_follow_pos{0};
 static const std::string PLANNING_GROUP = "arm";
-
+static geometry_msgs::Pose target_pose;
+static bool cartesian_val{false};
 // static moveit::planning_interface::MoveGroupInterface move_group_interface(PLANNING_GROUP);
 // static moveit::planning_interface::PlanningSceneInterface planning_scene_interface;
+static std::vector<geometry_msgs::Pose> cartesian_waypoints;
+static geometry_msgs::Pose target_pose_2;
+static double cartesian_x_pos{0.0}, cartesian_y_pos{0.0}, cartesian_z_pos{0.0};
+static bool increment_pos{0};
 
 
 
@@ -152,6 +159,25 @@ bool follow_pos_fn(arm_planner::FollowPos::Request &req, arm_planner::FollowPos:
   
 }
 
+bool cartesian_pos_fn(arm_planner::Cartesian::Request &req, arm_planner::Cartesian::Response &res){
+
+  cartesian_val = true;
+  cartesian_x_pos = req.cartesian_x;
+  cartesian_y_pos = req.cartesian_y;
+  cartesian_z_pos = req.cartesian_z;
+
+
+
+
+
+
+  return true;
+
+}
+
+
+
+
 
 int main(int argc, char** argv)
 {
@@ -175,6 +201,7 @@ int main(int argc, char** argv)
   ros::ServiceServer test_service = nh.advertiseService("test", test_fn);
   ros::ServiceServer follow_service = nh.advertiseService("follow", follow_fn);
   ros::ServiceServer follow_pos_service = nh.advertiseService("follow_pos", follow_pos_fn);
+  ros::ServiceServer cartesian_pos_service = nh.advertiseService("cartesian_pos", cartesian_pos_fn);
 
 
   //add planning group "arm"
@@ -268,9 +295,66 @@ int main(int argc, char** argv)
   collision_objects.push_back(ground_collision);
 
 
+  //table
+  moveit_msgs::CollisionObject collision_object;
   
 
+  collision_object.header.frame_id = "base_link";
+  collision_object.id = 3;
 
+  shape_msgs::SolidPrimitive primitive;
+
+  primitive.type = primitive.BOX;
+  primitive.dimensions.resize(3);
+  primitive.dimensions[primitive.BOX_X] = 0.5;
+  primitive.dimensions[primitive.BOX_Y] = 0.5;
+  primitive.dimensions[primitive.BOX_Z] = 0.45;
+
+
+  geometry_msgs::Pose brick_pose;
+
+  brick_pose.orientation.w = 1.0;
+  brick_pose.position.x = 0.0;
+  brick_pose.position.y = 0.565;
+  brick_pose.position.z = -0.225;
+  collision_object.primitive_poses.push_back(brick_pose);
+
+
+  
+  collision_object.primitives.push_back(primitive);
+  collision_object.operation = collision_object.ADD;
+  collision_objects.push_back(collision_object);
+
+
+
+  //cylinder
+  moveit_msgs::CollisionObject collision_cylinder1;
+  
+
+  collision_cylinder1.header.frame_id = "base_link";
+  collision_cylinder1.id = 4;
+
+  shape_msgs::SolidPrimitive cylinder_primitive;
+
+  cylinder_primitive.type = cylinder_primitive.CYLINDER;
+  cylinder_primitive.dimensions.resize(2);
+  cylinder_primitive.dimensions[cylinder_primitive.CYLINDER_HEIGHT] = 0.26;
+  cylinder_primitive.dimensions[cylinder_primitive.CYLINDER_RADIUS] = 0.04;
+
+
+  geometry_msgs::Pose cylinder1_pose;
+
+  cylinder1_pose.orientation.w = 1.0;
+  cylinder1_pose.position.x = 0.0968;
+  cylinder1_pose.position.y = 0.4188;
+  cylinder1_pose.position.z = 0.225;
+  collision_cylinder1.primitive_poses.push_back(cylinder1_pose);
+
+
+  
+  collision_cylinder1.primitives.push_back(cylinder_primitive);
+  collision_cylinder1.operation = collision_cylinder1.ADD;
+  collision_objects.push_back(collision_cylinder1);
 
   
 
@@ -557,7 +641,7 @@ int main(int argc, char** argv)
 
     //step service for pose goal
     if(step_pos_val == true){
-      geometry_msgs::Pose target_pose;
+      // geometry_msgs::Pose target_pose;
       target_pose.orientation.w = 1.0;
       target_pose.position.x = x_pos;
       target_pose.position.y = y_pos;
@@ -721,6 +805,40 @@ int main(int argc, char** argv)
 
           }
       set_follow_pos = 0;
+
+    }
+
+
+    if (cartesian_val == true){
+
+      // geometry_msgs::PoseStamped current_pose = move_group_interface.getCurrentPose();
+      move_group_interface.setStartStateToCurrentState();
+
+      
+      target_pose_2.position.x = target_pose.position.x;
+      target_pose_2.position.y = target_pose.position.y;
+      target_pose_2.position.z = target_pose.position.z;
+
+      std::cout << "get_current_pose_x: " << target_pose_2.position.x << std::endl;
+      std::cout << "get_current_pose_y: " << target_pose_2.position.y << std::endl;
+      std::cout << "get_current_pose_z: " << target_pose_2.position.z << std::endl;
+
+
+      target_pose_2.position.x -= cartesian_x_pos;
+      target_pose_2.position.y -= cartesian_y_pos;
+      target_pose_2.position.z -= cartesian_z_pos;
+      cartesian_waypoints.push_back(target_pose_2);
+
+      moveit_msgs::RobotTrajectory trajectory;
+      const double jump_threshold = 0.0;
+      const double eef_step = 0.01;
+      double fraction = move_group_interface.computeCartesianPath(cartesian_waypoints, eef_step, jump_threshold, trajectory);
+
+      move_group_interface.execute(trajectory);
+
+      cartesian_val = false;
+
+
 
     }
 

@@ -69,6 +69,7 @@ std_srvs
    FollowPos.srv
    Test.srv
    StepPos.srv
+   Cartesian.srv
  )
 
 ## Generate actions in the 'action' folder
