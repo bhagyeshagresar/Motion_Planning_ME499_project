@@ -18,6 +18,9 @@
 #include "arm_planner/StepPos.h"
 #include "arm_planner/FollowPos.h"
 #include "arm_planner/Cartesian.h"
+#include <tf2/LinearMath/Quaternion.h>
+#include <tf2_geometry_msgs/tf2_geometry_msgs.h>
+#include <tf2_ros/transform_listener.h>
 
 
 
@@ -37,20 +40,16 @@ static bool test_val{false};
 static std::vector <double> joints_seq;
 static std::vector <double> pos_seq;
 static double joint1{0.0}, joint2{0.0}, joint3{0.0}, joint4{0.0}, joint5{0.0}, joint6{0.0};
-static double x_pos{0.0}, y_pos{0.0}, z_pos{0.0}, w_pos{0.0};
+static double x_pos{0.0}, y_pos{0.0}, z_pos{0.0};
+static double roll{0.0}, pitch{0.0}, yaw{0.0};
 static bool gripper_req{false};
 static bool gripper_pos_req{false};
 static bool bool_param{false};
 static std::vector<double> sample_waypoints;
 static bool step_pos_val{false};
 static int set_follow_pos{0};
-static const std::string PLANNING_GROUP = "arm";
-static geometry_msgs::Pose target_pose;
 static bool cartesian_val{false};
-// static moveit::planning_interface::MoveGroupInterface move_group_interface(PLANNING_GROUP);
-// static moveit::planning_interface::PlanningSceneInterface planning_scene_interface;
 static std::vector<geometry_msgs::Pose> cartesian_waypoints;
-static geometry_msgs::Pose target_pose_2;
 static double cartesian_x_pos{0.0}, cartesian_y_pos{0.0}, cartesian_z_pos{0.0};
 static bool increment_pos{0};
 
@@ -130,7 +129,9 @@ bool step_pos_fn(arm_planner::StepPos::Request &req, arm_planner::StepPos::Respo
   x_pos = req.x;
   y_pos = req.y;
   z_pos = req.z;
-  w_pos = req.w;
+  roll = req.roll_angle;
+  pitch = req.pitch_angle;
+  yaw = req.yaw_angle;
   gripper_pos_req = req.gripper_pos_status;
 
 
@@ -165,11 +166,6 @@ bool cartesian_pos_fn(arm_planner::Cartesian::Request &req, arm_planner::Cartesi
   cartesian_x_pos = req.cartesian_x;
   cartesian_y_pos = req.cartesian_y;
   cartesian_z_pos = req.cartesian_z;
-
-
-
-
-
 
   return true;
 
@@ -315,7 +311,7 @@ int main(int argc, char** argv)
 
   brick_pose.orientation.w = 1.0;
   brick_pose.position.x = 0.0;
-  brick_pose.position.y = 0.565;
+  brick_pose.position.y = 0.57;
   brick_pose.position.z = -0.225;
   collision_object.primitive_poses.push_back(brick_pose);
 
@@ -345,8 +341,8 @@ int main(int argc, char** argv)
   geometry_msgs::Pose cylinder1_pose;
 
   cylinder1_pose.orientation.w = 1.0;
-  cylinder1_pose.position.x = 0.0968;
-  cylinder1_pose.position.y = 0.4188;
+  cylinder1_pose.position.x = 0.0;
+  cylinder1_pose.position.y = 0.38;
   cylinder1_pose.position.z = 0.1285;
   collision_cylinder1.primitive_poses.push_back(cylinder1_pose);
 
@@ -641,8 +637,10 @@ int main(int argc, char** argv)
 
     //step service for pose goal
     if(step_pos_val == true){
-      // geometry_msgs::Pose target_pose;
-      target_pose.orientation.w = 1.0;
+      geometry_msgs::Pose target_pose;
+      tf2::Quaternion orient_pose;
+      orient_pose.setRPY(roll, pitch, yaw);
+      target_pose.orientation = tf2::toMsg(orient_pose);
       target_pose.position.x = x_pos;
       target_pose.position.y = y_pos;
       target_pose.position.z = z_pos;
@@ -653,14 +651,14 @@ int main(int argc, char** argv)
       move_group_interface.setMaxAccelerationScalingFactor(1.0);
 
 
+      //check plan for target_pose
       move_group_interface.setPoseTarget(target_pose);
       moveit::planning_interface::MoveGroupInterface::Plan my_plan2;
-
       bool success = (move_group_interface.plan(my_plan2) == moveit::planning_interface::MoveItErrorCode::SUCCESS);
-      std::cout << "success: " << success << std::endl;
+      std::cout << "pos goal success: " << success << std::endl;
 
+     
 
-      
       if(success == true){
         std::cout << "pos success reached" << std::endl;
         move_group_interface.execute(my_plan2);
@@ -809,15 +807,19 @@ int main(int argc, char** argv)
     }
 
 
+
+
+    //Execute cartesian plan
     if (cartesian_val == true){
+      geometry_msgs::Pose target_pose_2;
 
       // geometry_msgs::PoseStamped current_pose = move_group_interface.getCurrentPose();
       move_group_interface.setStartStateToCurrentState();
 
       
-      target_pose_2.position.x = target_pose.position.x;
-      target_pose_2.position.y = target_pose.position.y;
-      target_pose_2.position.z = target_pose.position.z;
+      target_pose_2.position.x = target_pose_2.position.x;
+      target_pose_2.position.y = target_pose_2.position.y;
+      target_pose_2.position.z = target_pose_2.position.z;
 
       std::cout << "get_current_pose_x: " << target_pose_2.position.x << std::endl;
       std::cout << "get_current_pose_y: " << target_pose_2.position.y << std::endl;
