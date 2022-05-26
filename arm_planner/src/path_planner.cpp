@@ -323,7 +323,7 @@ int main(int argc, char** argv)
 
 
 
-  //cylinder
+  //cylinder1
   moveit_msgs::CollisionObject collision_cylinder1;
   
 
@@ -353,6 +353,155 @@ int main(int argc, char** argv)
   collision_objects.push_back(collision_cylinder1);
 
   
+
+  //cylinder2
+  moveit_msgs::CollisionObject collision_cylinder2;
+  
+
+  collision_cylinder2.header.frame_id = "base_link";
+  collision_cylinder2.id = 5;
+
+  shape_msgs::SolidPrimitive cylinder_primitive2;
+
+  cylinder_primitive2.type = cylinder_primitive2.CYLINDER;
+  cylinder_primitive2.dimensions.resize(2);
+  cylinder_primitive2.dimensions[cylinder_primitive2.CYLINDER_HEIGHT] = 0.257;
+  cylinder_primitive2.dimensions[cylinder_primitive2.CYLINDER_RADIUS] = 0.04;
+
+
+  geometry_msgs::Pose cylinder2_pose;
+
+  cylinder2_pose.orientation.w = 1.0;
+  cylinder2_pose.position.x = 0.2;
+  cylinder2_pose.position.y = 0.38;
+  cylinder2_pose.position.z = 0.1285;
+  collision_cylinder2.primitive_poses.push_back(cylinder2_pose);
+
+
+  
+  collision_cylinder2.primitives.push_back(cylinder_primitive2);
+  collision_cylinder2.operation = collision_cylinder2.ADD;
+  collision_objects.push_back(collision_cylinder2);
+
+
+  //cylinder3
+  moveit_msgs::CollisionObject collision_cylinder3;
+  
+
+  collision_cylinder3.header.frame_id = "base_link";
+  collision_cylinder3.id = 6;
+
+  shape_msgs::SolidPrimitive cylinder_primitive3;
+
+  cylinder_primitive3.type = cylinder_primitive3.CYLINDER;
+  cylinder_primitive3.dimensions.resize(2);
+  cylinder_primitive3.dimensions[cylinder_primitive3.CYLINDER_HEIGHT] = 0.257;
+  cylinder_primitive3.dimensions[cylinder_primitive3.CYLINDER_RADIUS] = 0.04;
+
+
+  geometry_msgs::Pose cylinder3_pose;
+
+  cylinder3_pose.orientation.w = 1.0;
+  cylinder3_pose.position.x = -0.2;
+  cylinder3_pose.position.y = 0.38;
+  cylinder3_pose.position.z = 0.1285;
+  collision_cylinder3.primitive_poses.push_back(cylinder3_pose);
+
+
+  
+  collision_cylinder3.primitives.push_back(cylinder_primitive3);
+  collision_cylinder3.operation = collision_cylinder3.ADD;
+  collision_objects.push_back(collision_cylinder3);
+
+
+  //cylinder4
+  moveit_msgs::CollisionObject collision_cylinder4;
+  
+
+  collision_cylinder4.header.frame_id = "base_link";
+  collision_cylinder4.id = 7;
+
+  shape_msgs::SolidPrimitive cylinder_primitive4;
+
+  cylinder_primitive4.type = cylinder_primitive4.CYLINDER;
+  cylinder_primitive4.dimensions.resize(2);
+  cylinder_primitive4.dimensions[cylinder_primitive4.CYLINDER_HEIGHT] = 0.257;
+  cylinder_primitive4.dimensions[cylinder_primitive4.CYLINDER_RADIUS] = 0.04;
+
+
+  geometry_msgs::Pose cylinder4_pose;
+
+  cylinder4_pose.orientation.w = 1.0;
+  cylinder4_pose.position.x = 0.0;
+  cylinder4_pose.position.y = 0.58;
+  cylinder4_pose.position.z = 0.1285;
+  collision_cylinder4.primitive_poses.push_back(cylinder4_pose);
+
+
+  
+  collision_cylinder4.primitives.push_back(cylinder_primitive4);
+  collision_cylinder4.operation = collision_cylinder4.ADD;
+  collision_objects.push_back(collision_cylinder4);
+
+
+  //cylinder5
+  moveit_msgs::CollisionObject collision_cylinder5;
+  
+
+  collision_cylinder5.header.frame_id = "base_link";
+  collision_cylinder5.id = 8;
+
+  shape_msgs::SolidPrimitive cylinder_primitive5;
+
+  cylinder_primitive5.type = cylinder_primitive5.CYLINDER;
+  cylinder_primitive5.dimensions.resize(2);
+  cylinder_primitive5.dimensions[cylinder_primitive5.CYLINDER_HEIGHT] = 0.257;
+  cylinder_primitive5.dimensions[cylinder_primitive5.CYLINDER_RADIUS] = 0.04;
+
+
+  geometry_msgs::Pose cylinder5_pose;
+
+  cylinder5_pose.orientation.w = 1.0;
+  cylinder5_pose.position.x = 0.2;
+  cylinder5_pose.position.y = 0.58;
+  cylinder5_pose.position.z = 0.1285;
+  collision_cylinder5.primitive_poses.push_back(cylinder5_pose);
+
+
+  
+  collision_cylinder5.primitives.push_back(cylinder_primitive5);
+  collision_cylinder5.operation = collision_cylinder5.ADD;
+  collision_objects.push_back(collision_cylinder5);
+
+
+  //cylinder6
+  moveit_msgs::CollisionObject collision_cylinder6;
+  
+
+  collision_cylinder6.header.frame_id = "base_link";
+  collision_cylinder6.id = 9;
+
+  shape_msgs::SolidPrimitive cylinder_primitive6;
+
+  cylinder_primitive6.type = cylinder_primitive6.CYLINDER;
+  cylinder_primitive6.dimensions.resize(2);
+  cylinder_primitive6.dimensions[cylinder_primitive6.CYLINDER_HEIGHT] = 0.257;
+  cylinder_primitive6.dimensions[cylinder_primitive6.CYLINDER_RADIUS] = 0.04;
+
+
+  geometry_msgs::Pose cylinder6_pose;
+
+  cylinder6_pose.orientation.w = 1.0;
+  cylinder6_pose.position.x = -0.2;
+  cylinder6_pose.position.y = 0.58;
+  cylinder6_pose.position.z = 0.1285;
+  collision_cylinder6.primitive_poses.push_back(cylinder6_pose);
+
+
+  
+  collision_cylinder6.primitives.push_back(cylinder_primitive6);
+  collision_cylinder6.operation = collision_cylinder6.ADD;
+  collision_objects.push_back(collision_cylinder6);
 
 
   //Add objects to planning scene
