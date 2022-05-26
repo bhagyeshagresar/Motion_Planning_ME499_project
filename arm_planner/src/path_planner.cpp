@@ -343,7 +343,7 @@ int main(int argc, char** argv)
   cylinder1_pose.orientation.w = 1.0;
   cylinder1_pose.position.x = 0.0;
   cylinder1_pose.position.y = 0.38;
-  cylinder1_pose.position.z = 0.1285;
+  cylinder1_pose.position.z = 0.1735;
   collision_cylinder1.primitive_poses.push_back(cylinder1_pose);
 
 
@@ -374,7 +374,7 @@ int main(int argc, char** argv)
   cylinder2_pose.orientation.w = 1.0;
   cylinder2_pose.position.x = 0.2;
   cylinder2_pose.position.y = 0.38;
-  cylinder2_pose.position.z = 0.1285;
+  cylinder2_pose.position.z = 0.1735;
   collision_cylinder2.primitive_poses.push_back(cylinder2_pose);
 
 
@@ -404,7 +404,7 @@ int main(int argc, char** argv)
   cylinder3_pose.orientation.w = 1.0;
   cylinder3_pose.position.x = -0.2;
   cylinder3_pose.position.y = 0.38;
-  cylinder3_pose.position.z = 0.1285;
+  cylinder3_pose.position.z = 0.1735;
   collision_cylinder3.primitive_poses.push_back(cylinder3_pose);
 
 
@@ -434,7 +434,7 @@ int main(int argc, char** argv)
   cylinder4_pose.orientation.w = 1.0;
   cylinder4_pose.position.x = 0.0;
   cylinder4_pose.position.y = 0.58;
-  cylinder4_pose.position.z = 0.1285;
+  cylinder4_pose.position.z = 0.1735;
   collision_cylinder4.primitive_poses.push_back(cylinder4_pose);
 
 
@@ -464,7 +464,7 @@ int main(int argc, char** argv)
   cylinder5_pose.orientation.w = 1.0;
   cylinder5_pose.position.x = 0.2;
   cylinder5_pose.position.y = 0.58;
-  cylinder5_pose.position.z = 0.1285;
+  cylinder5_pose.position.z = 0.1735;
   collision_cylinder5.primitive_poses.push_back(cylinder5_pose);
 
 
@@ -494,7 +494,7 @@ int main(int argc, char** argv)
   cylinder6_pose.orientation.w = 1.0;
   cylinder6_pose.position.x = -0.2;
   cylinder6_pose.position.y = 0.58;
-  cylinder6_pose.position.z = 0.1285;
+  cylinder6_pose.position.z = 0.1735;
   collision_cylinder6.primitive_poses.push_back(cylinder6_pose);
 
 
