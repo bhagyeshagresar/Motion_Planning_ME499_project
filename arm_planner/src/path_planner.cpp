@@ -268,27 +268,27 @@ int main(int argc, char** argv)
 
 
  //Add Ground
-  moveit_msgs::CollisionObject ground_collision;
-  ground_collision.header.frame_id = "base_link";
-  ground_collision.id = 2;
+  // moveit_msgs::CollisionObject ground_collision;
+  // ground_collision.header.frame_id = "base_link";
+  // ground_collision.id = 2;
   
-  shape_msgs::SolidPrimitive ground;
-  ground.type = ground.BOX;
-  ground.dimensions.resize(3);
-  ground.dimensions[ground.BOX_X] = 2.0;
-  ground.dimensions[ground.BOX_Y] = 2.0;
-  ground.dimensions[ground.BOX_Z] = 0.001;
+  // shape_msgs::SolidPrimitive ground;
+  // ground.type = ground.BOX;
+  // ground.dimensions.resize(3);
+  // ground.dimensions[ground.BOX_X] = 2.0;
+  // ground.dimensions[ground.BOX_Y] = 2.0;
+  // ground.dimensions[ground.BOX_Z] = 0.001;
 
-  geometry_msgs::Pose ground_pose;
-  ground_pose.orientation.w = 1.0;
-  ground_pose.position.x = 0.0;
-  ground_pose.position.y = 0.0;
-  ground_pose.position.z = -0.45;
-  ground_collision.primitive_poses.push_back(ground_pose);
+  // geometry_msgs::Pose ground_pose;
+  // ground_pose.orientation.w = 1.0;
+  // ground_pose.position.x = 0.0;
+  // ground_pose.position.y = 0.0;
+  // ground_pose.position.z = -0.45;
+  // ground_collision.primitive_poses.push_back(ground_pose);
 
-  ground_collision.primitives.push_back(ground);
-  ground_collision.operation = ground_collision.ADD;
-  collision_objects.push_back(ground_collision);
+  // ground_collision.primitives.push_back(ground);
+  // ground_collision.operation = ground_collision.ADD;
+  // collision_objects.push_back(ground_collision);
 
 
   //table
@@ -303,7 +303,7 @@ int main(int argc, char** argv)
   primitive.type = primitive.BOX;
   primitive.dimensions.resize(3);
   primitive.dimensions[primitive.BOX_X] = 0.58;
-  primitive.dimensions[primitive.BOX_Y] = 0.60;
+  primitive.dimensions[primitive.BOX_Y] = 0.7;
   primitive.dimensions[primitive.BOX_Z] = 0.54;
 
 
