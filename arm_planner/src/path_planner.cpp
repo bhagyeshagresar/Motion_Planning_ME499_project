@@ -174,12 +174,12 @@ bool cartesian_pos_fn(arm_planner::Cartesian::Request &req, arm_planner::Cartesi
 bool attach_obj_fn(arm_planner::Attach::Request &req, arm_planner::Attach::Response &res){
   
   attach_obj_val = true;
-  obj_x = req.x_obj;
-  obj_y = req.y_obj;
-  obj_z = req.z_obj;
-  obj_roll = req.roll_angle_obj;
-  obj_pitch = req.pitch_angle_obj;
-  obj_yaw = req.yaw_angle_obj;
+  // obj_x = req.x_obj;
+  // obj_y = req.y_obj;
+  // obj_z = req.z_obj;
+  // obj_roll = req.roll_angle_obj;
+  // obj_pitch = req.pitch_angle_obj;
+  // obj_yaw = req.yaw_angle_obj;
   obj_gripper = req.gripper_obj;
 
   return true;
@@ -534,8 +534,8 @@ int main(int argc, char** argv)
     //call gripper open service
     if (flag == 1){
       std_msgs::Float64 msg;
-      msg.data = 0.8;
-      std::cout << "gripper openeed" << std::endl;
+      msg.data = 0.45;
+      std::cout << "gripper closed" << std::endl;
       pub.publish(msg);
       flag = 0;
 
@@ -544,8 +544,8 @@ int main(int argc, char** argv)
     //call gripper close service
     if (flag == 2){
       std_msgs::Float64 msg;
-      msg.data = 0.1;
-      std::cout << "gripper closed" << std::endl;
+      msg.data = 0.9;
+      std::cout << "gripper open" << std::endl;
       pub.publish(msg);
       flag = 0;
     }
@@ -633,14 +633,14 @@ int main(int argc, char** argv)
         if(gripper_req == true){
           std_msgs::Float64 msg;
           msg.data = 0.8;
-          std::cout << "gripper openeed" << std::endl;
+          std::cout << "gripper closed" << std::endl;
           pub.publish(msg);
         }
         
         else{
           std_msgs::Float64 msg;
-          msg.data = 0.1;
-          std::cout << "gripper closed" << std::endl;
+          msg.data = 0.9;
+          std::cout << "gripper open" << std::endl;
           pub.publish(msg);
         
         
@@ -854,15 +854,15 @@ int main(int argc, char** argv)
 
         if(gripper_pos_req == true){
           std_msgs::Float64 msg;
-          msg.data = 0.8;
-          std::cout << "gripper openeed" << std::endl;
+          msg.data = 0.45;
+          std::cout << "gripper closed" << std::endl;
           pub.publish(msg);
         }
         
         else{
           std_msgs::Float64 msg;
-          msg.data = 0.1;
-          std::cout << "gripper closed" << std::endl;
+          msg.data = 0.9;
+          std::cout << "gripper open" << std::endl;
           pub.publish(msg);
         
         
@@ -1017,17 +1017,37 @@ int main(int argc, char** argv)
       obj.header.frame_id = move_group_interface.getEndEffectorLink();
       
       
-      geometry_msgs::Pose grab_pose;
-      tf2::Quaternion orient_grab_pose;
-      orient_grab_pose.setRPY(obj_roll, obj_pitch, obj_yaw);
-      grab_pose.orientation = tf2::toMsg(orient_grab_pose);
-      grab_pose.position.x = obj_x;
-      grab_pose.position.y = obj_y;
-      grab_pose.position.z = obj_z;
+      // geometry_msgs::Pose grab_pose;
+      // tf2::Quaternion orient_grab_pose;
+      // orient_grab_pose.setRPY(obj_roll, obj_pitch, obj_yaw);
+      // grab_pose.orientation = tf2::toMsg(orient_grab_pose);
+      // grab_pose.position.x = obj_x;
+      // grab_pose.position.y = obj_y;
+      // grab_pose.position.z = obj_z;
 
 
 
-     
+      // move_group_interface.attachObject(obj.id);
+
+      if(obj_gripper == true){
+        std_msgs::Float64 msg;
+        msg.data = 0.45;
+        std::cout << "gripper closed" << std::endl;
+        pub.publish(msg);
+
+      }
+      else{
+        std_msgs::Float64 msg;
+        msg.data = 0.9;
+        std::cout << "gripper open" << std::endl;
+        pub.publish(msg);
+
+      }
+
+      move_group_interface.attachObject(obj.id);
+
+
+
 
       attach_obj_val = false;
 
