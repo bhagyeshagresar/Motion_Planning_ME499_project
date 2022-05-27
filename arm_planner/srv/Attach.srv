@@ -1,0 +1,8 @@
+float64 x_obj
+float64 y_obj
+float64 z_obj
+float64 roll_angle_obj
+float64 pitch_angle_obj
+float64 yaw_angle_obj
+bool gripper_obj
+---

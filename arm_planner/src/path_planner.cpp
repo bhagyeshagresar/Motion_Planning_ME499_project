@@ -13,6 +13,7 @@
 #include "arm_planner/Step.h"
 #include "arm_planner/Follow.h"
 #include "arm_planner/Test.h"
+#include "arm_planner/Attach.h"
 #include <math.h>
 #include <string.h>
 #include "arm_planner/StepPos.h"
@@ -52,9 +53,9 @@ static bool cartesian_val{false};
 static std::vector<geometry_msgs::Pose> cartesian_waypoints;
 static double cartesian_x_pos{0.0}, cartesian_y_pos{0.0}, cartesian_z_pos{0.0};
 static bool increment_pos{0};
-
-
-
+static bool attach_obj_val{false};
+static double obj_x{0.0}, obj_y{0.0}, obj_z{0.0}, obj_roll{0.0}, obj_pitch{0.0}, obj_yaw{0.0};
+static bool obj_gripper{false};
 
 
 
@@ -144,7 +145,6 @@ bool step_pos_fn(arm_planner::StepPos::Request &req, arm_planner::StepPos::Respo
 
 
 
-
 bool follow_fn(arm_planner::Follow::Request &req, arm_planner::Follow::Response &res){
 
   set_follow = req.follow;
@@ -171,6 +171,20 @@ bool cartesian_pos_fn(arm_planner::Cartesian::Request &req, arm_planner::Cartesi
 
 }
 
+bool attach_obj_fn(arm_planner::Attach::Request &req, arm_planner::Attach::Response &res){
+  
+  attach_obj_val = true;
+  obj_x = req.x_obj;
+  obj_y = req.y_obj;
+  obj_z = req.z_obj;
+  obj_roll = req.roll_angle_obj;
+  obj_pitch = req.pitch_angle_obj;
+  obj_yaw = req.yaw_angle_obj;
+  obj_gripper = req.gripper_obj;
+
+  return true;
+
+}
 
 
 
@@ -198,7 +212,7 @@ int main(int argc, char** argv)
   ros::ServiceServer follow_service = nh.advertiseService("follow", follow_fn);
   ros::ServiceServer follow_pos_service = nh.advertiseService("follow_pos", follow_pos_fn);
   ros::ServiceServer cartesian_pos_service = nh.advertiseService("cartesian_pos", cartesian_pos_fn);
-
+  ros::ServiceServer attach_obj_service = nh.advertiseService("attach_obj", attach_obj_fn);
 
   //add planning group "arm"
   static const std::string PLANNING_GROUP = "arm";
@@ -328,7 +342,7 @@ int main(int argc, char** argv)
   
 
   collision_cylinder1.header.frame_id = "base_link";
-  collision_cylinder1.id = 4;
+  collision_cylinder1.id = "cylinder";
 
   shape_msgs::SolidPrimitive cylinder_primitive;
 
@@ -992,6 +1006,35 @@ int main(int argc, char** argv)
 
 
     }
+
+    if(attach_obj_val == true){
+      
+      moveit_msgs::CollisionObject obj;
+
+      obj.id = "cylinder";
+
+      //define frame pose for the gripper
+      obj.header.frame_id = move_group_interface.getEndEffectorLink();
+      
+      
+      geometry_msgs::Pose grab_pose;
+      tf2::Quaternion orient_grab_pose;
+      orient_grab_pose.setRPY(obj_roll, obj_pitch, obj_yaw);
+      grab_pose.orientation = tf2::toMsg(orient_grab_pose);
+      grab_pose.position.x = obj_x;
+      grab_pose.position.y = obj_y;
+      grab_pose.position.z = obj_z;
+
+
+
+     
+
+      attach_obj_val = false;
+
+
+    }
+
+
 
 
 

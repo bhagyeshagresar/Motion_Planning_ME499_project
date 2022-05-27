@@ -70,6 +70,7 @@ std_srvs
    Test.srv
    StepPos.srv
    Cartesian.srv
+   Attach.srv
  )
 
 ## Generate actions in the 'action' folder
