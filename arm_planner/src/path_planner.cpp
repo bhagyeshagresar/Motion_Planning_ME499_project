@@ -56,6 +56,8 @@ static bool increment_pos{0};
 static bool attach_obj_val{false};
 static double obj_x{0.0}, obj_y{0.0}, obj_z{0.0}, obj_roll{0.0}, obj_pitch{0.0}, obj_yaw{0.0};
 static bool obj_gripper{false};
+static bool detach_obj_val{false};
+
 
 
 
@@ -171,18 +173,21 @@ bool cartesian_pos_fn(arm_planner::Cartesian::Request &req, arm_planner::Cartesi
 
 }
 
+
+
 bool attach_obj_fn(arm_planner::Attach::Request &req, arm_planner::Attach::Response &res){
-  
   attach_obj_val = true;
-  // obj_x = req.x_obj;
-  // obj_y = req.y_obj;
-  // obj_z = req.z_obj;
-  // obj_roll = req.roll_angle_obj;
-  // obj_pitch = req.pitch_angle_obj;
-  // obj_yaw = req.yaw_angle_obj;
-  obj_gripper = req.gripper_obj;
 
   return true;
+
+}
+
+
+
+bool detach_obj_fn(arm_planner::Detach::Request &req, arm_planner::Attach::Response &res){
+  detach_obj_val = true;
+  return true;
+
 
 }
 
@@ -213,6 +218,7 @@ int main(int argc, char** argv)
   ros::ServiceServer follow_pos_service = nh.advertiseService("follow_pos", follow_pos_fn);
   ros::ServiceServer cartesian_pos_service = nh.advertiseService("cartesian_pos", cartesian_pos_fn);
   ros::ServiceServer attach_obj_service = nh.advertiseService("attach_obj", attach_obj_fn);
+  ros::ServiceServer detach_obj_service = nh.advertiseService("detach_obj", detach_obj_fn);
 
   //add planning group "arm"
   static const std::string PLANNING_GROUP = "arm";
@@ -238,10 +244,8 @@ int main(int argc, char** argv)
   
 
   std::string default_planner_id = move_group_interface.getPlannerId();
-  // std::string def_planning_pipe_id = move_group_interface.getPlanningPipelineId();
 
   std::cout << "default planner id: " << default_planner_id << std::endl;
-  // std::cout << "default planning pipeline id: %s" << def_planning_pipe_id << std::endl;
 
 
 
@@ -1017,33 +1021,13 @@ int main(int argc, char** argv)
       obj.header.frame_id = move_group_interface.getEndEffectorLink();
       
       
-      // geometry_msgs::Pose grab_pose;
-      // tf2::Quaternion orient_grab_pose;
-      // orient_grab_pose.setRPY(obj_roll, obj_pitch, obj_yaw);
-      // grab_pose.orientation = tf2::toMsg(orient_grab_pose);
-      // grab_pose.position.x = obj_x;
-      // grab_pose.position.y = obj_y;
-      // grab_pose.position.z = obj_z;
+      
+      std_msgs::Float64 msg;
+      msg.data = 0.4;
+      std::cout << "gripper closed" << std::endl;
+      pub.publish(msg);
 
-
-
-      // move_group_interface.attachObject(obj.id);
-
-      if(obj_gripper == true){
-        std_msgs::Float64 msg;
-        msg.data = 0.4;
-        std::cout << "gripper closed" << std::endl;
-        pub.publish(msg);
-
-      }
-      else{
-        std_msgs::Float64 msg;
-        msg.data = 0.9;
-        std::cout << "gripper open" << std::endl;
-        pub.publish(msg);
-
-      }
-
+      
       std::vector <std::string> touch_links;
       std::string link1 = "pincerfinger_left_link";
       std::string link2 = "pincerfinger_right_link";
@@ -1056,6 +1040,28 @@ int main(int argc, char** argv)
 
       attach_obj_val = false;
 
+
+    }
+
+
+    if(detach_obj_val == true){
+      
+      moveit_msgs::CollisionObject detach_obj;
+
+      detach_obj.id = "cylinder";
+
+      //define frame pose for the gripper
+      // detach_obj.header.frame_id = move_group_interface.getEndEffectorLink();
+      
+      
+      
+      std_msgs::Float64 msg;
+      msg.data = 0.9;
+      std::cout << "gripper open" << std::endl;
+      pub.publish(msg);
+
+      move_group_interface.detachObject(detach_obj.id);
+      
 
     }
 
