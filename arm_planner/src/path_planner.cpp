@@ -56,7 +56,6 @@ static double cartesian_x_pos{0.0}, cartesian_y_pos{0.0}, cartesian_z_pos{0.0};
 static bool increment_pos{0};
 static bool attach_obj_val{false};
 static double obj_x{0.0}, obj_y{0.0}, obj_z{0.0}, obj_roll{0.0}, obj_pitch{0.0}, obj_yaw{0.0};
-static bool obj_gripper{false};
 static bool detach_obj_val{false};
 
 
@@ -176,13 +175,7 @@ bool cartesian_pos_fn(arm_planner::Cartesian::Request &req, arm_planner::Cartesi
 bool attach_obj_fn(arm_planner::Attach::Request &req, arm_planner::Attach::Response &res){
   
   attach_obj_val = true;
-  // obj_x = req.x_obj;
-  // obj_y = req.y_obj;
-  // obj_z = req.z_obj;
-  // obj_roll = req.roll_angle_obj;
-  // obj_pitch = req.pitch_angle_obj;
-  // obj_yaw = req.yaw_angle_obj;
-  obj_gripper = req.gripper_obj;
+ 
 
   return true;
 
@@ -334,7 +327,7 @@ int main(int argc, char** argv)
   brick_pose.orientation.w = 1.0;
   brick_pose.position.x = 0.0;
   brick_pose.position.y = 0.57;
-  brick_pose.position.z = -0.1735;
+  brick_pose.position.z = -0.2125;
   collision_object.primitive_poses.push_back(brick_pose);
 
 
@@ -356,7 +349,7 @@ int main(int argc, char** argv)
 
   cylinder_primitive.type = cylinder_primitive.CYLINDER;
   cylinder_primitive.dimensions.resize(2);
-  cylinder_primitive.dimensions[cylinder_primitive.CYLINDER_HEIGHT] = 0.257;
+  cylinder_primitive.dimensions[cylinder_primitive.CYLINDER_HEIGHT] = 0.335;
   cylinder_primitive.dimensions[cylinder_primitive.CYLINDER_RADIUS] = 0.04;
 
 
@@ -387,7 +380,7 @@ int main(int argc, char** argv)
 
   cylinder_primitive2.type = cylinder_primitive2.CYLINDER;
   cylinder_primitive2.dimensions.resize(2);
-  cylinder_primitive2.dimensions[cylinder_primitive2.CYLINDER_HEIGHT] = 0.257;
+  cylinder_primitive2.dimensions[cylinder_primitive2.CYLINDER_HEIGHT] = 0.335;
   cylinder_primitive2.dimensions[cylinder_primitive2.CYLINDER_RADIUS] = 0.04;
 
 
@@ -417,7 +410,7 @@ int main(int argc, char** argv)
 
   cylinder_primitive3.type = cylinder_primitive3.CYLINDER;
   cylinder_primitive3.dimensions.resize(2);
-  cylinder_primitive3.dimensions[cylinder_primitive3.CYLINDER_HEIGHT] = 0.257;
+  cylinder_primitive3.dimensions[cylinder_primitive3.CYLINDER_HEIGHT] = 0.335;
   cylinder_primitive3.dimensions[cylinder_primitive3.CYLINDER_RADIUS] = 0.04;
 
 
@@ -456,7 +449,7 @@ int main(int argc, char** argv)
   cylinder4_pose.orientation.w = 1.0;
   cylinder4_pose.position.x = 0.0;
   cylinder4_pose.position.y = 0.58;
-  cylinder4_pose.position.z = 0.225;
+  cylinder4_pose.position.z = 0.186;
   collision_cylinder4.primitive_poses.push_back(cylinder4_pose);
 
 
@@ -486,7 +479,7 @@ int main(int argc, char** argv)
   cylinder5_pose.orientation.w = 1.0;
   cylinder5_pose.position.x = 0.2;
   cylinder5_pose.position.y = 0.58;
-  cylinder5_pose.position.z = 0.225;
+  cylinder5_pose.position.z = 0.186;
   collision_cylinder5.primitive_poses.push_back(cylinder5_pose);
 
 
@@ -516,7 +509,7 @@ int main(int argc, char** argv)
   cylinder6_pose.orientation.w = 1.0;
   cylinder6_pose.position.x = -0.2;
   cylinder6_pose.position.y = 0.58;
-  cylinder6_pose.position.z = 0.225;
+  cylinder6_pose.position.z = 0.186;
   collision_cylinder6.primitive_poses.push_back(cylinder6_pose);
 
 
@@ -1024,33 +1017,12 @@ int main(int argc, char** argv)
       //define frame pose for the gripper
       obj.header.frame_id = move_group_interface.getEndEffectorLink();
       
-      
-      // geometry_msgs::Pose grab_pose;
-      // tf2::Quaternion orient_grab_pose;
-      // orient_grab_pose.setRPY(obj_roll, obj_pitch, obj_yaw);
-      // grab_pose.orientation = tf2::toMsg(orient_grab_pose);
-      // grab_pose.position.x = obj_x;
-      // grab_pose.position.y = obj_y;
-      // grab_pose.position.z = obj_z;
-
-
-
-      // move_group_interface.attachObject(obj.id);
-
-      if(obj_gripper == true){
-        std_msgs::Float64 msg;
-        msg.data = 0.4;
-        std::cout << "gripper closed" << std::endl;
-        pub.publish(msg);
-
-      }
-      else{
-        std_msgs::Float64 msg;
-        msg.data = 0.9;
-        std::cout << "gripper open" << std::endl;
-        pub.publish(msg);
-
-      }
+     
+      std_msgs::Float64 msg;
+      msg.data = 0.4;
+      std::cout << "gripper closed" << std::endl;
+      pub.publish(msg);
+    
 
       std::vector <std::string> touch_links;
       std::string link1 = "pincerfinger_left_link";
