@@ -534,7 +534,7 @@ int main(int argc, char** argv)
     //call gripper open service
     if (flag == 1){
       std_msgs::Float64 msg;
-      msg.data = 0.45;
+      msg.data = 0.4;
       std::cout << "gripper closed" << std::endl;
       pub.publish(msg);
       flag = 0;
@@ -854,7 +854,7 @@ int main(int argc, char** argv)
 
         if(gripper_pos_req == true){
           std_msgs::Float64 msg;
-          msg.data = 0.45;
+          msg.data = 0.4;
           std::cout << "gripper closed" << std::endl;
           pub.publish(msg);
         }
@@ -1031,7 +1031,7 @@ int main(int argc, char** argv)
 
       if(obj_gripper == true){
         std_msgs::Float64 msg;
-        msg.data = 0.45;
+        msg.data = 0.4;
         std::cout << "gripper closed" << std::endl;
         pub.publish(msg);
 
@@ -1044,7 +1044,12 @@ int main(int argc, char** argv)
 
       }
 
-      move_group_interface.attachObject(obj.id);
+      std::vector <std::string> touch_links;
+      std::string link1 = "pincerfinger_left_link";
+      std::string link2 = "pincerfinger_right_link";
+      touch_links.push_back(link1);
+      touch_links.push_back(link2);
+      move_group_interface.attachObject(obj.id, "endpoint_link", touch_links);
 
 
 
