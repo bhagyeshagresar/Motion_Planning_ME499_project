@@ -327,7 +327,7 @@ int main(int argc, char** argv)
   brick_pose.orientation.w = 1.0;
   brick_pose.position.x = 0.0;
   brick_pose.position.y = 0.57;
-  brick_pose.position.z = -0.2125;
+  brick_pose.position.z = -0.18;
   collision_object.primitive_poses.push_back(brick_pose);
 
 
@@ -358,7 +358,7 @@ int main(int argc, char** argv)
   cylinder1_pose.orientation.w = 1.0;
   cylinder1_pose.position.x = 0.0;
   cylinder1_pose.position.y = 0.38;
-  cylinder1_pose.position.z = 0.225;
+  cylinder1_pose.position.z = 0.2575;
   collision_cylinder1.primitive_poses.push_back(cylinder1_pose);
 
 
@@ -387,9 +387,9 @@ int main(int argc, char** argv)
   geometry_msgs::Pose cylinder2_pose;
 
   cylinder2_pose.orientation.w = 1.0;
-  cylinder2_pose.position.x = 0.2;
+  cylinder2_pose.position.x = 0.15;
   cylinder2_pose.position.y = 0.38;
-  cylinder2_pose.position.z = 0.225;
+  cylinder2_pose.position.z = 0.2575;
   collision_cylinder2.primitive_poses.push_back(cylinder2_pose);
 
 
@@ -417,9 +417,9 @@ int main(int argc, char** argv)
   geometry_msgs::Pose cylinder3_pose;
 
   cylinder3_pose.orientation.w = 1.0;
-  cylinder3_pose.position.x = -0.2;
+  cylinder3_pose.position.x = -0.15;
   cylinder3_pose.position.y = 0.38;
-  cylinder3_pose.position.z = 0.225;
+  cylinder3_pose.position.z = 0.2575;
   collision_cylinder3.primitive_poses.push_back(cylinder3_pose);
 
 
@@ -449,7 +449,7 @@ int main(int argc, char** argv)
   cylinder4_pose.orientation.w = 1.0;
   cylinder4_pose.position.x = 0.0;
   cylinder4_pose.position.y = 0.58;
-  cylinder4_pose.position.z = 0.186;
+  cylinder4_pose.position.z = 0.2185;
   collision_cylinder4.primitive_poses.push_back(cylinder4_pose);
 
 
@@ -477,9 +477,9 @@ int main(int argc, char** argv)
   geometry_msgs::Pose cylinder5_pose;
 
   cylinder5_pose.orientation.w = 1.0;
-  cylinder5_pose.position.x = 0.2;
+  cylinder5_pose.position.x = 0.15;
   cylinder5_pose.position.y = 0.58;
-  cylinder5_pose.position.z = 0.186;
+  cylinder5_pose.position.z = 0.2185;
   collision_cylinder5.primitive_poses.push_back(cylinder5_pose);
 
 
@@ -507,9 +507,9 @@ int main(int argc, char** argv)
   geometry_msgs::Pose cylinder6_pose;
 
   cylinder6_pose.orientation.w = 1.0;
-  cylinder6_pose.position.x = -0.2;
+  cylinder6_pose.position.x = -0.15;
   cylinder6_pose.position.y = 0.58;
-  cylinder6_pose.position.z = 0.186;
+  cylinder6_pose.position.z = 0.2185;
   collision_cylinder6.primitive_poses.push_back(cylinder6_pose);
 
 
@@ -535,7 +535,7 @@ int main(int argc, char** argv)
     //call gripper open service
     if (flag == 1){
       std_msgs::Float64 msg;
-      msg.data = 0.4;
+      msg.data = 0.3;
       std::cout << "gripper closed" << std::endl;
       pub.publish(msg);
       flag = 0;
@@ -855,7 +855,7 @@ int main(int argc, char** argv)
 
         if(gripper_pos_req == true){
           std_msgs::Float64 msg;
-          msg.data = 0.4;
+          msg.data = 0.3;
           std::cout << "gripper closed" << std::endl;
           pub.publish(msg);
         }
@@ -1019,7 +1019,7 @@ int main(int argc, char** argv)
       
      
       std_msgs::Float64 msg;
-      msg.data = 0.4;
+      msg.data = 0.3;
       std::cout << "gripper closed" << std::endl;
       pub.publish(msg);
     
