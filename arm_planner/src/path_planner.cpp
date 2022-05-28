@@ -7,6 +7,7 @@
 #include <moveit_visual_tools/moveit_visual_tools.h>
 #include <ros/ros.h>
 #include "std_msgs/Float64.h"
+#include <std_msgs/String.h>
 #include "arm_planner/Gripper.h"
 #include <std_srvs/Empty.h>
 #include "arm_planner/Reset.h"
@@ -57,8 +58,8 @@ static bool increment_pos{0};
 static bool attach_obj_val{false};
 static double obj_x{0.0}, obj_y{0.0}, obj_z{0.0}, obj_roll{0.0}, obj_pitch{0.0}, obj_yaw{0.0};
 static bool detach_obj_val{false};
-
-
+static std::string cylinder_id;
+static std::string cylinder_id_2;
 
 bool reset_fn(arm_planner::Reset::Request &req, arm_planner::Reset::Response &res){
 
@@ -175,6 +176,8 @@ bool cartesian_pos_fn(arm_planner::Cartesian::Request &req, arm_planner::Cartesi
 bool attach_obj_fn(arm_planner::Attach::Request &req, arm_planner::Attach::Response &res){
   
   attach_obj_val = true;
+  cylinder_id = req.cylinder_name;
+
  
 
   return true;
@@ -184,6 +187,7 @@ bool attach_obj_fn(arm_planner::Attach::Request &req, arm_planner::Attach::Respo
 
 bool detach_obj_fn(arm_planner::Detach::Request &req, arm_planner::Detach::Response &res){
   detach_obj_val = true;
+  cylinder_id_2 = req.cylinder_name_2;
   return true;
 }
 
@@ -343,7 +347,7 @@ int main(int argc, char** argv)
   
 
   collision_cylinder1.header.frame_id = "base_link";
-  collision_cylinder1.id = "cylinder";
+  collision_cylinder1.id = "1";
 
   shape_msgs::SolidPrimitive cylinder_primitive;
 
@@ -374,7 +378,7 @@ int main(int argc, char** argv)
   
 
   collision_cylinder2.header.frame_id = "base_link";
-  collision_cylinder2.id = 5;
+  collision_cylinder2.id = "2";
 
   shape_msgs::SolidPrimitive cylinder_primitive2;
 
@@ -404,8 +408,7 @@ int main(int argc, char** argv)
   
 
   collision_cylinder3.header.frame_id = "base_link";
-  collision_cylinder3.id = 6;
-
+  collision_cylinder3.id = "3";
   shape_msgs::SolidPrimitive cylinder_primitive3;
 
   cylinder_primitive3.type = cylinder_primitive3.CYLINDER;
@@ -434,7 +437,7 @@ int main(int argc, char** argv)
   
 
   collision_cylinder4.header.frame_id = "base_link";
-  collision_cylinder4.id = 7;
+  collision_cylinder4.id = "4";
 
   shape_msgs::SolidPrimitive cylinder_primitive4;
 
@@ -464,7 +467,7 @@ int main(int argc, char** argv)
   
 
   collision_cylinder5.header.frame_id = "base_link";
-  collision_cylinder5.id = 8;
+  collision_cylinder5.id = "5";
 
   shape_msgs::SolidPrimitive cylinder_primitive5;
 
@@ -494,7 +497,7 @@ int main(int argc, char** argv)
   
 
   collision_cylinder6.header.frame_id = "base_link";
-  collision_cylinder6.id = 9;
+  collision_cylinder6.id = "6";
 
   shape_msgs::SolidPrimitive cylinder_primitive6;
 
@@ -545,7 +548,7 @@ int main(int argc, char** argv)
     //call gripper close service
     if (flag == 2){
       std_msgs::Float64 msg;
-      msg.data = 0.9;
+      msg.data = 0.8;
       std::cout << "gripper open" << std::endl;
       pub.publish(msg);
       flag = 0;
@@ -633,14 +636,14 @@ int main(int argc, char** argv)
 
         if(gripper_req == true){
           std_msgs::Float64 msg;
-          msg.data = 0.8;
+          msg.data = 0.3;
           std::cout << "gripper closed" << std::endl;
           pub.publish(msg);
         }
         
         else{
           std_msgs::Float64 msg;
-          msg.data = 0.9;
+          msg.data = 0.8;
           std::cout << "gripper open" << std::endl;
           pub.publish(msg);
         
@@ -862,7 +865,7 @@ int main(int argc, char** argv)
         
         else{
           std_msgs::Float64 msg;
-          msg.data = 0.9;
+          msg.data = 0.8;
           std::cout << "gripper open" << std::endl;
           pub.publish(msg);
         
@@ -1012,7 +1015,7 @@ int main(int argc, char** argv)
       
       moveit_msgs::CollisionObject obj;
 
-      obj.id = "cylinder";
+      obj.id = cylinder_id;
 
       //define frame pose for the gripper
       obj.header.frame_id = move_group_interface.getEndEffectorLink();
@@ -1044,10 +1047,10 @@ int main(int argc, char** argv)
 
       moveit_msgs::CollisionObject detach_obj;
 
-      detach_obj.id = "cylinder";
+      detach_obj.id = cylinder_id_2;
 
       std_msgs::Float64 msg;
-      msg.data = 0.9;
+      msg.data = 0.8;
       std::cout << "gripper open" << std::endl;
       pub.publish(msg);
 
