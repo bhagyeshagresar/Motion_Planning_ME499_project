@@ -1,5 +1,4 @@
-float64 cartesian_x
-float64 cartesian_y
-float64 cartesian_z
-bool increment
+float64 x_delta
+float64 y_delta
+float64 z_delta
 ---

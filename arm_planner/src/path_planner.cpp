@@ -53,7 +53,7 @@ static bool step_pos_val{false};
 static int set_follow_pos{0};
 static bool cartesian_val{false};
 static std::vector<geometry_msgs::Pose> cartesian_waypoints;
-static double cartesian_x_pos{0.0}, cartesian_y_pos{0.0}, cartesian_z_pos{0.0};
+static double cartesian_x_delta{0.0}, cartesian_y_delta{0.0}, cartesian_z_delta{0.0};
 static bool increment_pos{0};
 static bool attach_obj_val{false};
 static double obj_x{0.0}, obj_y{0.0}, obj_z{0.0}, obj_roll{0.0}, obj_pitch{0.0}, obj_yaw{0.0};
@@ -165,9 +165,9 @@ bool follow_pos_fn(arm_planner::FollowPos::Request &req, arm_planner::FollowPos:
 bool cartesian_pos_fn(arm_planner::Cartesian::Request &req, arm_planner::Cartesian::Response &res){
 
   cartesian_val = true;
-  cartesian_x_pos = req.cartesian_x;
-  cartesian_y_pos = req.cartesian_y;
-  cartesian_z_pos = req.cartesian_z;
+  cartesian_x_delta = req.x_delta;
+  cartesian_y_delta = req.y_delta;
+  cartesian_z_delta = req.z_delta;
 
   return true;
 
@@ -177,8 +177,6 @@ bool attach_obj_fn(arm_planner::Attach::Request &req, arm_planner::Attach::Respo
   
   attach_obj_val = true;
   cylinder_id = req.cylinder_name;
-
- 
 
   return true;
 
@@ -978,32 +976,54 @@ int main(int argc, char** argv)
 
     //Execute cartesian plan
     if (cartesian_val == true){
-      geometry_msgs::Pose target_pose_2;
 
-      // geometry_msgs::PoseStamped current_pose = move_group_interface.getCurrentPose();
-      move_group_interface.setStartStateToCurrentState();
+      geometry_msgs::PoseStamped current_pose = move_group_interface.getCurrentPose();
+      std::vector<double> current_rpy = move_group_interface.getCurrentRPY();
 
+
+       geometry_msgs::Pose cartesian_pose;
+       tf2::Quaternion orient_pose3;
+       orient_pose3.setRPY(current_rpy.at(0), current_rpy.at(1), current_rpy.at(2));
+       cartesian_pose.orientation = tf2::toMsg(orient_pose3);
+       cartesian_pose.position.x = current_pose.pose.position.x;
+       cartesian_pose.position.y = current_pose.pose.position.y;
+       cartesian_pose.position.z = current_pose.pose.position.z;
+       
+       cartesian_pose.position.x += cartesian_x_delta;
+       cartesian_pose.position.y += cartesian_y_delta;
+       cartesian_pose.position.z += cartesian_z_delta;
+
+
+       std::vector<geometry_msgs::Pose> cartesian_waypoints;
+       cartesian_waypoints.push_back(cartesian_pose);
+
+       moveit_msgs::RobotTrajectory cartesian_traj;
+
+       const double jump_thresh = 0.0;
+       const double eef_step = 0.01;
+       double fraction = move_group_interface.computeCartesianPath(cartesian_waypoints, eef_step, jump_thresh, cartesian_traj);
+
+       std::cout << "x_pos for cartesian: " << cartesian_pose.position.x << std::endl;
+       std::cout << "y_pos for cartesian: " << cartesian_pose.position.y << std::endl;
+       std::cout << "z_pos for cartesian: " << cartesian_pose.position.z << std::endl;
+       std::cout << "x_delta for cartesian: " << cartesian_x_delta << std::endl;
+       std::cout << "y_delta for cartesian: " << cartesian_y_delta << std::endl;
+       std::cout << "z_delta for cartesian: " << cartesian_z_delta << std::endl;
+
+
+
+
+
+      if (fraction == 1.0) {
+          move_group_interface.execute(cartesian_traj);
+      }
+      else {
+          std::cout << "cartesian plan failed" << std::endl;
+          move_group_interface.stop();
+      }
+
+     
       
-      target_pose_2.position.x = target_pose_2.position.x;
-      target_pose_2.position.y = target_pose_2.position.y;
-      target_pose_2.position.z = target_pose_2.position.z;
-
-      std::cout << "get_current_pose_x: " << target_pose_2.position.x << std::endl;
-      std::cout << "get_current_pose_y: " << target_pose_2.position.y << std::endl;
-      std::cout << "get_current_pose_z: " << target_pose_2.position.z << std::endl;
-
-
-      target_pose_2.position.x -= cartesian_x_pos;
-      target_pose_2.position.y -= cartesian_y_pos;
-      target_pose_2.position.z -= cartesian_z_pos;
-      cartesian_waypoints.push_back(target_pose_2);
-
-      moveit_msgs::RobotTrajectory trajectory;
-      const double jump_threshold = 0.0;
-      const double eef_step = 0.01;
-      double fraction = move_group_interface.computeCartesianPath(cartesian_waypoints, eef_step, jump_threshold, trajectory);
-
-      move_group_interface.execute(trajectory);
 
       cartesian_val = false;
 
