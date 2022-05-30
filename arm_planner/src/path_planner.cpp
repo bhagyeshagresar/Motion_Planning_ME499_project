@@ -1076,6 +1076,11 @@ int main(int argc, char** argv)
 
       move_group_interface.detachObject(detach_obj.id);
 
+      std::vector<std::string> object_ids;
+
+      object_ids.push_back(detach_obj.id);
+      planning_scene_interface.removeCollisionObjects(object_ids);
+
 
       detach_obj_val = false;
     }
