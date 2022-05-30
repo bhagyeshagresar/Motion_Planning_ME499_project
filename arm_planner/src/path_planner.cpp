@@ -546,7 +546,7 @@ int main(int argc, char** argv)
     //call gripper close service
     if (flag == 2){
       std_msgs::Float64 msg;
-      msg.data = 0.8;
+      msg.data = 0.7;
       std::cout << "gripper open" << std::endl;
       pub.publish(msg);
       flag = 0;
@@ -641,7 +641,7 @@ int main(int argc, char** argv)
         
         else{
           std_msgs::Float64 msg;
-          msg.data = 0.8;
+          msg.data = 0.7;
           std::cout << "gripper open" << std::endl;
           pub.publish(msg);
         
@@ -732,7 +732,7 @@ int main(int argc, char** argv)
 
             if(gripper_value == 1.0){
               std_msgs::Float64 msg;
-              msg.data = 0.8;
+              msg.data = 0.7;
               std::cout << "gripper openeed" << std::endl;
               pub.publish(msg);
               }
@@ -779,7 +779,7 @@ int main(int argc, char** argv)
 
         if(gripper_value == 1.0){
               std_msgs::Float64 msg;
-              msg.data = 0.8;
+              msg.data = 0.7;
               std::cout << "gripper openeed" << std::endl;
               pub.publish(msg);
               }
@@ -863,7 +863,7 @@ int main(int argc, char** argv)
         
         else{
           std_msgs::Float64 msg;
-          msg.data = 0.8;
+          msg.data = 0.7;
           std::cout << "gripper open" << std::endl;
           pub.publish(msg);
         
@@ -906,7 +906,7 @@ int main(int argc, char** argv)
 
             if(gripper_value_pos == 1.0){
               std_msgs::Float64 msg;
-              msg.data = 0.8;
+              msg.data = 0.7;
               std::cout << "gripper openeed" << std::endl;
               pub.publish(msg);
               }
@@ -952,7 +952,7 @@ int main(int argc, char** argv)
 
         if(gripper_value_pos == 1.0){
               std_msgs::Float64 msg;
-              msg.data = 0.8;
+              msg.data = 0.7;
               std::cout << "gripper openeed" << std::endl;
               pub.publish(msg);
               }
@@ -1070,7 +1070,7 @@ int main(int argc, char** argv)
       detach_obj.id = cylinder_id_2;
 
       std_msgs::Float64 msg;
-      msg.data = 0.8;
+      msg.data = 0.7;
       std::cout << "gripper open" << std::endl;
       pub.publish(msg);
 
