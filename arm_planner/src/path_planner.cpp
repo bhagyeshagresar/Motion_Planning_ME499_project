@@ -24,6 +24,7 @@
 #include <tf2_geometry_msgs/tf2_geometry_msgs.h>
 #include <tf2_ros/transform_listener.h>
 #include "arm_planner/Detach.h"
+// #include "arm_planner/AddObjects.h"
 
 
 
@@ -60,6 +61,7 @@ static double obj_x{0.0}, obj_y{0.0}, obj_z{0.0}, obj_roll{0.0}, obj_pitch{0.0},
 static bool detach_obj_val{false};
 static std::string cylinder_id;
 static std::string cylinder_id_2;
+// static bool add_obj_val{false};
 
 bool reset_fn(arm_planner::Reset::Request &req, arm_planner::Reset::Response &res){
 
@@ -189,6 +191,12 @@ bool detach_obj_fn(arm_planner::Detach::Request &req, arm_planner::Detach::Respo
   return true;
 }
 
+// bool add_obj_fn(arm_planner::AddObjects::Request &req, arm_planner::AddObjects::Response &res){
+//   add_obj_val = true;
+//   return true;
+
+// }
+
 
 
 int main(int argc, char** argv)
@@ -216,6 +224,7 @@ int main(int argc, char** argv)
   ros::ServiceServer cartesian_pos_service = nh.advertiseService("cartesian_pos", cartesian_pos_fn);
   ros::ServiceServer attach_obj_service = nh.advertiseService("attach_obj", attach_obj_fn);
   ros::ServiceServer detach_obj_service = nh.advertiseService("detach_obj", detach_obj_fn);
+  // ros::ServiceServer add_obj_service = nh.advertiseService("add_obj", add_obj_fn);
 
   //add planning group "arm"
   static const std::string PLANNING_GROUP = "arm";
@@ -1055,6 +1064,19 @@ int main(int argc, char** argv)
       move_group_interface.attachObject(obj.id, "endpoint_link", touch_links);
 
 
+      if(obj.id == "4"){
+        std::vector<std::string> object_ids;
+
+        object_ids.push_back(collision_cylinder1.id);
+        object_ids.push_back(collision_cylinder2.id);
+        object_ids.push_back(collision_cylinder3.id);
+
+        planning_scene_interface.removeCollisionObjects(object_ids);
+
+
+
+
+      }
 
 
       attach_obj_val = false;
@@ -1076,16 +1098,28 @@ int main(int argc, char** argv)
 
       move_group_interface.detachObject(detach_obj.id);
 
-      std::vector<std::string> object_ids;
+      // std::vector<std::string> object_ids;
 
-      object_ids.push_back(detach_obj.id);
-      planning_scene_interface.removeCollisionObjects(object_ids);
+      // object_ids.push_back(detach_obj.id);
+      // planning_scene_interface.removeCollisionObjects(object_ids);
 
 
       detach_obj_val = false;
     }
 
 
+    // if(add_obj_val == true){
+    //   moveit_msgs::CollisionObject add_obj;
+    //   std::vector<moveit_msgs::CollisionObject> add_collision_objects;
+
+
+    //   add_obj.id = cylinder_number;
+
+    //   add_collision_objects.push_back(add_obj.id);
+    //   planning_scene_interface.
+
+      
+    // }
 
 
 
