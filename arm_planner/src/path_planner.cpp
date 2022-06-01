@@ -61,7 +61,6 @@ static double obj_x{0.0}, obj_y{0.0}, obj_z{0.0}, obj_roll{0.0}, obj_pitch{0.0},
 static bool detach_obj_val{false};
 static std::string cylinder_id;
 static std::string cylinder_id_2;
-// static bool add_obj_val{false};
 
 bool reset_fn(arm_planner::Reset::Request &req, arm_planner::Reset::Response &res){
 
@@ -149,20 +148,6 @@ bool step_pos_fn(arm_planner::StepPos::Request &req, arm_planner::StepPos::Respo
 
 
 
-bool follow_fn(arm_planner::Follow::Request &req, arm_planner::Follow::Response &res){
-
-  set_follow = req.follow;
-  return true;
-  
-}
-
-
-bool follow_pos_fn(arm_planner::FollowPos::Request &req, arm_planner::FollowPos::Response &res){
-
-  set_follow_pos = req.follow_pos;
-  return true;
-  
-}
 
 bool cartesian_pos_fn(arm_planner::Cartesian::Request &req, arm_planner::Cartesian::Response &res){
 
@@ -191,11 +176,25 @@ bool detach_obj_fn(arm_planner::Detach::Request &req, arm_planner::Detach::Respo
   return true;
 }
 
-// bool add_obj_fn(arm_planner::AddObjects::Request &req, arm_planner::AddObjects::Response &res){
-//   add_obj_val = true;
-//   return true;
 
-// }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 
@@ -219,12 +218,9 @@ int main(int argc, char** argv)
   ros::ServiceServer step_service = nh.advertiseService("step", step_fn);
   ros::ServiceServer step_pos_service = nh.advertiseService("step_pos", step_pos_fn);
   ros::ServiceServer test_service = nh.advertiseService("test", test_fn);
-  ros::ServiceServer follow_service = nh.advertiseService("follow", follow_fn);
-  ros::ServiceServer follow_pos_service = nh.advertiseService("follow_pos", follow_pos_fn);
   ros::ServiceServer cartesian_pos_service = nh.advertiseService("cartesian_pos", cartesian_pos_fn);
   ros::ServiceServer attach_obj_service = nh.advertiseService("attach_obj", attach_obj_fn);
   ros::ServiceServer detach_obj_service = nh.advertiseService("detach_obj", detach_obj_fn);
-  // ros::ServiceServer add_obj_service = nh.advertiseService("add_obj", add_obj_fn);
 
   //add planning group "arm"
   static const std::string PLANNING_GROUP = "arm";
@@ -240,28 +236,17 @@ int main(int argc, char** argv)
       move_group_interface.getCurrentState()->getJointModelGroup(PLANNING_GROUP);
 
   
-  // ROS_INFO_NAMED("Planner id: %s", move_group_interface.getDefaultPlannerId(PLANNING_GROUP).c_str());
-  // ROS_INFO_NAMED("Default planning pipeline id: %s", move_group_interface.getDefaultPlanningPipelineId().c_str());
-  // // ROS_INFO_NAMED("tutorial", "Available Planning Groups:");
-  // std::copy(move_group_interface.getJointModelGroupNames().begin(),
-  //           move_group_interface.getJointModelGroupNames().end(), std::ostream_iterator<std::string>(std::cout, ", "));
-
-  // move_group_interface.setPlannerId();
+  
   
 
   std::string default_planner_id = move_group_interface.getPlannerId();
-  // std::string def_planning_pipe_id = move_group_interface.getPlanningPipelineId();
 
   std::cout << "default planner id: " << default_planner_id << std::endl;
-  // std::cout << "default planning pipeline id: %s" << def_planning_pipe_id << std::endl;
 
 
 
   std::vector<moveit_msgs::CollisionObject> collision_objects;
 
-  //get waypoints
-  // nh.getParam("/path_planner/waypoints", sample_waypoints);
-  // std::cout << "first waypoints: " << waypoints.size() << std::endl;
   
 
 
@@ -293,28 +278,7 @@ int main(int argc, char** argv)
 
 
 
- //Add Ground
-  // moveit_msgs::CollisionObject ground_collision;
-  // ground_collision.header.frame_id = "base_link";
-  // ground_collision.id = 2;
-  
-  // shape_msgs::SolidPrimitive ground;
-  // ground.type = ground.BOX;
-  // ground.dimensions.resize(3);
-  // ground.dimensions[ground.BOX_X] = 2.0;
-  // ground.dimensions[ground.BOX_Y] = 2.0;
-  // ground.dimensions[ground.BOX_Z] = 0.001;
 
-  // geometry_msgs::Pose ground_pose;
-  // ground_pose.orientation.w = 1.0;
-  // ground_pose.position.x = 0.0;
-  // ground_pose.position.y = 0.0;
-  // ground_pose.position.z = -0.45;
-  // ground_collision.primitive_poses.push_back(ground_pose);
-
-  // ground_collision.primitives.push_back(ground);
-  // ground_collision.operation = ground_collision.ADD;
-  // collision_objects.push_back(ground_collision);
 
 
   //table
@@ -555,7 +519,7 @@ int main(int argc, char** argv)
     //call gripper close service
     if (flag == 2){
       std_msgs::Float64 msg;
-      msg.data = 0.7;
+      msg.data = 0.8;
       std::cout << "gripper open" << std::endl;
       pub.publish(msg);
       flag = 0;
@@ -582,7 +546,7 @@ int main(int argc, char** argv)
 
       joint_group_positions = move_group_interface.getCurrentJointValues();
       move_group_interface.setStartStateToCurrentState();
-      move_group_interface.setMaxVelocityScalingFactor(1.0);
+      move_group_interface.setMaxVelocityScalingFactor(0.8);
 
       std::cout << "step value reached" << std::endl;
       joint_group_positions[0] = (joint1*M_PI)/180.0;
@@ -650,7 +614,7 @@ int main(int argc, char** argv)
         
         else{
           std_msgs::Float64 msg;
-          msg.data = 0.7;
+          msg.data = 0.8;
           std::cout << "gripper open" << std::endl;
           pub.publish(msg);
         
@@ -716,97 +680,7 @@ int main(int argc, char** argv)
       test_val = false;
     }
 
-
-
-    //follow condition 1
-    if(set_follow == 1){
-      std::cout << "reached follow service" << std::endl;
-      
-      while(1){
-        for(int z = 0; z < waypoints.size(); z++){
-            joints_seq.push_back(waypoints[z][0]);
-            joints_seq.push_back(waypoints[z][1]);
-            joints_seq.push_back(waypoints[z][2]);
-            joints_seq.push_back(waypoints[z][3]);
-            joints_seq.push_back(waypoints[z][4]);
-            joints_seq.push_back(waypoints[z][5]);
-            double gripper_value = waypoints[z][6];
-
-            
-
-            move_group_interface.setJointValueTarget(joints_seq);
-            moveit::planning_interface::MoveGroupInterface::Plan my_plan;
-            move_group_interface.setPlanningTime(5.0);
-            move_group_interface.move();
-
-            if(gripper_value == 1.0){
-              std_msgs::Float64 msg;
-              msg.data = 0.7;
-              std::cout << "gripper openeed" << std::endl;
-              pub.publish(msg);
-              }
-        
-            else{
-              std_msgs::Float64 msg;
-              msg.data = 0.1;
-              std::cout << "gripper closed" << std::endl;
-              pub.publish(msg);
-            
-            
-          }
-          joints_seq.clear();
-
-
-          }
-          set_follow = 0;
-
-
-      }
-
-      }
-
-
-    //follow condition 2
-    if (set_follow == 2){
-      std::cout << "follow else condition reached" << std::endl;
-      for(int z = 0; z < waypoints.size(); z++){
-        joints_seq.push_back(waypoints[z][0]);
-        joints_seq.push_back(waypoints[z][1]);
-        joints_seq.push_back(waypoints[z][2]);
-        joints_seq.push_back(waypoints[z][3]);
-        joints_seq.push_back(waypoints[z][4]);
-        joints_seq.push_back(waypoints[z][5]);
-        double gripper_value = waypoints[z][6];
-
-        
-
-        move_group_interface.setJointValueTarget(joints_seq);
-        moveit::planning_interface::MoveGroupInterface::Plan my_plan;
-        move_group_interface.setPlanningTime(5.0);
-        move_group_interface.move();
-
-
-        if(gripper_value == 1.0){
-              std_msgs::Float64 msg;
-              msg.data = 0.7;
-              std::cout << "gripper openeed" << std::endl;
-              pub.publish(msg);
-              }
-        
-        else{
-          std_msgs::Float64 msg;
-          msg.data = 0.1;
-          std::cout << "gripper closed" << std::endl;
-          pub.publish(msg);
-        
-        
-      }
-      joints_seq.clear();
-
-          }
-      set_follow = 0;
-
-    }
+    
 
 
     //step service for pose goal
@@ -821,8 +695,8 @@ int main(int argc, char** argv)
       
       
       move_group_interface.setStartStateToCurrentState();
-      move_group_interface.setMaxVelocityScalingFactor(1.0);
-      move_group_interface.setMaxAccelerationScalingFactor(1.0);
+      move_group_interface.setMaxVelocityScalingFactor(0.8);
+      move_group_interface.setMaxAccelerationScalingFactor(0.8);
 
 
       //check plan for target_pose
@@ -872,7 +746,7 @@ int main(int argc, char** argv)
         
         else{
           std_msgs::Float64 msg;
-          msg.data = 0.7;
+          msg.data = 0.8;
           std::cout << "gripper open" << std::endl;
           pub.publish(msg);
         
@@ -890,97 +764,7 @@ int main(int argc, char** argv)
 
     }
 
-
-
-    //follow pos goal condition 1
-    if(set_follow_pos == 1){
-      std::cout << "reached follow service pos goal" << std::endl;
-      
-      while(1){
-        for(int z = 0; z < waypoints_pos.size(); z++){
-            geometry_msgs::Pose follow_pose;
-            follow_pose.orientation.w = 1.0;
-            follow_pose.position.x = waypoints_pos[z][0];
-            follow_pose.position.y = waypoints_pos[z][1];
-            follow_pose.position.z = waypoints_pos[z][2];
-      
-            double gripper_value_pos = waypoints[z][3];
-
-            
-
-            move_group_interface.setPoseTarget(follow_pose);
-            moveit::planning_interface::MoveGroupInterface::Plan my_plan;
-            move_group_interface.setPlanningTime(5.0);
-            move_group_interface.move();
-
-            if(gripper_value_pos == 1.0){
-              std_msgs::Float64 msg;
-              msg.data = 0.7;
-              std::cout << "gripper openeed" << std::endl;
-              pub.publish(msg);
-              }
-        
-            else{
-              std_msgs::Float64 msg;
-              msg.data = 0.1;
-              std::cout << "gripper closed" << std::endl;
-              pub.publish(msg);
-            
-            
-          }
-
-
-          }
-          set_follow_pos = 0;
-
-
-      }
-
-      }
-
-
-    //follow pos goal condition 2
-    if (set_follow_pos == 2){
-      std::cout << "follow else condition reached pos" << std::endl;
-      for(int z = 0; z < waypoints_pos.size(); z++){
-        geometry_msgs::Pose follow_pose;
-        follow_pose.orientation.w = 1.0;
-        follow_pose.position.x = waypoints_pos[z][0];
-        follow_pose.position.y = waypoints_pos[z][1];
-        follow_pose.position.z = waypoints_pos[z][2];
   
-        double gripper_value_pos = waypoints_pos[z][3];
-
-        
-
-        move_group_interface.setPoseTarget(follow_pose);
-        moveit::planning_interface::MoveGroupInterface::Plan my_plan;
-        move_group_interface.setPlanningTime(5.0);
-        move_group_interface.move();
-
-
-        if(gripper_value_pos == 1.0){
-              std_msgs::Float64 msg;
-              msg.data = 0.7;
-              std::cout << "gripper openeed" << std::endl;
-              pub.publish(msg);
-              }
-        
-        else{
-          std_msgs::Float64 msg;
-          msg.data = 0.1;
-          std::cout << "gripper closed" << std::endl;
-          pub.publish(msg);
-        
-        
-      }
-
-          }
-      set_follow_pos = 0;
-
-    }
-
-
 
 
     //Execute cartesian plan
@@ -990,38 +774,29 @@ int main(int argc, char** argv)
       std::vector<double> current_rpy = move_group_interface.getCurrentRPY();
 
 
-       geometry_msgs::Pose cartesian_pose;
-       tf2::Quaternion orient_pose3;
-       orient_pose3.setRPY(current_rpy.at(0), current_rpy.at(1), current_rpy.at(2));
-       cartesian_pose.orientation = tf2::toMsg(orient_pose3);
-       cartesian_pose.position.x = current_pose.pose.position.x;
-       cartesian_pose.position.y = current_pose.pose.position.y;
-       cartesian_pose.position.z = current_pose.pose.position.z;
+      geometry_msgs::Pose cartesian_pose;
+      tf2::Quaternion orient_pose3;
+      orient_pose3.setRPY(current_rpy.at(0), current_rpy.at(1), current_rpy.at(2));
+      cartesian_pose.orientation = tf2::toMsg(orient_pose3);
+      cartesian_pose.position.x = current_pose.pose.position.x;
+      cartesian_pose.position.y = current_pose.pose.position.y;
+      cartesian_pose.position.z = current_pose.pose.position.z;
        
-       cartesian_pose.position.x += cartesian_x_delta;
-       cartesian_pose.position.y += cartesian_y_delta;
-       cartesian_pose.position.z += cartesian_z_delta;
+      cartesian_pose.position.x += cartesian_x_delta;
+      cartesian_pose.position.y += cartesian_y_delta;
+      cartesian_pose.position.z += cartesian_z_delta;
 
 
-       std::vector<geometry_msgs::Pose> cartesian_waypoints;
-       cartesian_waypoints.push_back(cartesian_pose);
+      std::vector<geometry_msgs::Pose> cartesian_waypoints;
+      cartesian_waypoints.push_back(cartesian_pose);
 
-       moveit_msgs::RobotTrajectory cartesian_traj;
+      moveit_msgs::RobotTrajectory cartesian_traj;
 
-       const double jump_thresh = 0.0;
-       const double eef_step = 0.01;
-       double fraction = move_group_interface.computeCartesianPath(cartesian_waypoints, eef_step, jump_thresh, cartesian_traj);
+      const double jump_thresh = 0.0;
+      const double eef_step = 0.01;
+      double fraction = move_group_interface.computeCartesianPath(cartesian_waypoints, eef_step, jump_thresh, cartesian_traj);
 
-       std::cout << "x_pos for cartesian: " << cartesian_pose.position.x << std::endl;
-       std::cout << "y_pos for cartesian: " << cartesian_pose.position.y << std::endl;
-       std::cout << "z_pos for cartesian: " << cartesian_pose.position.z << std::endl;
-       std::cout << "x_delta for cartesian: " << cartesian_x_delta << std::endl;
-       std::cout << "y_delta for cartesian: " << cartesian_y_delta << std::endl;
-       std::cout << "z_delta for cartesian: " << cartesian_z_delta << std::endl;
-
-
-
-
+       
 
       if (fraction == 1.0) {
           move_group_interface.execute(cartesian_traj);

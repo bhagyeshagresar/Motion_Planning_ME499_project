@@ -65,8 +65,6 @@ std_srvs
    Gripper.srv
    Reset.srv
    Step.srv
-   Follow.srv
-   FollowPos.srv
    Test.srv
    StepPos.srv
    Cartesian.srv
