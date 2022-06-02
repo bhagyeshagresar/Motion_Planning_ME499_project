@@ -1,2 +1,122 @@
-bool_param : false
+
+cylinder1:
+  #waypoint1
+  - x: 0.0
+  - y: 0.2
+  - z: 0.4
+  - r: 0.0
+  - p: 0.0
+  - y: 0.0
+  - gripper_state: 0
+
+  #waypoint2
+  - j1: 96
+  - j2: 43
+  - j3: -28
+  - j4: 11
+  - j5: -19
+  - j6: -105
+  - gripper_state: 1
+
+  #waypoint3
+  - j1: -89
+  - j2: 59
+  - j3: -4
+  - j4: 1
+  - j5: 125
+  - j6: 91
+  - gripper_state: 0
+
+  #attach obj
+  - attach: "1"
+
+  #waypoint5
+  - x_cartesian: 0
+  - y_cartesian: 0
+  - z_cartesian: 0.1
+
+  #waypoint6
+  - x_cartesian: 0
+  - y_cartesian: -0.2
+  - z_cartesian: 0.0
+
+  #waypoint7
+  - x: 0.422
+  - y: -0.045
+  - z: -0.1
+  - r: 0.0
+  - p: -0.1
+  - y: 0.0
+  - gripper_state: 1
+
+  #detach obj
+  - detach: "1"
+
+
+cylinder2:
+   #waypoint1
+  - x: 0.0
+  - y: 0.2
+  - z: 0.4
+  - r: 0.0
+  - p: 0.0
+  - y: 0.0
+  - gripper_state: 0
+
+    #waypoint2
+  - j1: 80
+  - j2: -8
+  - j3: 47
+  - j4: 165
+  - j5: 40
+  - j6: 102
+
+   #waypoint3
+  - j1: 10
+  - j2: 11
+  - j3: 37
+  - j4: 153
+  - j5: 1
+  - j6: 41
+
+    #attach obj
+  - attach_obj_val: 1
+
+  #waypoint5
+  - x_cartesian: 0
+  - y_cartesian: 0
+  - z_cartesian: 0.1
+  
+  #waypoint6
+  - x_cartesian: 0
+  - y_cartesian: -0.2
+  - z_cartesian: 0.0
+
+  #waypoint7
+  - x: 0.422
+  - y: -0.15
+  - z: -0.1
+  - r: 0.0
+  - p: -0.1
+  - y: 0.0
+  - gripper_state: 1
+
+   #detach obj
+  - detach_obj_val: 1
+
+
+
+
+# cylinder3:
+#  #waypoint1
+#   - x: 0.0
+#   - y: 0.2
+#   - z: 0.4
+#   - r: 0.0
+#   - p: 0.0
+#   - y: 0.0
+#   - gripper_state: false
+
+
+
 

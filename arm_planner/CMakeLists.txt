@@ -70,6 +70,7 @@ std_srvs
    Cartesian.srv
    Attach.srv
    Detach.srv
+   Follow.srv
  )
 
 ## Generate actions in the 'action' folder

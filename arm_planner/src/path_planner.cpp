@@ -12,19 +12,18 @@
 #include <std_srvs/Empty.h>
 #include "arm_planner/Reset.h"
 #include "arm_planner/Step.h"
-#include "arm_planner/Follow.h"
 #include "arm_planner/Test.h"
 #include "arm_planner/Attach.h"
 #include <math.h>
 #include <string.h>
 #include "arm_planner/StepPos.h"
-#include "arm_planner/FollowPos.h"
 #include "arm_planner/Cartesian.h"
 #include <tf2/LinearMath/Quaternion.h>
 #include <tf2_geometry_msgs/tf2_geometry_msgs.h>
 #include <tf2_ros/transform_listener.h>
 #include "arm_planner/Detach.h"
-// #include "arm_planner/AddObjects.h"
+#include "XmlRpcValue.h"
+#include "arm_planner/Follow.h"
 
 
 
@@ -39,7 +38,6 @@ static std::vector<std::vector <double>> waypoints;
 static std::vector<std::vector <double>> waypoints_pos;
 static std::vector<double> waypoints_list;
 static std::vector<double> waypoints_pos_list;
-static int set_follow{0};
 static bool test_val{false};
 static std::vector <double> joints_seq;
 static std::vector <double> pos_seq;
@@ -51,7 +49,6 @@ static bool gripper_pos_req{false};
 static bool bool_param{false};
 static std::vector<double> sample_waypoints;
 static bool step_pos_val{false};
-static int set_follow_pos{0};
 static bool cartesian_val{false};
 static std::vector<geometry_msgs::Pose> cartesian_waypoints;
 static double cartesian_x_delta{0.0}, cartesian_y_delta{0.0}, cartesian_z_delta{0.0};
@@ -61,6 +58,23 @@ static double obj_x{0.0}, obj_y{0.0}, obj_z{0.0}, obj_roll{0.0}, obj_pitch{0.0},
 static bool detach_obj_val{false};
 static std::string cylinder_id;
 static std::string cylinder_id_2;
+static bool set_follow{false};
+static bool trigger_trajectory{false};
+static XmlRpc::XmlRpcValue cylinder1;
+static XmlRpc::XmlRpcValue cylinder2;
+static ros::Publisher pub;
+
+
+
+
+void cylinder_fn(XmlRpc::XmlRpcValue &cylinder);
+void set_pose_target_fn(XmlRpc::XmlRpcValue &cylinder, int index, moveit::planning_interface::MoveGroupInterface& move_group_interface);
+void set_joint_target_fn(XmlRpc::XmlRpcValue &cylinder, int index);
+void set_cartesian_fn(XmlRpc::XmlRpcValue &cylinder, int index);
+void set_attach_fn(XmlRpc::XmlRpcValue &cylinder, int index);
+void set_detach_fn(XmlRpc::XmlRpcValue &cylinder, int index);
+
+
 
 bool reset_fn(arm_planner::Reset::Request &req, arm_planner::Reset::Response &res){
 
@@ -147,8 +161,6 @@ bool step_pos_fn(arm_planner::StepPos::Request &req, arm_planner::StepPos::Respo
 }
 
 
-
-
 bool cartesian_pos_fn(arm_planner::Cartesian::Request &req, arm_planner::Cartesian::Response &res){
 
   cartesian_val = true;
@@ -178,22 +190,11 @@ bool detach_obj_fn(arm_planner::Detach::Request &req, arm_planner::Detach::Respo
 
 
 
+bool follow_fn(arm_planner::Follow::Request &req, arm_planner::Follow::Response &res){
+  trigger_trajectory = true;
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
+  return true;
+}
 
 
 
@@ -206,12 +207,8 @@ int main(int argc, char** argv)
   ros::AsyncSpinner spinner(1);
   spinner.start();
 
-  // ros::Publisher pub = nh.advertise<std_msgs::Float64>("/pincer_joint/position_controllers/JointPositionController", 10);
-  ros::Publisher pub = nh.advertise<std_msgs::Float64>("/pincer_joint_position_controller/command", 10);
-  // /hdt_arm/pincer_joint_position_controller/command
-  // ros::Publisher pub = nh.advertise<std_msgs::Float64>("hdt_arm/pincer_joint/fake_pincer_controller", 10);
-  // ros::Publisher pub = nh.advertise<std_msgs::Float64>("/hdt_arm/pincer_joint_position_controller/command", 10);
-
+  pub = nh.advertise<std_msgs::Float64>("/pincer_joint_position_controller/command", 10);
+  
 
   ros::ServiceServer gripper_service = nh.advertiseService("gripper", gripper_fn);
   ros::ServiceServer reset_service = nh.advertiseService("reset", reset_fn);
@@ -221,6 +218,7 @@ int main(int argc, char** argv)
   ros::ServiceServer cartesian_pos_service = nh.advertiseService("cartesian_pos", cartesian_pos_fn);
   ros::ServiceServer attach_obj_service = nh.advertiseService("attach_obj", attach_obj_fn);
   ros::ServiceServer detach_obj_service = nh.advertiseService("detach_obj", detach_obj_fn);
+  ros::ServiceServer follow_service = nh.advertiseService("follow", follow_fn);
 
   //add planning group "arm"
   static const std::string PLANNING_GROUP = "arm";
@@ -237,17 +235,15 @@ int main(int argc, char** argv)
 
   
   
-  
-
   std::string default_planner_id = move_group_interface.getPlannerId();
 
   std::cout << "default planner id: " << default_planner_id << std::endl;
 
-
-
   std::vector<moveit_msgs::CollisionObject> collision_objects;
 
-  
+  nh.getParam("cylinder1", cylinder1);
+  nh.getParam("cylinder2", cylinder2);
+
 
 
   //Add stand
@@ -563,14 +559,7 @@ int main(int argc, char** argv)
       else{
         joint_group_positions[6] = 0.0;
       }
-      std::cout << "joint_group_pos 0: " << joint_group_positions[0] << std::endl;
-      std::cout << "joint_group_pos 1: " << joint_group_positions[1] << std::endl;
-      std::cout << "joint_group_pos 2: " << joint_group_positions[2] << std::endl;
-      std::cout << "joint_group_pos 3: " << joint_group_positions[3] << std::endl;
-      std::cout << "joint_group_pos 4: " << joint_group_positions[4] << std::endl;
-      std::cout << "joint_group_pos 5: " << joint_group_positions[5] << std::endl;
-      std::cout << "joint_group_pos 6: " << joint_group_positions[6] << std::endl;
-
+     
       
       
       move_group_interface.setJointValueTarget(joint_group_positions);
@@ -583,28 +572,7 @@ int main(int argc, char** argv)
         std::cout << "success reached" << std::endl;
         move_group_interface.execute(my_plan);
         
-        waypoints_list.push_back(joint_group_positions[0]);
-        waypoints_list.push_back(joint_group_positions[1]);
-        waypoints_list.push_back(joint_group_positions[2]);
-        waypoints_list.push_back(joint_group_positions[3]);
-        waypoints_list.push_back(joint_group_positions[4]);
-        waypoints_list.push_back(joint_group_positions[5]);
-        waypoints_list.push_back(joint_group_positions[6]);
-
-        
-        waypoints.push_back(waypoints_list);
-
-        
-
-        for(int z = 0; z < waypoints.size(); z++){
-          for(int j = 0; j < waypoints[z].size(); j++){
-            std::cout << "waypoints joint angles: " << waypoints[z][j] << std::endl;
-          }
-        }
-        std::cout << "waypoints size joint angles: " << waypoints.size() << std::endl;
-
-
-
+       
         if(gripper_req == true){
           std_msgs::Float64 msg;
           msg.data = 0.3;
@@ -620,7 +588,6 @@ int main(int argc, char** argv)
         
         
       }
-      waypoints_list.clear();
       joint_group_positions.clear();
       
 
@@ -710,49 +677,24 @@ int main(int argc, char** argv)
       if(success == true){
         std::cout << "pos success reached" << std::endl;
         move_group_interface.execute(my_plan2);
-        
-
-        waypoints_pos_list.push_back(target_pose.position.x);
-        waypoints_pos_list.push_back(target_pose.position.y);
-        waypoints_pos_list.push_back(target_pose.position.z);
-        if (gripper_pos_req == true){
-          waypoints_pos_list.push_back(1.0);
-        }
-        else{
-          waypoints_pos_list.push_back(0.0);
-        }
-        
-
-        
-        waypoints_pos.push_back(waypoints_pos_list);
-       
-        
-
-        for(int z = 0; z < waypoints_pos.size(); z++){
-          for(int j = 0; j < waypoints_pos[z].size(); j++){
-            std::cout << "waypoints for 2d pos: " << waypoints_pos[z][j] << std::endl;
-          }
-        }
-        std::cout << "waypoints size pos: " << waypoints_pos.size() << std::endl;
-
+      
 
 
         if(gripper_pos_req == true){
-          std_msgs::Float64 msg;
-          msg.data = 0.3;
-          std::cout << "gripper closed" << std::endl;
-          pub.publish(msg);
-        }
-        
+            std_msgs::Float64 msg;
+            msg.data = 0.3;
+            std::cout << "gripper closed" << std::endl;
+            pub.publish(msg);
+          }
+          
         else{
-          std_msgs::Float64 msg;
-          msg.data = 0.8;
-          std::cout << "gripper open" << std::endl;
-          pub.publish(msg);
-        
-        
-      }
-      waypoints_pos_list.clear();
+            std_msgs::Float64 msg;
+            msg.data = 0.8;
+            std::cout << "gripper open" << std::endl;
+            pub.publish(msg);
+          
+          
+        }
       
 
       }
@@ -873,30 +815,27 @@ int main(int argc, char** argv)
 
       move_group_interface.detachObject(detach_obj.id);
 
-      // std::vector<std::string> object_ids;
-
-      // object_ids.push_back(detach_obj.id);
-      // planning_scene_interface.removeCollisionObjects(object_ids);
-
+      
 
       detach_obj_val = false;
     }
 
+    
+      // cylinder_fn(cylinder1);
+      // cylinder_fn(cylinder2);
 
-    // if(add_obj_val == true){
-    //   moveit_msgs::CollisionObject add_obj;
-    //   std::vector<moveit_msgs::CollisionObject> add_collision_objects;
+      set_pose_target_fn(cylinder1, 0, move_group_interface);
+      // set_joint_target_fn(cylinder1, 1);
+      // set_joint_target_fn(cylinder1, 2);
+      // set_attach_fn(cylinder1, 3);
+      // set_cartesian_fn(cylinder1, 4);
+      // set_cartesian_fn(cylinder1, 5);
+      // set_pose_target_fn(cylinder1, 6);
+      // set_detach_fn(cylinder1, 7);
 
 
-    //   add_obj.id = cylinder_number;
 
-    //   add_collision_objects.push_back(add_obj.id);
-    //   planning_scene_interface.
-
-      
-    // }
-
-
+    
 
     ros::spinOnce();
 
@@ -912,3 +851,270 @@ int main(int argc, char** argv)
 
   return 0;
 }
+
+
+
+
+
+// void cylinder_fn(XmlRpc::XmlRpcValue &cylinder){
+
+//   //go to waypoint 1
+//   set_pose_target_fn(cylinder, 0);
+  
+//   //go to waypoint2
+//   set_joint_target_fn(cylinder, 1);
+
+//   //go to waypoint3
+//   set_joint_target_fn(cylinder, 2);
+
+//   //attach
+//   set_attach_fn(cylinder, 3);
+
+//   //go to waypoint4
+//   set_cartesian_fn(cylinder, 4);
+
+//   //go to waypoint5
+//   set_cartesian_fn(cylinder, 5);
+
+//   //go to waypoint6
+//   set_pose_target_fn(cylinder, 6);
+
+//   //detach
+//   set_detach_fn(cylinder, 7);
+
+
+// }
+
+
+
+
+
+void set_pose_target_fn(XmlRpc::XmlRpcValue &cylinder, int index, moveit::planning_interface::MoveGroupInterface& move_group_interface){
+
+  geometry_msgs::Pose target_pose_follow;
+  tf2::Quaternion orient_pose_follow;
+  orient_pose_follow.setRPY(cylinder[index]["r"], cylinder[index]["p"], cylinder[index]["y"]);
+  target_pose_follow.orientation = tf2::toMsg(orient_pose_follow);
+  target_pose_follow.position.x = cylinder[index]["x"];
+  target_pose_follow.position.y = cylinder[index]["y"];
+  target_pose_follow.position.z = cylinder[index]["z"];
+  
+  
+  move_group_interface.setStartStateToCurrentState();
+  move_group_interface.setMaxVelocityScalingFactor(0.8);
+  move_group_interface.setMaxAccelerationScalingFactor(0.8);
+
+
+  //check plan for target_pose
+  move_group_interface.setPoseTarget(target_pose_follow);
+  moveit::planning_interface::MoveGroupInterface::Plan my_plan2_follow;
+  bool success_follow = (move_group_interface.plan(my_plan2_follow) == moveit::planning_interface::MoveItErrorCode::SUCCESS);
+  std::cout << "pos goal success: " << success_follow << std::endl;
+
+  
+
+  if(success_follow == true){
+    std::cout << "pos success reached" << std::endl;
+    move_group_interface.execute(my_plan2_follow);
+  
+
+
+    if(cylinder[index]["gripper_state"] == "1"){
+        std_msgs::Float64 msg;
+        msg.data = 0.3;
+        pub.publish(msg);
+      }
+      
+    else{
+        std_msgs::Float64 msg;
+        msg.data = 0.8;
+        pub.publish(msg);
+      
+      
+    }
+  
+
+  }
+  else{
+    move_group_interface.stop();
+  }
+
+}
+
+
+// void set_joint_target_fn(XmlRpc::XmlRpcValue &cylinder, int index){
+  
+//   std::vector<double> joint_group_positions_follow;
+//   joint_group_positions_follow = move_group_interface.getCurrentJointValues();
+//   move_group_interface.setStartStateToCurrentState();
+//   move_group_interface.setMaxVelocityScalingFactor(0.8);
+
+//   joint_group_positions_follow[0] = (cylinder[index]["j1"]*M_PI)/180.0;
+//   joint_group_positions_follow[1] = (cylinder[index]["j2"]*M_PI)/180.0;
+//   joint_group_positions_follow[2] = (cylinder[index]["j3"]*M_PI)/180.0;
+//   joint_group_positions_follow[3] = (cylinder[index]["j4"]*M_PI)/180.0;
+//   joint_group_positions_follow[4] = (cylinder[index]["j5"]*M_PI)/180.0;
+//   joint_group_positions_follow[5] = (cylinder[index]["j6"]*M_PI)/180.0;
+  
+//   if (cylinder[index]["gripper_state"] == true){
+//     joint_group_positions[6] = 1.0;
+//   }
+//   else{
+//     joint_group_positions[6] = 0.0;
+//   }
+  
+  
+  
+//   move_group_interface.setJointValueTarget(joint_group_positions_follow);
+//   moveit::planning_interface::MoveGroupInterface::Plan my_plan_follow;
+//   bool success = (move_group_interface.plan(my_plan_follow) == moveit::planning_interface::MoveItErrorCode::SUCCESS);
+
+
+  
+//   if(success == true){
+//     move_group_interface.execute(my_plan_follow);
+    
+    
+//     if(gripper_req == true){
+//       std_msgs::Float64 msg;
+//       msg.data = 0.3;
+//       pub.publish(msg);
+//     }
+    
+//     else{
+//       std_msgs::Float64 msg;
+//       msg.data = 0.8;
+//       pub.publish(msg);
+    
+    
+//   }
+//   joint_group_positions_follow.clear();
+  
+
+//   }
+
+//   else{
+    
+//     move_group_interface.stop();
+
+//   }
+
+
+// }
+
+
+
+// void set_cartesian_fn(XmlRpc::XmlRpcValue &cylinder, int index){
+
+//   geometry_msgs::PoseStamped current_pose_follow = move_group_interface.getCurrentPose();
+//   std::vector<double> current_rpy_follow = move_group_interface.getCurrentRPY();
+
+
+//   geometry_msgs::Pose cartesian_pose_follow;
+//   tf2::Quaternion orient_pose3_follow;
+//   orient_pose3_follow.setRPY(current_rpy_follow.at(0), current_rpy_follow.at(1), current_rpy_follow.at(2));
+//   cartesian_pose_follow.orientation = tf2::toMsg(orient_pose3_follow);
+//   cartesian_pose_follow.position.x = current_pose_follow.pose.position.x;
+//   cartesian_pose_follow.position.y = current_pose_follow.pose.position.y;
+//   cartesian_pose_follow.position.z = current_pose_follow.pose.pose.position.z;
+    
+//   cartesian_pose_follow.position.x += cylinder[index]["x_cartesian"];
+//   cartesian_pose_follow.position.y += cylinder[index]["y_cartesian"];
+//   cartesian_pose_follow.position.z += cylinder[index]["z_cartesian"];
+
+
+//   std::vector<geometry_msgs::Pose> cartesian_waypoints_follow;
+//   cartesian_waypoints_follow.push_back(cartesian_pose_follow);
+
+//   moveit_msgs::RobotTrajectory cartesian_traj_follow;
+
+//   const double jump_thresh = 0.0;
+//   const double eef_step = 0.01;
+//   double fraction = move_group_interface.computeCartesianPath(cartesian_waypoints_follow, eef_step, jump_thresh, cartesian_traj_follow);
+
+      
+
+//   if (fraction == 1.0) {
+//       move_group_interface.execute(cartesian_traj_follow);
+//   }
+//   else {
+//       std::cout << "cartesian plan failed" << std::endl;
+//       move_group_interface.stop();
+//   }
+
+
+// }
+
+
+
+
+
+// void set_attach_fn(XmlRpc::XmlRpcValue &cylinder, int index){
+
+
+//   moveit_msgs::CollisionObject obj_follow;
+
+//   obj_follow.id = cylinder[index]["attach"];
+
+//   //define frame pose for the gripper
+//   obj_follow.header.frame_id = move_group_interface.getEndEffectorLink();
+  
+  
+//   std_msgs::Float64 msg;
+//   msg.data = 0.3;
+//   std::cout << "gripper closed" << std::endl;
+//   pub.publish(msg);
+
+
+//   std::vector <std::string> touch_links;
+//   std::string link1 = "pincerfinger_left_link";
+//   std::string link2 = "pincerfinger_right_link";
+//   touch_links.push_back(link1);
+//   touch_links.push_back(link2);
+//   move_group_interface.attachObject(obj_follow.id, "endpoint_link", touch_links);
+
+
+//   if(obj_follow.id == "4"){
+//     std::vector<std::string> object_ids;
+
+//     object_ids.push_back(collision_cylinder1.id);
+//     object_ids.push_back(collision_cylinder2.id);
+//     object_ids.push_back(collision_cylinder3.id);
+
+//     planning_scene_interface.removeCollisionObjects(object_ids);
+
+
+
+// }
+
+// }
+
+
+
+
+// void set_detach_fn(XmlRpc::XmlRpcValue &cylinder, int index){
+
+//   moveit_msgs::CollisionObject detach_obj_follow;
+
+//   detach_obj_follow.id = cylinder[index]["detach"];
+
+//   std_msgs::Float64 msg;
+//   msg.data = 0.7;
+//   std::cout << "gripper open" << std::endl;
+//   pub.publish(msg);
+
+//   move_group_interface.detachObject(detach_obj_follow.id);
+
+
+// }
+
+
+
+
+
+
+
+
+
+
+
