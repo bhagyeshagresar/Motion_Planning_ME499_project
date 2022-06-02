@@ -63,6 +63,7 @@ static bool trigger_trajectory{false};
 static XmlRpc::XmlRpcValue cylinder1;
 static XmlRpc::XmlRpcValue cylinder2;
 static ros::Publisher pub;
+static double cylinder4;
 
 
 
@@ -203,6 +204,7 @@ int main(int argc, char** argv)
 {
   ros::init(argc, argv, "path_planner");
   ros::NodeHandle nh;
+  ros::NodeHandle nh2("~");
 
   ros::AsyncSpinner spinner(1);
   spinner.start();
@@ -241,11 +243,14 @@ int main(int argc, char** argv)
 
   std::vector<moveit_msgs::CollisionObject> collision_objects;
 
-  nh.getParam("cylinder1", cylinder1);
-  nh.getParam("cylinder2", cylinder2);
+  nh2.getParam("cylinder1", cylinder1);
+  nh2.getParam("cylinder2", cylinder2);
+  nh2.getParam("cylinder4", cylinder4);
 
-
-
+  std::cout << "test cylinder: " << (cylinder1[0]["x"]) << std::endl;
+  std::cout << "test cylinder: " << (cylinder1[1]["y"]) << std::endl;
+  std::cout << "test cylinder: " << cylinder4 << std::endl;
+ 
   //Add stand
   moveit_msgs::CollisionObject collision;
   collision.header.frame_id = "base_link";
@@ -824,7 +829,7 @@ int main(int argc, char** argv)
       // cylinder_fn(cylinder1);
       // cylinder_fn(cylinder2);
 
-      set_pose_target_fn(cylinder1, 0, move_group_interface);
+      // set_pose_target_fn(cylinder1, 0, move_group_interface);
       // set_joint_target_fn(cylinder1, 1);
       // set_joint_target_fn(cylinder1, 2);
       // set_attach_fn(cylinder1, 3);
@@ -832,9 +837,12 @@ int main(int argc, char** argv)
       // set_cartesian_fn(cylinder1, 5);
       // set_pose_target_fn(cylinder1, 6);
       // set_detach_fn(cylinder1, 7);
+    
+    if(trigger_trajectory == true){
+      set_pose_target_fn(cylinder1, 0, move_group_interface);
+      trigger_trajectory = false;
 
-
-
+    }
     
 
     ros::spinOnce();
@@ -893,12 +901,17 @@ void set_pose_target_fn(XmlRpc::XmlRpcValue &cylinder, int index, moveit::planni
 
   geometry_msgs::Pose target_pose_follow;
   tf2::Quaternion orient_pose_follow;
-  orient_pose_follow.setRPY(cylinder[index]["r"], cylinder[index]["p"], cylinder[index]["y"]);
+  orient_pose_follow.setRPY(static_cast<double>(cylinder[index]["r"]), static_cast<double>(cylinder[index]["p"]), static_cast<double>(cylinder[index]["y"]));
   target_pose_follow.orientation = tf2::toMsg(orient_pose_follow);
-  target_pose_follow.position.x = cylinder[index]["x"];
-  target_pose_follow.position.y = cylinder[index]["y"];
-  target_pose_follow.position.z = cylinder[index]["z"];
+  target_pose_follow.position.x = static_cast<double>(cylinder[index]["x"]);
+  target_pose_follow.position.y = static_cast<double>(cylinder[index]["y"]);
+  target_pose_follow.position.z = static_cast<double>(cylinder[index]["z"]);
   
+  // orient_pose_follow.setRPY(0, 0, 1.5707);
+  // target_pose_follow.orientation = tf2::toMsg(orient_pose_follow);
+  // target_pose_follow.position.x = 0;
+  // target_pose_follow.position.y = 0.2;
+  // target_pose_follow.position.z = 0.4;
   
   move_group_interface.setStartStateToCurrentState();
   move_group_interface.setMaxVelocityScalingFactor(0.8);
@@ -911,6 +924,10 @@ void set_pose_target_fn(XmlRpc::XmlRpcValue &cylinder, int index, moveit::planni
   bool success_follow = (move_group_interface.plan(my_plan2_follow) == moveit::planning_interface::MoveItErrorCode::SUCCESS);
   std::cout << "pos goal success: " << success_follow << std::endl;
 
+  std::cout << "cylinder index x" << (cylinder[index]["x"]) << std::endl;
+  std::cout << "cylinder index y" << (cylinder[index]["y"]) << std::endl;
+  std::cout << "cylinder index z" << (cylinder[index]["z"]) << std::endl;
+
   
 
   if(success_follow == true){
@@ -919,19 +936,19 @@ void set_pose_target_fn(XmlRpc::XmlRpcValue &cylinder, int index, moveit::planni
   
 
 
-    if(cylinder[index]["gripper_state"] == "1"){
-        std_msgs::Float64 msg;
-        msg.data = 0.3;
-        pub.publish(msg);
-      }
+    // if(static_cast<int>(cylinder[index]["gripper_state"]) == 1){
+    //     std_msgs::Float64 msg;
+    //     msg.data = 0.3;
+    //     pub.publish(msg);
+    //   }
       
-    else{
-        std_msgs::Float64 msg;
-        msg.data = 0.8;
-        pub.publish(msg);
+    // else{
+    //     std_msgs::Float64 msg;
+    //     msg.data = 0.8;
+    //     pub.publish(msg);
       
       
-    }
+    // }
   
 
   }

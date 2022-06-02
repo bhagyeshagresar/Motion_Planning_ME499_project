@@ -1,0 +1,952 @@
+adroit_control:
+  fake_execution: false
+  robot_name: hdt_arm
+button_map:
+  change_drive_set:
+    axisA: 8
+    input: buttons
+    invert: false
+  change_speed:
+    axisA: 6
+    input: buttons
+    invert: false
+  collision_enable:
+    axisA: 7
+    input: buttons
+    invert: false
+  control_mode:
+    axisA: 2
+    input: buttons
+    invert: false
+  cycle_control:
+    axisA: 3
+    input: buttons
+    invert: false
+  joystick_control:
+    axisA: 2
+    input: buttons
+    invert: false
+  mirror_mode:
+    axisA: 1
+    input: buttons
+    invert: false
+  named_cycle:
+    axisA: 1
+    input: buttons
+    invert: false
+  named_execute:
+    axisA: 3
+    input: buttons
+    invert: false
+  stop_control:
+    axisA: 0
+    input: buttons
+    invert: false
+  zero_position:
+    axisA: 7
+    input: buttons
+    invert: false
+generic_joystick:
+  controller_prefix: hdt_arm
+  status_message_frame: base_link
+  use_spacemouse: false
+hdt_arm:
+  arm_controller:
+    constraints:
+      goal_time: 5.0
+      joint1:
+        goal: 0.0873
+        trajectory: 0.2618
+      joint2:
+        goal: 0.0873
+        trajectory: 0.2618
+      joint3:
+        goal: 0.0873
+        trajectory: 0.2618
+      joint4:
+        goal: 0.0873
+        trajectory: 0.2618
+      joint5:
+        goal: 0.0873
+        trajectory: 0.2618
+      joint6:
+        goal: 0.0873
+        trajectory: 0.2618
+    joints:
+    - joint1
+    - joint2
+    - joint3
+    - joint4
+    - joint5
+    - joint6
+    state_publish_rate: 20
+    type: position_controllers/JointTrajectoryController
+  hardware_interface:
+    joint1:
+      addr: 1
+      inertia: 0.1
+      kmax: 200.0
+      kmin: 100.0
+    joint2:
+      addr: 2
+      inertia: 0.1
+      kmax: 200.0
+      kmin: 100.0
+    joint3:
+      addr: 3
+      inertia: 0.1
+      kmax: 200.0
+      kmin: 100.0
+    joint4:
+      addr: 4
+      inertia: 0.1
+      kmax: 200.0
+      kmin: 100.0
+    joint5:
+      addr: 5
+      inertia: 0.1
+      kmax: 200.0
+      kmin: 100.0
+    joint6:
+      addr: 6
+      inertia: 0.1
+      kmax: 200.0
+      kmin: 100.0
+    joints:
+    - joint1
+    - joint2
+    - joint3
+    - joint4
+    - joint5
+    - joint6
+    - pincer_joint
+    loop_hz: 20
+    pincer_joint:
+      addr: 10
+      inertia: 0.1
+      kmax: 200.0
+      kmin: 100.0
+  joint1_position_controller:
+    joint: joint1
+    type: position_controllers/JointPositionController
+  joint1_velocity_controller:
+    joint: joint1
+    type: velocity_controllers/JointVelocityController
+  joint2_position_controller:
+    joint: joint2
+    type: position_controllers/JointPositionController
+  joint2_velocity_controller:
+    joint: joint2
+    type: velocity_controllers/JointVelocityController
+  joint3_position_controller:
+    joint: joint3
+    type: position_controllers/JointPositionController
+  joint3_velocity_controller:
+    joint: joint3
+    type: velocity_controllers/JointVelocityController
+  joint4_position_controller:
+    joint: joint4
+    type: position_controllers/JointPositionController
+  joint4_velocity_controller:
+    joint: joint4
+    type: velocity_controllers/JointVelocityController
+  joint5_position_controller:
+    joint: joint5
+    type: position_controllers/JointPositionController
+  joint5_velocity_controller:
+    joint: joint5
+    type: velocity_controllers/JointVelocityController
+  joint6_position_controller:
+    joint: joint6
+    type: position_controllers/JointPositionController
+  joint6_velocity_controller:
+    joint: joint6
+    type: velocity_controllers/JointVelocityController
+  joint_state_controller:
+    publish_rate: 20
+    type: joint_state_controller/JointStateController
+  pincer_joint_position_controller:
+    joint: pincer_joint
+    type: position_controllers/JointPositionController
+  pincer_joint_velocity_controller:
+    joint: pincer_joint
+    type: velocity_controllers/JointVelocityController
+joystick_feedback_colors:
+  MODE_ENDPOINT:
+  - 1.0
+  - 0.094
+  - 0.663
+  - 0.353
+  MODE_ENDPOINT_EE:
+  - 1.0
+  - 0.705
+  - 0.58
+  - 0.255
+  MODE_JOINT_POSITION:
+  - 1.0
+  - 0.0
+  - 0.282
+  - 0.549
+  MODE_JOINT_VELOCITY:
+  - 1.0
+  - 0.4
+  - 0.569
+  - 0.173
+  MODE_NAMED:
+  - 1.0
+  - 0.957
+  - 0.137
+  - 0.49
+  MODE_NONE:
+  - 1.0
+  - 0.451
+  - 0.451
+  - 0.451
+  MODE_RESET:
+  - 1.0
+  - 0.933
+  - 0.184
+  - 0.18
+joystick_map:
+  joint1:
+    axisA: 0
+    input: axes
+    invert: true
+  joint2:
+    axisA: 1
+    input: axes
+    invert: true
+  joint3:
+    axisA: 3
+    input: axes
+    invert: true
+  joint4:
+    axisA: 4
+    input: axes
+    invert: false
+  joint5:
+    axisA: 6
+    input: axes
+    invert: false
+  joint6:
+    axisA: 7
+    input: axes
+    invert: true
+  pincer_joint:
+    axisA: 2
+    axisB: 5
+    input: axes
+    invert: false
+move_group:
+  allow_trajectory_execution: true
+  arm:
+    default_planner_config: ''
+    planner_configs:
+    - SBL
+    - EST
+    - LBKPIECE
+    - BKPIECE
+    - KPIECE
+    - RRT
+    - RRTConnect
+    - RRTstar
+    - TRRT
+    - PRM
+    - PRMstar
+    - FMT
+    - BFMT
+    - PDST
+    - STRIDE
+    - BiTRRT
+    - LBTRRT
+    - BiEST
+    - ProjEST
+    - LazyPRM
+    - LazyPRMstar
+    - SPARS
+    - SPARStwo
+  capabilities: ''
+  controller_list:
+  - action_ns: follow_joint_trajectory
+    default: true
+    joints:
+    - joint1
+    - joint2
+    - joint3
+    - joint4
+    - joint5
+    - joint6
+    name: hdt_arm/arm_controller
+    type: FollowJointTrajectory
+  default_planning_pipeline: ''
+  disable_capabilities: ''
+  generic_hw_control_loop:
+    cycle_time_error_threshold: 0.01
+    loop_hz: 300
+  hardware_interface:
+    joints:
+    - joint1
+    - joint2
+    - joint3
+    - joint4
+    - joint5
+    - joint6
+    - pincer_joint
+    sim_control_mode: 1
+  jiggle_fraction: 0.05
+  joint_state_controller:
+    publish_rate: 50
+    type: joint_state_controller/JointStateController
+  max_range: 5.0
+  max_safe_path_cost: 1
+  moveit_controller_manager: moveit_simple_controller_manager/MoveItSimpleControllerManager
+  moveit_manage_controllers: true
+  moveit_sim_hw_interface:
+    joint_model_group: arm
+    joint_model_group_pose: ready
+  octomap_resolution: 0.025
+  ompl:
+    display_random_valid_states: false
+    link_for_exploration_tree: ''
+    maximum_waypoint_distance: 0.0
+    minimum_waypoint_count: 2
+    simplify_solutions: true
+  pincer:
+    default_planner_config: ''
+    longest_valid_segment_fraction: 0.005
+    planner_configs:
+    - SBL
+    - EST
+    - LBKPIECE
+    - BKPIECE
+    - KPIECE
+    - RRT
+    - RRTConnect
+    - RRTstar
+    - TRRT
+    - PRM
+    - PRMstar
+    - FMT
+    - BFMT
+    - PDST
+    - STRIDE
+    - BiTRRT
+    - LBTRRT
+    - BiEST
+    - ProjEST
+    - LazyPRM
+    - LazyPRMstar
+    - SPARS
+    - SPARStwo
+    projection_evaluator: joints(pincer_joint,pincerfinger_left)
+  plan_execution:
+    max_replan_attempts: 5
+    record_trajectory_state_frequency: 0.0
+  planner_configs:
+    BFMT:
+      balanced: 0
+      cache_cc: 1
+      extended_fmt: 1
+      heuristics: 1
+      nearest_k: 1
+      num_samples: 1000
+      optimality: 1
+      radius_multiplier: 1.0
+      type: geometric::BFMT
+    BKPIECE:
+      border_fraction: 0.9
+      failed_expansion_score_factor: 0.5
+      min_valid_path_fraction: 0.5
+      range: 0.0
+      type: geometric::BKPIECE
+    BiEST:
+      range: 0.0
+      type: geometric::BiEST
+    BiTRRT:
+      cost_threshold: 1e300
+      frountier_node_ratio: 0.1
+      frountier_threshold: 0.0
+      init_temperature: 100
+      range: 0.0
+      temp_change_factor: 0.1
+      type: geometric::BiTRRT
+    EST:
+      goal_bias: 0.05
+      range: 0.0
+      type: geometric::EST
+    FMT:
+      cache_cc: 1
+      extended_fmt: 1
+      heuristics: 0
+      nearest_k: 1
+      num_samples: 1000
+      radius_multiplier: 1.1
+      type: geometric::FMT
+    KPIECE:
+      border_fraction: 0.9
+      failed_expansion_score_factor: 0.5
+      goal_bias: 0.05
+      min_valid_path_fraction: 0.5
+      range: 0.0
+      type: geometric::KPIECE
+    LBKPIECE:
+      border_fraction: 0.9
+      min_valid_path_fraction: 0.5
+      range: 0.0
+      type: geometric::LBKPIECE
+    LBTRRT:
+      epsilon: 0.4
+      goal_bias: 0.05
+      range: 0.0
+      type: geometric::LBTRRT
+    LazyPRM:
+      range: 0.0
+      type: geometric::LazyPRM
+    LazyPRMstar:
+      type: geometric::LazyPRMstar
+    PDST:
+      type: geometric::PDST
+    PRM:
+      max_nearest_neighbors: 10
+      type: geometric::PRM
+    PRMstar:
+      type: geometric::PRMstar
+    ProjEST:
+      goal_bias: 0.05
+      range: 0.0
+      type: geometric::ProjEST
+    RRT:
+      goal_bias: 0.05
+      range: 0.0
+      type: geometric::RRT
+    RRTConnect:
+      range: 0.0
+      type: geometric::RRTConnect
+    RRTstar:
+      delay_collision_checking: 1
+      goal_bias: 0.05
+      range: 0.0
+      type: geometric::RRTstar
+    SBL:
+      range: 0.0
+      type: geometric::SBL
+    SPARS:
+      dense_delta_fraction: 0.001
+      max_failures: 1000
+      sparse_delta_fraction: 0.25
+      stretch_factor: 3.0
+      type: geometric::SPARS
+    SPARStwo:
+      dense_delta_fraction: 0.001
+      max_failures: 5000
+      sparse_delta_fraction: 0.25
+      stretch_factor: 3.0
+      type: geometric::SPARStwo
+    STRIDE:
+      degree: 16
+      estimated_dimension: 0.0
+      goal_bias: 0.05
+      max_degree: 18
+      max_pts_per_leaf: 6
+      min_degree: 12
+      min_valid_path_fraction: 0.2
+      range: 0.0
+      type: geometric::STRIDE
+      use_projected_distance: 0
+    TRRT:
+      frountierNodeRatio: 0.1
+      frountier_threshold: 0.0
+      goal_bias: 0.05
+      init_temperature: 10e-6
+      k_constant: 0.0
+      max_states_failed: 10
+      min_temperature: 10e-10
+      range: 0.0
+      temp_change_factor: 2.0
+      type: geometric::TRRT
+  planning_plugin: ompl_interface/OMPLPlanner
+  planning_scene_monitor:
+    publish_geometry_updates: true
+    publish_planning_scene: true
+    publish_planning_scene_hz: 4.0
+    publish_state_updates: true
+    publish_transforms_updates: true
+  request_adapters: default_planner_request_adapters/AddTimeParameterization            default_planner_request_adapters/FixWorkspaceBounds            default_planner_request_adapters/FixStartStateBounds            default_planner_request_adapters/FixStartStateCollision            default_planner_request_adapters/FixStartStatePathConstraints
+  sense_for_plan:
+    discard_overlapping_cost_sources: 0.8
+    max_cost_sources: 100
+    max_look_attempts: 3
+    max_safe_path_cost: 0.01
+  sensors:
+  - {}
+  start_state_max_bounds_error: 0.1
+  trajectory_execution:
+    allowed_execution_duration_scaling: 1.2
+    allowed_goal_duration_margin: 0.5
+    allowed_start_tolerance: 0.01
+    execution_duration_monitoring: true
+    execution_velocity_scaling: 1.0
+    wait_for_trajectory_completion: true
+path_planner:
+  cylinder1:
+  - x: 0.0
+  - y: 0.2
+  - z: 0.4
+  - r: 0.0
+  - p: 0.0
+  - y: 0.0
+  - gripper_state: 0
+  - j1: 96
+  - j2: 43
+  - j3: -28
+  - j4: 11
+  - j5: -19
+  - j6: -105
+  - gripper_state: 1
+  - j1: -89
+  - j2: 59
+  - j3: -4
+  - j4: 1
+  - j5: 125
+  - j6: 91
+  - gripper_state: 0
+  - attach: '1'
+  - x_cartesian: 0
+  - y_cartesian: 0
+  - z_cartesian: 0.1
+  - x_cartesian: 0
+  - y_cartesian: -0.2
+  - z_cartesian: 0.0
+  - x: 0.422
+  - y: -0.045
+  - z: -0.1
+  - r: 0.0
+  - p: -0.1
+  - y: 0.0
+  - gripper_state: 1
+  - detach: '1'
+  cylinder2:
+  - x: 0.0
+  - y: 0.2
+  - z: 0.4
+  - r: 0.0
+  - p: 0.0
+  - y: 0.0
+  - gripper_state: 0
+  - j1: 80
+  - j2: -8
+  - j3: 47
+  - j4: 165
+  - j5: 40
+  - j6: 102
+  - j1: 10
+  - j2: 11
+  - j3: 37
+  - j4: 153
+  - j5: 1
+  - j6: 41
+  - attach_obj_val: 1
+  - x_cartesian: 0
+  - y_cartesian: 0
+  - z_cartesian: 0.1
+  - x_cartesian: 0
+  - y_cartesian: -0.2
+  - z_cartesian: 0.0
+  - x: 0.422
+  - y: -0.15
+  - z: -0.1
+  - r: 0.0
+  - p: -0.1
+  - y: 0.0
+  - gripper_state: 1
+  - detach_obj_val: 1
+robot_description: "<?xml version=\"1.0\" ?>\n<!-- ===================================================================================\
+  \ -->\n<!-- |    This document was autogenerated by xacro from /home/student/hdt_adroit/src/hdt_6dof_a24_pincer/hdt_6dof_a24_pincer_description/urdf/hdt_arm.xacro\
+  \ | -->\n<!-- |    EDITING THIS FILE BY HAND IS NOT RECOMMENDED                \
+  \                 | -->\n<!-- ===================================================================================\
+  \ -->\n<robot name=\"hdt_arm\">\n  <!-- materials -->\n  <material name=\"drive_color\"\
+  >\n    <color rgba=\"0.9803921568627451 0.6549019607843137 0.3568627450980392 1.0\"\
+  />\n  </material>\n  <material name=\"link_color\">\n    <color rgba=\"0.8 0.8 0.8\
+  \ 1.0\"/>\n  </material>\n  <material name=\"finger_color\">\n    <color rgba=\"\
+  0.4392156862745098 0.7647058823529411 0.41568627450980394 1.0\"/>\n  </material>\n\
+  \  <!-- segment 0 -->\n  <link name=\"base_link\"/>\n  <!-- pedestal -->\n  <joint\
+  \ name=\"pedestal_joint\" type=\"fixed\">\n    <origin rpy=\"0 0 0\" xyz=\"0 0 0\"\
+  />\n    <parent link=\"base_link\"/>\n    <child link=\"pedestal_link\"/>\n  </joint>\n\
+  \  <link name=\"pedestal_link\">\n    <collision>\n      <origin rpy=\"0 0 0\" xyz=\"\
+  0 0 0\"/>\n      <geometry>\n        <mesh filename=\"package://hdt_6dof_a24_pincer_description/meshes/H021285\
+  \ - SHAREABLE - A24 Q PEDESTAL ASSY - EMD_1.STL\"/>\n      </geometry>\n    </collision>\n\
+  \    <visual>\n      <origin rpy=\"0 0 0\" xyz=\"0 0 0\"/>\n      <geometry>\n \
+  \       <mesh filename=\"package://hdt_6dof_a24_pincer_description/meshes/H021285\
+  \ - SHAREABLE - A24 Q PEDESTAL ASSY - EMD_1.STL\"/>\n      </geometry>\n      <material\
+  \ name=\"link_color\"/>\n    </visual>\n    <inertial>\n      <origin rpy=\"0 0\
+  \ 0\" xyz=\"0 0 0\"/>\n      <mass value=\"0\"/>\n      <inertia ixx=\"0.005\" ixy=\"\
+  0.0\" ixz=\"0.0\" iyy=\"0.005\" iyz=\"0.0\" izz=\"0.005\"/>\n    </inertial>\n \
+  \ </link>\n  <!-- drive 1 -->\n  <joint name=\"joint1\" type=\"revolute\">\n   \
+  \ <axis xyz=\"0 0 1\"/>\n    <limit effort=\"60.0\" lower=\"-3.141592653589793\"\
+  \ upper=\"3.141592653589793\" velocity=\"0.7853981633974483\"/>\n    <origin rpy=\"\
+  0 0 -1.5707963267948966\" xyz=\"0 0 0.05515\"/>\n    <parent link=\"pedestal_link\"\
+  />\n    <child link=\"drive1_link\"/>\n    <dynamics damping=\"0.7\" friction=\"\
+  0.0\"/>\n  </joint>\n  <link name=\"drive1_link\">\n    <collision>\n      <origin\
+  \ rpy=\"0 0 0\" xyz=\"0 0 -0.01\"/>\n      <geometry>\n        <cylinder length=\"\
+  0.07\" radius=\"0.025\"/>\n      </geometry>\n    </collision>\n    <visual>\n \
+  \     <origin rpy=\"0 0 0\" xyz=\"0 0 0\"/>\n      <geometry>\n        <mesh filename=\"\
+  package://hdt_6dof_a24_pincer_description/meshes/H020840 - SHAREABLE - A24 DRIVE\
+  \ MODULE - EMD_1.STL\"/>\n      </geometry>\n      <material name=\"drive_color\"\
+  />\n    </visual>\n    <inertial>\n      <origin rpy=\"0 0 0\" xyz=\"0 0 0\"/>\n\
+  \      <mass value=\"0\"/>\n      <inertia ixx=\"0.005\" ixy=\"0.0\" ixz=\"0.0\"\
+  \ iyy=\"0.005\" iyz=\"0.0\" izz=\"0.005\"/>\n    </inertial>\n  </link>\n  <!--\
+  \ drive 2 -->\n  <joint name=\"joint2\" type=\"revolute\">\n    <axis xyz=\"0 0\
+  \ 1\"/>\n    <limit effort=\"60.0\" lower=\"-1.5707963267948966\" upper=\"1.5707963267948966\"\
+  \ velocity=\"0.7853981633974483\"/>\n    <origin rpy=\"3.141592653589793 -1.5707963267948966\
+  \ 0\" xyz=\"0.06275 0 0\"/>\n    <parent link=\"drive1_link\"/>\n    <child link=\"\
+  drive2_link\"/>\n    <dynamics damping=\"0.7\" friction=\"0.0\"/>\n  </joint>\n\
+  \  <link name=\"drive2_link\">\n    <collision>\n      <origin rpy=\"0 0 0\" xyz=\"\
+  0 0 -0.01\"/>\n      <geometry>\n        <cylinder length=\"0.07\" radius=\"0.025\"\
+  />\n      </geometry>\n    </collision>\n    <visual>\n      <origin rpy=\"0 0 0\"\
+  \ xyz=\"0 0 0\"/>\n      <geometry>\n        <mesh filename=\"package://hdt_6dof_a24_pincer_description/meshes/H020840\
+  \ - SHAREABLE - A24 DRIVE MODULE - EMD_1.STL\"/>\n      </geometry>\n      <material\
+  \ name=\"drive_color\"/>\n    </visual>\n    <inertial>\n      <origin rpy=\"0 0\
+  \ 0\" xyz=\"0 0 0\"/>\n      <mass value=\"0\"/>\n      <inertia ixx=\"0.005\" ixy=\"\
+  0.0\" ixz=\"0.0\" iyy=\"0.005\" iyz=\"0.0\" izz=\"0.005\"/>\n    </inertial>\n \
+  \ </link>\n  <!-- proximal tube -->\n  <joint name=\"proximal_tube_joint\" type=\"\
+  fixed\">\n    <origin rpy=\"0 0 0\" xyz=\"0.1502 0 0\"/>\n    <parent link=\"drive2_link\"\
+  />\n    <child link=\"proximal_tube_link\"/>\n  </joint>\n  <link name=\"proximal_tube_link\"\
+  >\n    <collision>\n      <origin rpy=\"0 0 0\" xyz=\"0 0 0\"/>\n      <geometry>\n\
+  \        <mesh filename=\"package://hdt_6dof_a24_pincer_description/meshes/H021435\
+  \ - SHAREABLE - A24 PROXIMAL TUBE ASSY - EMD_1.STL\"/>\n      </geometry>\n    </collision>\n\
+  \    <visual>\n      <origin rpy=\"0 0 0\" xyz=\"0 0 0\"/>\n      <geometry>\n \
+  \       <mesh filename=\"package://hdt_6dof_a24_pincer_description/meshes/H021435\
+  \ - SHAREABLE - A24 PROXIMAL TUBE ASSY - EMD_1.STL\"/>\n      </geometry>\n    \
+  \  <material name=\"link_color\"/>\n    </visual>\n    <inertial>\n      <origin\
+  \ rpy=\"0 0 0\" xyz=\"0 0 0\"/>\n      <mass value=\"0\"/>\n      <inertia ixx=\"\
+  0.005\" ixy=\"0.0\" ixz=\"0.0\" iyy=\"0.005\" iyz=\"0.0\" izz=\"0.005\"/>\n    </inertial>\n\
+  \  </link>\n  <!-- drive 3 link - place holder for drive housing model -->\n  <joint\
+  \ name=\"drive3_housing_joint\" type=\"fixed\">\n    <origin rpy=\"0 0 3.141592653589793\"\
+  \ xyz=\"0.1502 0 0\"/>\n    <parent link=\"proximal_tube_link\"/>\n    <child link=\"\
+  drive3_housing_link\"/>\n  </joint>\n  <link name=\"drive3_housing_link\">\n   \
+  \ <collision>\n      <origin rpy=\"0 0 0\" xyz=\"0 0 -0.01\"/>\n      <geometry>\n\
+  \        <cylinder length=\"0.07\" radius=\"0.025\"/>\n      </geometry>\n    </collision>\n\
+  \    <visual>\n      <origin rpy=\"0 0 0\" xyz=\"0 0 0\"/>\n      <geometry>\n \
+  \       <mesh filename=\"package://hdt_6dof_a24_pincer_description/meshes/H020840\
+  \ - SHAREABLE - A24 DRIVE MODULE - EMD_1.STL\"/>\n      </geometry>\n      <material\
+  \ name=\"drive_color\"/>\n    </visual>\n  </link>\n  <!-- drive 3 -->\n  <joint\
+  \ name=\"joint3\" type=\"revolute\">\n    <axis xyz=\"0 0 1\"/>\n    <limit effort=\"\
+  60.0\" lower=\"-1.5708\" upper=\"1.5708\" velocity=\"0.7853981633974483\"/>\n  \
+  \  <origin rpy=\"0 0 -2.670353755589793\" xyz=\"0 0 0\"/>\n    <parent link=\"drive3_housing_link\"\
+  />\n    <child link=\"drive3_link\"/>\n    <dynamics damping=\"0.7\" friction=\"\
+  0.0\"/>\n  </joint>\n  <link name=\"drive3_link\">\n    <inertial>\n      <origin\
+  \ rpy=\"0 0 0\" xyz=\"0 0 0\"/>\n      <mass value=\"0\"/>\n      <inertia ixx=\"\
+  0.005\" ixy=\"0.0\" ixz=\"0.0\" iyy=\"0.005\" iyz=\"0.0\" izz=\"0.005\"/>\n    </inertial>\n\
+  \  </link>\n  <!-- elbow box -->\n  <joint name=\"elbow_box_joint\" type=\"fixed\"\
+  >\n    <origin rpy=\"0 0 -1.5707963267948966\" xyz=\"0 0 -0.03865\"/>\n    <parent\
+  \ link=\"drive3_link\"/>\n    <child link=\"elbow_box_link\"/>\n    <dynamics damping=\"\
+  0.7\" friction=\"0.0\"/>\n  </joint>\n  <link name=\"elbow_box_link\">\n    <collision>\n\
+  \      <origin rpy=\"0 0 0\" xyz=\"0 0 0\"/>\n      <geometry>\n        <mesh filename=\"\
+  package://hdt_6dof_a24_pincer_description/meshes/H021330 - SHAREABLE - A24 CRS-I\
+  \ ELBOW BRACKET COMPUTER ASSY - EMD_1.STL\"/>\n      </geometry>\n    </collision>\n\
+  \    <visual>\n      <origin rpy=\"0 0 0\" xyz=\"0 0 0\"/>\n      <geometry>\n \
+  \       <mesh filename=\"package://hdt_6dof_a24_pincer_description/meshes/H021330\
+  \ - SHAREABLE - A24 CRS-I ELBOW BRACKET COMPUTER ASSY - EMD_1.STL\"/>\n      </geometry>\n\
+  \      <material name=\"link_color\"/>\n    </visual>\n    <inertial>\n      <origin\
+  \ rpy=\"0 0 0\" xyz=\"0 0 0\"/>\n      <mass value=\"0\"/>\n      <inertia ixx=\"\
+  0.005\" ixy=\"0.0\" ixz=\"0.0\" iyy=\"0.005\" iyz=\"0.0\" izz=\"0.005\"/>\n    </inertial>\n\
+  \  </link>\n  <!-- drive 4 link - place holder for drive housing model -->\n  <joint\
+  \ name=\"drive4_housing_joint\" type=\"fixed\">\n    <origin rpy=\"0 1.5707963267948966\
+  \ 2.670353755589793\" xyz=\"0.08 0 0.03517\"/>\n    <parent link=\"elbow_box_link\"\
+  />\n    <child link=\"drive4_housing_link\"/>\n  </joint>\n  <link name=\"drive4_housing_link\"\
+  >\n    <collision>\n      <origin rpy=\"0 0 0\" xyz=\"0 0 -0.01\"/>\n      <geometry>\n\
+  \        <cylinder length=\"0.07\" radius=\"0.025\"/>\n      </geometry>\n    </collision>\n\
+  \    <visual>\n      <origin rpy=\"0 0 0\" xyz=\"0 0 0\"/>\n      <geometry>\n \
+  \       <mesh filename=\"package://hdt_6dof_a24_pincer_description/meshes/H020840\
+  \ - SHAREABLE - A24 DRIVE MODULE - EMD_1.STL\"/>\n      </geometry>\n      <material\
+  \ name=\"drive_color\"/>\n    </visual>\n  </link>\n  <!-- drive 4 -->\n  <joint\
+  \ name=\"joint4\" type=\"revolute\">\n    <axis xyz=\"0 0 1\"/>\n    <limit effort=\"\
+  60.0\" lower=\"-3.141592653589793\" upper=\"3.141592653589793\" velocity=\"0.7853981633974483\"\
+  />\n    <origin rpy=\"0 0 0\" xyz=\"0 0 0\"/>\n    <parent link=\"drive4_housing_link\"\
+  />\n    <child link=\"drive4_link\"/>\n    <dynamics damping=\"0.7\" friction=\"\
+  0.0\"/>\n  </joint>\n  <link name=\"drive4_link\">\n    <inertial>\n      <origin\
+  \ rpy=\"0 0 0\" xyz=\"0 0 0\"/>\n      <mass value=\"0\"/>\n      <inertia ixx=\"\
+  0.005\" ixy=\"0.0\" ixz=\"0.0\" iyy=\"0.005\" iyz=\"0.0\" izz=\"0.005\"/>\n    </inertial>\n\
+  \  </link>\n  <!-- distal tube -->\n  <joint name=\"distal_tube_joint\" type=\"\
+  fixed\">\n    <origin rpy=\"0 0 0\" xyz=\"0 0 -0.07295\"/>\n    <parent link=\"\
+  drive4_link\"/>\n    <child link=\"distal_tube_link\"/>\n  </joint>\n  <link name=\"\
+  distal_tube_link\">\n    <collision>\n      <origin rpy=\"3.141592653589793 0 0\"\
+  \ xyz=\"0 0 0\"/>\n      <geometry>\n        <mesh filename=\"package://hdt_6dof_a24_pincer_description/meshes/H021436\
+  \ - SHAREABLE - A24 DISTAL TUBE ASSY - EMD_1.STL\"/>\n      </geometry>\n    </collision>\n\
+  \    <visual>\n      <origin rpy=\"3.141592653589793 0 0\" xyz=\"0 0 0\"/>\n   \
+  \   <geometry>\n        <mesh filename=\"package://hdt_6dof_a24_pincer_description/meshes/H021436\
+  \ - SHAREABLE - A24 DISTAL TUBE ASSY - EMD_1.STL\"/>\n      </geometry>\n      <material\
+  \ name=\"link_color\"/>\n    </visual>\n    <inertial>\n      <origin rpy=\"0 0\
+  \ 0\" xyz=\"0 0 0\"/>\n      <mass value=\"0\"/>\n      <inertia ixx=\"0.005\" ixy=\"\
+  0.0\" ixz=\"0.0\" iyy=\"0.005\" iyz=\"0.0\" izz=\"0.005\"/>\n    </inertial>\n \
+  \ </link>\n  <!-- drive 5 link - place holder for drive housing model -->\n  <joint\
+  \ name=\"drive5_housing_joint\" type=\"fixed\">\n    <origin rpy=\"0 -1.5707963267948966\
+  \ 0\" xyz=\"0 0 -0.06530000000000001\"/>\n    <parent link=\"distal_tube_link\"\
+  />\n    <child link=\"drive5_housing_link\"/>\n  </joint>\n  <link name=\"drive5_housing_link\"\
+  >\n    <collision>\n      <origin rpy=\"0 0 0\" xyz=\"0 0 -0.01\"/>\n      <geometry>\n\
+  \        <cylinder length=\"0.07\" radius=\"0.025\"/>\n      </geometry>\n    </collision>\n\
+  \    <visual>\n      <origin rpy=\"0 0 0\" xyz=\"0 0 0\"/>\n      <geometry>\n \
+  \       <mesh filename=\"package://hdt_6dof_a24_pincer_description/meshes/H020840\
+  \ - SHAREABLE - A24 DRIVE MODULE - EMD_1.STL\"/>\n      </geometry>\n      <material\
+  \ name=\"drive_color\"/>\n    </visual>\n  </link>\n  <!-- drive 5 -->\n  <joint\
+  \ name=\"joint5\" type=\"revolute\">\n    <axis xyz=\"0 0 1\"/>\n    <limit effort=\"\
+  60.0\" lower=\"-2.3\" upper=\"2.3\" velocity=\"0.7853981633974483\"/>\n    <origin\
+  \ rpy=\"0 0 0\" xyz=\"0 0 0\"/>\n    <parent link=\"drive5_housing_link\"/>\n  \
+  \  <child link=\"drive5_link\"/>\n    <dynamics damping=\"0.7\" friction=\"0.0\"\
+  />\n  </joint>\n  <link name=\"drive5_link\">\n    <inertial>\n      <origin rpy=\"\
+  0 0 0\" xyz=\"0 0 0\"/>\n      <mass value=\"0\"/>\n      <inertia ixx=\"0.005\"\
+  \ ixy=\"0.0\" ixz=\"0.0\" iyy=\"0.005\" iyz=\"0.0\" izz=\"0.005\"/>\n    </inertial>\n\
+  \  </link>\n  <!-- drive 6 link - place holder for drive housing model -->\n  <joint\
+  \ name=\"drive6_housing_joint\" type=\"fixed\">\n    <origin rpy=\"0 -1.5707963267948966\
+  \ 3.141592653589793\" xyz=\"0 0 -0.06275\"/>\n    <parent link=\"drive5_link\"/>\n\
+  \    <child link=\"drive6_housing_link\"/>\n  </joint>\n  <link name=\"drive6_housing_link\"\
+  >\n    <collision>\n      <origin rpy=\"0 0 0\" xyz=\"0 0 -0.01\"/>\n      <geometry>\n\
+  \        <cylinder length=\"0.07\" radius=\"0.025\"/>\n      </geometry>\n    </collision>\n\
+  \    <visual>\n      <origin rpy=\"0 0 0\" xyz=\"0 0 0\"/>\n      <geometry>\n \
+  \       <mesh filename=\"package://hdt_6dof_a24_pincer_description/meshes/H020840\
+  \ - SHAREABLE - A24 DRIVE MODULE - EMD_1.STL\"/>\n      </geometry>\n      <material\
+  \ name=\"drive_color\"/>\n    </visual>\n  </link>\n  <!-- drive 6 -->\n  <joint\
+  \ name=\"joint6\" type=\"revolute\">\n    <axis xyz=\"0 0 1\"/>\n    <limit effort=\"\
+  60.0\" lower=\"-3.141592653589793\" upper=\"3.141592653589793\" velocity=\"0.7853981633974483\"\
+  />\n    <origin rpy=\"0 0 0\" xyz=\"0 0 0\"/>\n    <parent link=\"drive6_housing_link\"\
+  />\n    <child link=\"drive6_link\"/>\n    <dynamics damping=\"0.7\" friction=\"\
+  0.0\"/>\n  </joint>\n  <link name=\"drive6_link\">\n    <inertial>\n      <origin\
+  \ rpy=\"0 0 0\" xyz=\"0 0 0\"/>\n      <mass value=\"0\"/>\n      <inertia ixx=\"\
+  0.005\" ixy=\"0.0\" ixz=\"0.0\" iyy=\"0.005\" iyz=\"0.0\" izz=\"0.005\"/>\n    </inertial>\n\
+  \  </link>\n  <!-- pincer link - place holder for pincer housing model -->\n  <joint\
+  \ name=\"pincer_housing_joint\" type=\"fixed\">\n    <origin rpy=\"0 -1.5707963267948966\
+  \ 0\" xyz=\"0 0 -0.06275\"/>\n    <parent link=\"drive6_link\"/>\n    <child link=\"\
+  pincer_housing_link\"/>\n  </joint>\n  <link name=\"pincer_housing_link\">\n   \
+  \ <collision>\n      <origin rpy=\"0 0 0\" xyz=\"0 0 0\"/>\n      <geometry>\n \
+  \       <mesh filename=\"package://hdt_6dof_a24_pincer_description/meshes/H021094\
+  \ - SHAREABLE - A24-P PINCER ASSY, NO FINGERS - EMD_1.STL\"/>\n      </geometry>\n\
+  \    </collision>\n    <visual>\n      <origin rpy=\"0 0 0\" xyz=\"0 0 0\"/>\n \
+  \     <geometry>\n        <mesh filename=\"package://hdt_6dof_a24_pincer_description/meshes/H021094\
+  \ - SHAREABLE - A24-P PINCER ASSY, NO FINGERS - EMD_1.STL\"/>\n      </geometry>\n\
+  \      <material name=\"drive_color\"/>\n    </visual>\n  </link>\n  <!-- Pincer\
+  \ joint, nothing connected to output link use mimic joints to account for gear ratio\
+  \ beteen output and fingers -->\n  <joint name=\"pincer_joint\" type=\"revolute\"\
+  >\n    <hdt id=\"10\" inertia=\"0.075\" kmax=\"150\" kmin=\"75\"/>\n    <axis xyz=\"\
+  0 0 1\"/>\n    <limit effort=\"48.0\" lower=\"-0.2\" upper=\"0.9\" velocity=\"0.7853981633974483\"\
+  />\n    <origin rpy=\"0 0 0\" xyz=\"0.0135 0 0.0375\"/>\n    <parent link=\"pincer_housing_link\"\
+  />\n    <child link=\"pincer_output\"/>\n    <dynamics damping=\"0.7\" friction=\"\
+  0.0\"/>\n  </joint>\n  <link name=\"pincer_output\">\n    </link>\n  <!-- pincer\
+  \ finger left -->\n  <joint name=\"pincerfinger_left\" type=\"revolute\">\n    <axis\
+  \ xyz=\"0 0 1\"/>\n    <limit effort=\"60.0\" lower=\"0\" upper=\"1.5707963267948966\"\
+  \ velocity=\"0.7853981633974483\"/>\n    <origin rpy=\"0 0 -3.141592653589793\"\
+  \ xyz=\"-0.036761 -0.0135 0\"/>\n    <parent link=\"pincer_housing_link\"/>\n  \
+  \  <child link=\"pincerfinger_left_link\"/>\n    <dynamics damping=\"0.7\" friction=\"\
+  0.0\"/>\n    <mimic joint=\"pincer_joint\" multiplier=\"0.86\" offset=\"0.0\"/>\n\
+  \  </joint>\n  <link name=\"pincerfinger_left_link\">\n    <collision>\n      <origin\
+  \ rpy=\"0 0 0\" xyz=\"0 0 0\"/>\n      <geometry>\n        <mesh filename=\"package://hdt_6dof_a24_pincer_description/meshes/H020868\
+  \ - SHAREABLE - A24-P PINCER FINGER, OVERMOLD ASSY - EMD_1.STL\"/>\n      </geometry>\n\
+  \    </collision>\n    <visual>\n      <origin rpy=\"0 0 0\" xyz=\"0 0 0\"/>\n \
+  \     <geometry>\n        <mesh filename=\"package://hdt_6dof_a24_pincer_description/meshes/H020868\
+  \ - SHAREABLE - A24-P PINCER FINGER, OVERMOLD ASSY - EMD_1.STL\"/>\n      </geometry>\n\
+  \      <material name=\"finger_color\"/>\n    </visual>\n    <inertial>\n      <origin\
+  \ rpy=\"0 0 0\" xyz=\"0 0 0\"/>\n      <mass value=\"0\"/>\n      <inertia ixx=\"\
+  0.005\" ixy=\"0.0\" ixz=\"0.0\" iyy=\"0.005\" iyz=\"0.0\" izz=\"0.005\"/>\n    </inertial>\n\
+  \  </link>\n  <!-- pincer finger left -->\n  <joint name=\"pincerfinger_right\"\
+  \ type=\"revolute\">\n    <axis xyz=\"0 0 1\"/>\n    <limit effort=\"60.0\" lower=\"\
+  -6.283185307179586\" upper=\"6.283185307179586\" velocity=\"0.7853981633974483\"\
+  />\n    <origin rpy=\"3.141592653589793 0 -3.141592653589793\" xyz=\"-0.036761 0.0135\
+  \ 0\"/>\n    <parent link=\"pincer_housing_link\"/>\n    <child link=\"pincerfinger_right_link\"\
+  />\n    <dynamics damping=\"0.7\" friction=\"0.0\"/>\n    <mimic joint=\"pincer_joint\"\
+  \ multiplier=\"0.86\" offset=\"0.0\"/>\n  </joint>\n  <link name=\"pincerfinger_right_link\"\
+  >\n    <collision>\n      <origin rpy=\"0 0 0\" xyz=\"0 0 0\"/>\n      <geometry>\n\
+  \        <mesh filename=\"package://hdt_6dof_a24_pincer_description/meshes/H020868\
+  \ - SHAREABLE - A24-P PINCER FINGER, OVERMOLD ASSY - EMD_1.STL\"/>\n      </geometry>\n\
+  \    </collision>\n    <visual>\n      <origin rpy=\"0 0 0\" xyz=\"0 0 0\"/>\n \
+  \     <geometry>\n        <mesh filename=\"package://hdt_6dof_a24_pincer_description/meshes/H020868\
+  \ - SHAREABLE - A24-P PINCER FINGER, OVERMOLD ASSY - EMD_1.STL\"/>\n      </geometry>\n\
+  \      <material name=\"finger_color\"/>\n    </visual>\n    <inertial>\n      <origin\
+  \ rpy=\"0 0 0\" xyz=\"0 0 0\"/>\n      <mass value=\"0\"/>\n      <inertia ixx=\"\
+  0.005\" ixy=\"0.0\" ixz=\"0.0\" iyy=\"0.005\" iyz=\"0.0\" izz=\"0.005\"/>\n    </inertial>\n\
+  \  </link>\n  <!-- endpoint -->\n  <joint name=\"endpoint_joint\" type=\"fixed\"\
+  >\n    <origin rpy=\"0 0 3.141592653589793\" xyz=\"-0.15 0 0\"/>\n    <parent link=\"\
+  pincer_housing_link\"/>\n    <child link=\"endpoint_link\"/>\n  </joint>\n  <link\
+  \ name=\"endpoint_link\">\n    </link>\n</robot>\n\n"
+robot_description_kinematics:
+  arm:
+    kinematics_solver: kdl_kinematics_plugin/KDLKinematicsPlugin
+    kinematics_solver_search_resolution: 0.005
+    kinematics_solver_timeout: 0.005
+robot_description_planning:
+  joint_limits:
+    joint1:
+      has_acceleration_limits: false
+      has_velocity_limits: true
+      max_acceleration: 0
+      max_velocity: 0.785398163397
+    joint2:
+      has_acceleration_limits: false
+      has_velocity_limits: true
+      max_acceleration: 0
+      max_velocity: 0.785398163397
+    joint3:
+      has_acceleration_limits: false
+      has_velocity_limits: true
+      max_acceleration: 0
+      max_velocity: 0.785398163397
+    joint4:
+      has_acceleration_limits: false
+      has_velocity_limits: true
+      max_acceleration: 0
+      max_velocity: 0.785398163397
+    joint5:
+      has_acceleration_limits: false
+      has_velocity_limits: true
+      max_acceleration: 0
+      max_velocity: 0.785398163397
+    joint6:
+      has_acceleration_limits: false
+      has_velocity_limits: true
+      max_acceleration: 0
+      max_velocity: 0.785398163397
+    pincer_joint:
+      has_acceleration_limits: false
+      has_velocity_limits: true
+      max_acceleration: 0
+      max_velocity: 0.785398163397
+    pincerfinger_left:
+      has_acceleration_limits: false
+      has_velocity_limits: true
+      max_acceleration: 0
+      max_velocity: 0.785398163397
+    pincerfinger_right:
+      has_acceleration_limits: false
+      has_velocity_limits: true
+      max_acceleration: 0
+      max_velocity: 0.785398163397
+robot_description_semantic: "<?xml version=\"1.0\" ?>\n<!--This does not replace URDF,\
+  \ and is not an extension of URDF.\n    This is a format for representing semantic\
+  \ information about the robot structure.\n    A URDF file must exist for this robot\
+  \ as well, where the joints and the links that are referenced are defined\n-->\n\
+  <robot name=\"hdt_arm\">\n    <!--GROUPS: Representation of a set of joints and\
+  \ links. This can be useful for specifying DOF to plan for, defining arms, end effectors,\
+  \ etc-->\n    <!--LINKS: When a link is specified, the parent joint of that link\
+  \ (if it exists) is automatically included-->\n    <!--JOINTS: When a joint is specified,\
+  \ the child link of that joint (which will always exist) is automatically included-->\n\
+  \    <!--CHAINS: When a chain is specified, all the links along the chain (including\
+  \ endpoints) are included in the group. Additionally, all the joints that are parents\
+  \ to included links are also included. This means that joints along the chain and\
+  \ the parent joint of the base link are included in the group-->\n    <!--SUBGROUPS:\
+  \ Groups can also be formed by referencing to already defined group names-->\n \
+  \   <group name=\"arm\">\n        <chain base_link=\"base_link\" tip_link=\"endpoint_link\"\
+  \ />\n    </group>\n    <group name=\"pincer\">\n        <joint name=\"pincer_joint\"\
+  \ />\n        <joint name=\"pincerfinger_left\" />\n        <joint name=\"pincerfinger_right\"\
+  \ />\n    </group>\n    <!--GROUP STATES: Purpose: Define a named state for a particular\
+  \ group, in terms of joint values. This is useful to define states like 'folded\
+  \ arms'-->\n    <group_state name=\"ready\" group=\"arm\">\n        <joint name=\"\
+  joint1\" value=\"0\" />\n        <joint name=\"joint2\" value=\"0\" />\n       \
+  \ <joint name=\"joint3\" value=\"0\" />\n        <joint name=\"joint4\" value=\"\
+  0\" />\n        <joint name=\"joint5\" value=\"0\" />\n        <joint name=\"joint6\"\
+  \ value=\"0\" />\n    </group_state>\n    <group_state name=\"stow\" group=\"arm\"\
+  >\n        <joint name=\"joint1\" value=\"0\" />\n        <joint name=\"joint2\"\
+  \ value=\"1.5708\" />\n        <joint name=\"joint3\" value=\"-1.5000\" />\n   \
+  \     <joint name=\"joint4\" value=\"0\" />\n        <joint name=\"joint5\" value=\"\
+  -0.0708\" />\n        <joint name=\"joint6\" value=\"1.5708\" />\n    </group_state>\n\
+  \    <!--END EFFECTOR: Purpose: Represent information about an end effector.-->\n\
+  \    <end_effector name=\"pincer\" parent_link=\"pincer_housing_link\" group=\"\
+  pincer\" parent_group=\"arm\" />\n    <!--VIRTUAL JOINT: Purpose: this element defines\
+  \ a virtual joint between a robot link and an external frame of reference (considered\
+  \ fixed with respect to the robot)-->\n    <virtual_joint name=\"world_link\" type=\"\
+  fixed\" parent_frame=\"world\" child_link=\"base_link\" />\n    <!--DISABLE COLLISIONS:\
+  \ By default it is assumed that any link of the robot could potentially come into\
+  \ collision with any other link in the robot. This tag disables collision checking\
+  \ between a specified pair of links. -->\n    <disable_collisions link1=\"distal_tube_link\"\
+  \ link2=\"drive1_link\" reason=\"Never\" />\n    <disable_collisions link1=\"distal_tube_link\"\
+  \ link2=\"drive2_link\" reason=\"Never\" />\n    <disable_collisions link1=\"distal_tube_link\"\
+  \ link2=\"drive3_housing_link\" reason=\"Never\" />\n    <disable_collisions link1=\"\
+  distal_tube_link\" link2=\"drive4_housing_link\" reason=\"Adjacent\" />\n    <disable_collisions\
+  \ link1=\"distal_tube_link\" link2=\"drive5_housing_link\" reason=\"Adjacent\" />\n\
+  \    <disable_collisions link1=\"distal_tube_link\" link2=\"drive6_housing_link\"\
+  \ reason=\"Never\" />\n    <disable_collisions link1=\"distal_tube_link\" link2=\"\
+  elbow_box_link\" reason=\"Never\" />\n    <disable_collisions link1=\"distal_tube_link\"\
+  \ link2=\"pincer_housing_link\" reason=\"Never\" />\n    <disable_collisions link1=\"\
+  distal_tube_link\" link2=\"pincerfinger_left_link\" reason=\"Never\" />\n    <disable_collisions\
+  \ link1=\"distal_tube_link\" link2=\"pincerfinger_right_link\" reason=\"Never\"\
+  \ />\n    <disable_collisions link1=\"drive1_link\" link2=\"drive2_link\" reason=\"\
+  Adjacent\" />\n    <disable_collisions link1=\"drive1_link\" link2=\"drive3_housing_link\"\
+  \ reason=\"Never\" />\n    <disable_collisions link1=\"drive1_link\" link2=\"drive4_housing_link\"\
+  \ reason=\"Never\" />\n    <disable_collisions link1=\"drive1_link\" link2=\"drive5_housing_link\"\
+  \ reason=\"Never\" />\n    <disable_collisions link1=\"drive1_link\" link2=\"elbow_box_link\"\
+  \ reason=\"Never\" />\n    <disable_collisions link1=\"drive1_link\" link2=\"pedestal_link\"\
+  \ reason=\"Adjacent\" />\n    <disable_collisions link1=\"drive1_link\" link2=\"\
+  proximal_tube_link\" reason=\"Never\" />\n    <disable_collisions link1=\"drive2_link\"\
+  \ link2=\"drive3_housing_link\" reason=\"Never\" />\n    <disable_collisions link1=\"\
+  drive2_link\" link2=\"drive4_housing_link\" reason=\"Never\" />\n    <disable_collisions\
+  \ link1=\"drive2_link\" link2=\"drive5_housing_link\" reason=\"Never\" />\n    <disable_collisions\
+  \ link1=\"drive2_link\" link2=\"drive6_housing_link\" reason=\"Never\" />\n    <disable_collisions\
+  \ link1=\"drive2_link\" link2=\"elbow_box_link\" reason=\"Never\" />\n    <disable_collisions\
+  \ link1=\"drive2_link\" link2=\"pedestal_link\" reason=\"Never\" />\n    <disable_collisions\
+  \ link1=\"drive2_link\" link2=\"proximal_tube_link\" reason=\"Adjacent\" />\n  \
+  \  <disable_collisions link1=\"drive3_housing_link\" link2=\"drive4_housing_link\"\
+  \ reason=\"Never\" />\n    <disable_collisions link1=\"drive3_housing_link\" link2=\"\
+  drive5_housing_link\" reason=\"Never\" />\n    <disable_collisions link1=\"drive3_housing_link\"\
+  \ link2=\"drive6_housing_link\" reason=\"Never\" />\n    <disable_collisions link1=\"\
+  drive3_housing_link\" link2=\"elbow_box_link\" reason=\"Adjacent\" />\n    <disable_collisions\
+  \ link1=\"drive3_housing_link\" link2=\"pedestal_link\" reason=\"Never\" />\n  \
+  \  <disable_collisions link1=\"drive3_housing_link\" link2=\"pincer_housing_link\"\
+  \ reason=\"Never\" />\n    <disable_collisions link1=\"drive3_housing_link\" link2=\"\
+  pincerfinger_left_link\" reason=\"Never\" />\n    <disable_collisions link1=\"drive3_housing_link\"\
+  \ link2=\"pincerfinger_right_link\" reason=\"Never\" />\n    <disable_collisions\
+  \ link1=\"drive3_housing_link\" link2=\"proximal_tube_link\" reason=\"Adjacent\"\
+  \ />\n    <disable_collisions link1=\"drive4_housing_link\" link2=\"drive5_housing_link\"\
+  \ reason=\"Never\" />\n    <disable_collisions link1=\"drive4_housing_link\" link2=\"\
+  drive6_housing_link\" reason=\"Never\" />\n    <disable_collisions link1=\"drive4_housing_link\"\
+  \ link2=\"elbow_box_link\" reason=\"Adjacent\" />\n    <disable_collisions link1=\"\
+  drive4_housing_link\" link2=\"pincer_housing_link\" reason=\"Never\" />\n    <disable_collisions\
+  \ link1=\"drive4_housing_link\" link2=\"pincerfinger_left_link\" reason=\"Never\"\
+  \ />\n    <disable_collisions link1=\"drive4_housing_link\" link2=\"pincerfinger_right_link\"\
+  \ reason=\"Never\" />\n    <disable_collisions link1=\"drive5_housing_link\" link2=\"\
+  drive6_housing_link\" reason=\"Adjacent\" />\n    <disable_collisions link1=\"drive5_housing_link\"\
+  \ link2=\"elbow_box_link\" reason=\"Never\" />\n    <disable_collisions link1=\"\
+  drive5_housing_link\" link2=\"pincer_housing_link\" reason=\"Never\" />\n    <disable_collisions\
+  \ link1=\"drive5_housing_link\" link2=\"pincerfinger_left_link\" reason=\"Never\"\
+  \ />\n    <disable_collisions link1=\"drive5_housing_link\" link2=\"pincerfinger_right_link\"\
+  \ reason=\"Never\" />\n    <disable_collisions link1=\"drive6_housing_link\" link2=\"\
+  elbow_box_link\" reason=\"Never\" />\n    <disable_collisions link1=\"drive6_housing_link\"\
+  \ link2=\"pincer_housing_link\" reason=\"Adjacent\" />\n    <disable_collisions\
+  \ link1=\"drive6_housing_link\" link2=\"pincerfinger_left_link\" reason=\"Never\"\
+  \ />\n    <disable_collisions link1=\"drive6_housing_link\" link2=\"pincerfinger_right_link\"\
+  \ reason=\"Never\" />\n    <disable_collisions link1=\"elbow_box_link\" link2=\"\
+  pedestal_link\" reason=\"Never\" />\n    <disable_collisions link1=\"elbow_box_link\"\
+  \ link2=\"pincer_housing_link\" reason=\"Never\" />\n    <disable_collisions link1=\"\
+  elbow_box_link\" link2=\"pincerfinger_left_link\" reason=\"Never\" />\n    <disable_collisions\
+  \ link1=\"elbow_box_link\" link2=\"pincerfinger_right_link\" reason=\"Never\" />\n\
+  \    <disable_collisions link1=\"elbow_box_link\" link2=\"proximal_tube_link\" reason=\"\
+  Never\" />\n    <disable_collisions link1=\"pincer_housing_link\" link2=\"pincerfinger_left_link\"\
+  \ reason=\"Adjacent\" />\n    <disable_collisions link1=\"pincer_housing_link\"\
+  \ link2=\"pincerfinger_right_link\" reason=\"Adjacent\" />\n    <disable_collisions\
+  \ link1=\"pincerfinger_left_link\" link2=\"pincerfinger_right_link\" reason=\"Default\"\
+  \ />\n</robot>\n"
+rosdistro: 'noetic
+
+  '
+roslaunch:
+  uris:
+    host_student_sys76__37853: http://student-sys76:37853/
+    host_student_sys76__42905: http://student-sys76:42905/
+rosversion: '1.15.14
+
+  '
+run_id: 0fe6f484-e297-11ec-bd67-01f48a02666b
+rviz_student_sys76_45648_7428956382959696039:
+  arm:
+    kinematics_solver: kdl_kinematics_plugin/KDLKinematicsPlugin
+    kinematics_solver_search_resolution: 0.005
+    kinematics_solver_timeout: 0.005
+  motionplanning_planning_scene_monitor:
+    publish_geometry_updates: true
+    publish_planning_scene: false
+    publish_planning_scene_hz: 4.0
+    publish_state_updates: false
+    publish_transforms_updates: false
+spacenav_node_student_sys76_45648_584590823324437224:
+  static_count_threshold: 30
+  zero_when_static: true
+xbox_joystick:
+  autorepeat_rate: 10.0
+  deadzone: 0.15
+  dev: /dev/input/js0

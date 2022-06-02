@@ -117,6 +117,4 @@ cylinder2:
 #   - y: 0.0
 #   - gripper_state: false
 
-
-
-
+cylinder4: 0.5
