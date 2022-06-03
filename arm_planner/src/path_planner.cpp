@@ -73,7 +73,9 @@ void cylinder_fn(XmlRpc::XmlRpcValue &cylinder, moveit::planning_interface::Move
 void set_pose_target_fn(XmlRpc::XmlRpcValue &cylinder, int index, moveit::planning_interface::MoveGroupInterface& move_group_interface);
 void set_joint_target_fn(XmlRpc::XmlRpcValue &cylinder, int index, moveit::planning_interface::MoveGroupInterface& move_group_interface);
 void set_cartesian_fn(XmlRpc::XmlRpcValue &cylinder, int index);
-void set_attach_fn(XmlRpc::XmlRpcValue &cylinder, int index);
+void set_attach_fn(XmlRpc::XmlRpcValue &cylinder, int index, moveit::planning_interface::MoveGroupInterface& move_group_interface, 
+moveit_msgs::CollisionObject collision_object1, moveit_msgs::CollisionObject collision_object2, moveit_msgs::CollisionObject collision_object3,
+moveit::planning_interface::PlanningSceneInterface planning_scene_interface);
 void set_detach_fn(XmlRpc::XmlRpcValue &cylinder, int index);
 
 
@@ -833,9 +835,14 @@ int main(int argc, char** argv)
     if(trigger_trajectory == true){
 
       set_pose_target_fn(cylinder1, 0, move_group_interface);
-      // joint_group_positions_follow = move_group_interface.getCurrentJointValues();
-      // std::cout << "joint_group_positions_follow: " << joint_group_positions.size() << std::endl;
       set_joint_target_fn(cylinder1, 1, move_group_interface);
+      set_joint_target_fn(cylinder1, 2, move_group_interface);
+      set_attach_fn(cylinder1, 3, move_group_interface, collision_cylinder1, collision_cylinder2, collision_cylinder3, planning_scene_interface);
+      // set_cartesian_fn(cylinder1, 4, move_group_interface);
+      // set_cartesian_fn(cylinder1, 5, move_group_interface);
+      // set_pose_target_fn(cylinder1, 6, move_group_interface);
+      // set_detach_fn(cylinder1, 7, move_group_interface);
+
 
       trigger_trajectory = false;
 
@@ -977,12 +984,6 @@ void set_joint_target_fn(XmlRpc::XmlRpcValue &cylinder, int index, moveit::plann
   joint_group_positions_follow.at(5) = static_cast<double>(cylinder[index]["j6"]);
 
 
-  std::cout << "first joint angle: " << (cylinder[index]["j1"]) << std::endl;
-  std::cout << "second joint angle: " << static_cast<double>(cylinder[index]["j2"]) << std::endl; 
-  std::cout << "third joint angle: " << static_cast<double>(cylinder[index]["j3"]) << std::endl; 
-  std::cout << "four joint angle: " << static_cast<double>(cylinder[index]["j4"]) << std::endl; 
-  std::cout << "five joint angle: " << static_cast<double>(cylinder[index]["j5"]) << std::endl; 
-  std::cout << "six joint angle: " << static_cast<double>(cylinder[index]["j6"]) << std::endl; 
 
   
   if (static_cast<int>(cylinder1[index]["gripper_state"]) == 1){
@@ -1078,45 +1079,47 @@ void set_joint_target_fn(XmlRpc::XmlRpcValue &cylinder, int index, moveit::plann
 
 
 
-// void set_attach_fn(XmlRpc::XmlRpcValue &cylinder, int index){
+void set_attach_fn(XmlRpc::XmlRpcValue &cylinder, int index, moveit::planning_interface::MoveGroupInterface& move_group_interface, 
+moveit_msgs::CollisionObject collision_cylinder1, moveit_msgs::CollisionObject collision_cylinder2, moveit_msgs::CollisionObject collision_cylinder3,
+moveit::planning_interface::PlanningSceneInterface planning_scene_interface){
 
 
-//   moveit_msgs::CollisionObject obj_follow;
+  moveit_msgs::CollisionObject obj_follow;
 
-//   obj_follow.id = cylinder[index]["attach"];
+  obj_follow.id = static_cast<std::string>(cylinder[index]["attach"]);
 
-//   //define frame pose for the gripper
-//   obj_follow.header.frame_id = move_group_interface.getEndEffectorLink();
+  //define frame pose for the gripper
+  obj_follow.header.frame_id = move_group_interface.getEndEffectorLink();
   
   
-//   std_msgs::Float64 msg;
-//   msg.data = 0.3;
-//   std::cout << "gripper closed" << std::endl;
-//   pub.publish(msg);
+  std_msgs::Float64 msg;
+  msg.data = 0.3;
+  std::cout << "gripper closed" << std::endl;
+  pub.publish(msg);
 
 
-//   std::vector <std::string> touch_links;
-//   std::string link1 = "pincerfinger_left_link";
-//   std::string link2 = "pincerfinger_right_link";
-//   touch_links.push_back(link1);
-//   touch_links.push_back(link2);
-//   move_group_interface.attachObject(obj_follow.id, "endpoint_link", touch_links);
+  std::vector <std::string> touch_links;
+  std::string link1 = "pincerfinger_left_link";
+  std::string link2 = "pincerfinger_right_link";
+  touch_links.push_back(link1);
+  touch_links.push_back(link2);
+  move_group_interface.attachObject(obj_follow.id, "endpoint_link", touch_links);
 
 
-//   if(obj_follow.id == "4"){
-//     std::vector<std::string> object_ids;
+  if(obj_follow.id == "4"){
+    std::vector<std::string> object_ids;
 
-//     object_ids.push_back(collision_cylinder1.id);
-//     object_ids.push_back(collision_cylinder2.id);
-//     object_ids.push_back(collision_cylinder3.id);
+    object_ids.push_back(collision_cylinder1.id);
+    object_ids.push_back(collision_cylinder2.id);
+    object_ids.push_back(collision_cylinder3.id);
 
-//     planning_scene_interface.removeCollisionObjects(object_ids);
+    planning_scene_interface.removeCollisionObjects(object_ids);
 
 
 
-// }
+}
 
-// }
+}
 
 
 
