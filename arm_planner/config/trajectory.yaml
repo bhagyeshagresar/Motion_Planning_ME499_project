@@ -9,21 +9,21 @@ cylinder1:
     gripper_state: 0
 
   #waypoint2
-  - j1: 96
-    j2: 43
-    j3: -28
-    j4: 11
-    j5: -19
-    j6: -105
-    gripper_state: 1
+  - j1: 0.23
+    j2: 0.5
+    j3: 0.8
+    j4: 0.7
+    j5: 0.9
+    j6: 0.1
+    gripper_state: 0
 
   #waypoint3
-  - j1: -89
-    j2: 59
-    j3: -4
-    j4: 1
-    j5: 125
-    j6: 91
+  - j1: 0.23
+    j2: 0.2
+    j3: 0.1
+    j4: 0.67
+    j5: 0.89
+    j6: 0.91
     gripper_state: 0
 
   #attach obj

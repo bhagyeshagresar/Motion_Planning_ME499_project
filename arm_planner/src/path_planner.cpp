@@ -65,12 +65,13 @@ static XmlRpc::XmlRpcValue cylinder2;
 static ros::Publisher pub;
 static double cylinder4;
 static double test_cylinder{0.0};
+static std::vector<double> joint_group_positions_follow;
 
 
 
-void cylinder_fn(XmlRpc::XmlRpcValue &cylinder);
-void set_pose_target_fn(XmlRpc::XmlRpcValue &cylinder, double test_cylinder, int index, moveit::planning_interface::MoveGroupInterface& move_group_interface);
-void set_joint_target_fn(XmlRpc::XmlRpcValue &cylinder, int index);
+void cylinder_fn(XmlRpc::XmlRpcValue &cylinder, moveit::planning_interface::MoveGroupInterface& move_group_interface);
+void set_pose_target_fn(XmlRpc::XmlRpcValue &cylinder, int index, moveit::planning_interface::MoveGroupInterface& move_group_interface);
+void set_joint_target_fn(XmlRpc::XmlRpcValue &cylinder, int index, moveit::planning_interface::MoveGroupInterface& move_group_interface);
 void set_cartesian_fn(XmlRpc::XmlRpcValue &cylinder, int index);
 void set_attach_fn(XmlRpc::XmlRpcValue &cylinder, int index);
 void set_detach_fn(XmlRpc::XmlRpcValue &cylinder, int index);
@@ -85,6 +86,7 @@ bool reset_fn(arm_planner::Reset::Request &req, arm_planner::Reset::Response &re
     // waypoints.clear();
     waypoints_list.clear();
     joint_group_positions.clear();
+    joint_group_positions_follow.clear();
 
 
   }
@@ -244,12 +246,12 @@ int main(int argc, char** argv)
   std::vector<moveit_msgs::CollisionObject> collision_objects;
 
   nh2.getParam("cylinder1", cylinder1);
-  nh2.getParam("cylinder2", cylinder2);
-  nh2.getParam("cylinder4", cylinder4);
-
+ 
   std::cout << "test cylinder: " << (cylinder1[0]["x"]) << std::endl;
-  std::cout << "test cylinder: " << (cylinder1[1]["y"]) << std::endl;
-  std::cout << "test cylinder: " << cylinder4 << std::endl;
+  std::cout << "test cylinder: " << (cylinder1[0]["y"]) << std::endl;
+  std::cout << "test cylinder: " << (cylinder1[1]["j1"]) << std::endl;
+
+
  
   //Add stand
   moveit_msgs::CollisionObject collision;
@@ -548,7 +550,7 @@ int main(int argc, char** argv)
       joint_group_positions = move_group_interface.getCurrentJointValues();
       move_group_interface.setStartStateToCurrentState();
       move_group_interface.setMaxVelocityScalingFactor(0.8);
-
+      std::cout << "joint group positions size: " << joint_group_positions.size() << std::endl;
       std::cout << "step value reached" << std::endl;
       joint_group_positions[0] = (joint1*M_PI)/180.0;
       std::cout << "filled first joint state" << std::endl;
@@ -830,7 +832,11 @@ int main(int argc, char** argv)
     
     if(trigger_trajectory == true){
 
-      set_pose_target_fn(cylinder1, test_cylinder, 0, move_group_interface);
+      set_pose_target_fn(cylinder1, 0, move_group_interface);
+      // joint_group_positions_follow = move_group_interface.getCurrentJointValues();
+      // std::cout << "joint_group_positions_follow: " << joint_group_positions.size() << std::endl;
+      set_joint_target_fn(cylinder1, 1, move_group_interface);
+
       trigger_trajectory = false;
 
     }
@@ -853,14 +859,41 @@ int main(int argc, char** argv)
 
 
 
+// void cylinder_fn(XmlRpc::XmlRpcValue &cylinder, moveit::planning_interface::MoveGroupInterface& move_group_interface){
+
+//   //go to waypoint 1
+//   set_pose_target_fn(cylinder, 0, move_group_interface);
+  
+//   //go to waypoint2
+//   set_joint_target_fn(cylinder, 1, move_group_interface);
+
+//   //go to waypoint3
+//   set_joint_target_fn(cylinder, 2, move_group_interface);
+
+//   //attachaaaa
+//   set_attach_fn(cylinder, 3, move_group_interface);
+
+//   //go to waypoint4
+//   set_cartesian_fn(cylinder, 4, move_group_interface);
+
+//   //go to waypoint5
+//   set_cartesian_fn(cylinder, 5, move_group_interface);
+
+//   //go to waypoint6
+//   set_pose_target_fn(cylinder, 6, move_group_interface);
+
+//   //detach
+//   set_detach_fn(cylinder, 7, move_group_interface);
+
+
+// }
 
 
 
 
 
 
-
-void set_pose_target_fn(XmlRpc::XmlRpcValue &cylinder, double test_cylinder, int index, moveit::planning_interface::MoveGroupInterface& move_group_interface){
+void set_pose_target_fn(XmlRpc::XmlRpcValue &cylinder, int index, moveit::planning_interface::MoveGroupInterface& move_group_interface){
 
   geometry_msgs::Pose target_pose_follow;
   tf2::Quaternion orient_pose_follow;
@@ -883,11 +916,10 @@ void set_pose_target_fn(XmlRpc::XmlRpcValue &cylinder, double test_cylinder, int
   bool success_follow = (move_group_interface.plan(my_plan2_follow) == moveit::planning_interface::MoveItErrorCode::SUCCESS);
   std::cout << "pos goal success: " << success_follow << std::endl;
 
-  // std::cout << "cylinder index x" << (cylinder[index]["x"]) << std::endl;
-  // std::cout << "cylinder index y" << (cylinder[index]["y"]) << std::endl;
-  // std::cout << "cylinder index z" << (cylinder[index]["z"]) << std::endl;
-
+  
   std::cout << "test cylinder: " << cylinder << std::endl;
+  std::cout << "first x: " << (cylinder[index]["x"]) << std::endl;
+
 
   if(success_follow == true){
     std::cout << "pos success reached" << std::endl;
@@ -918,65 +950,86 @@ void set_pose_target_fn(XmlRpc::XmlRpcValue &cylinder, double test_cylinder, int
 }
 
 
-// void set_joint_target_fn(XmlRpc::XmlRpcValue &cylinder, int index){
+void set_joint_target_fn(XmlRpc::XmlRpcValue &cylinder, int index, moveit::planning_interface::MoveGroupInterface& move_group_interface){
   
-//   std::vector<double> joint_group_positions_follow;
-//   joint_group_positions_follow = move_group_interface.getCurrentJointValues();
-//   move_group_interface.setStartStateToCurrentState();
-//   move_group_interface.setMaxVelocityScalingFactor(0.8);
+  // std::vector<double> joint_group_positions_follow;
+  joint_group_positions_follow = move_group_interface.getCurrentJointValues();
+  move_group_interface.setStartStateToCurrentState();
+  move_group_interface.setMaxVelocityScalingFactor(0.8);
 
-//   joint_group_positions_follow[0] = (cylinder[index]["j1"]*M_PI)/180.0;
-//   joint_group_positions_follow[1] = (cylinder[index]["j2"]*M_PI)/180.0;
-//   joint_group_positions_follow[2] = (cylinder[index]["j3"]*M_PI)/180.0;
-//   joint_group_positions_follow[3] = (cylinder[index]["j4"]*M_PI)/180.0;
-//   joint_group_positions_follow[4] = (cylinder[index]["j5"]*M_PI)/180.0;
-//   joint_group_positions_follow[5] = (cylinder[index]["j6"]*M_PI)/180.0;
+  std::cout << "first joint angle: " << (cylinder[index]["j1"]) << std::endl;
+
+  std::cout << "before first" << std::endl;
+  std::cout << "size: " << joint_group_positions_follow.size() << std::endl;
+  // double test = static_cast<double>(cylinder[index]["j1"]);
+  std::cout << "test 1: " << cylinder[index]["j2"] << std::endl;
+
+  double test = static_cast<double>(cylinder[index]["j1"]);
+
+  std::cout << test << std::endl;
+
+  joint_group_positions_follow.at(0) = static_cast<double>(cylinder[index]["j1"]);
+  // std::cout << "added test inside " << std::endl;
+  joint_group_positions_follow.at(1) = static_cast<double>(cylinder[index]["j2"]);
+  joint_group_positions_follow.at(2) = static_cast<double>(cylinder[index]["j3"]);
+  joint_group_positions_follow.at(3) = static_cast<double>(cylinder[index]["j4"]);
+  joint_group_positions_follow.at(4) = static_cast<double>(cylinder[index]["j5"]);
+  joint_group_positions_follow.at(5) = static_cast<double>(cylinder[index]["j6"]);
+
+
+  std::cout << "first joint angle: " << (cylinder[index]["j1"]) << std::endl;
+  std::cout << "second joint angle: " << static_cast<double>(cylinder[index]["j2"]) << std::endl; 
+  std::cout << "third joint angle: " << static_cast<double>(cylinder[index]["j3"]) << std::endl; 
+  std::cout << "four joint angle: " << static_cast<double>(cylinder[index]["j4"]) << std::endl; 
+  std::cout << "five joint angle: " << static_cast<double>(cylinder[index]["j5"]) << std::endl; 
+  std::cout << "six joint angle: " << static_cast<double>(cylinder[index]["j6"]) << std::endl; 
+
   
-//   if (cylinder[index]["gripper_state"] == true){
-//     joint_group_positions[6] = 1.0;
-//   }
-//   else{
-//     joint_group_positions[6] = 0.0;
-//   }
+  if (static_cast<int>(cylinder1[index]["gripper_state"]) == 1){
+    joint_group_positions_follow[6] = 1.0;
+  }
+  else{
+    joint_group_positions_follow[6] = 0.0;
+  }
   
   
   
-//   move_group_interface.setJointValueTarget(joint_group_positions_follow);
-//   moveit::planning_interface::MoveGroupInterface::Plan my_plan_follow;
-//   bool success = (move_group_interface.plan(my_plan_follow) == moveit::planning_interface::MoveItErrorCode::SUCCESS);
+  move_group_interface.setJointValueTarget(joint_group_positions_follow);
+  moveit::planning_interface::MoveGroupInterface::Plan my_plan_follow;
+  bool success = (move_group_interface.plan(my_plan_follow) == moveit::planning_interface::MoveItErrorCode::SUCCESS);
 
 
   
-//   if(success == true){
-//     move_group_interface.execute(my_plan_follow);
+  if(success == true){
+    move_group_interface.execute(my_plan_follow);
     
     
-//     if(gripper_req == true){
-//       std_msgs::Float64 msg;
-//       msg.data = 0.3;
-//       pub.publish(msg);
-//     }
+    if(static_cast<int>(cylinder1[index]["gripper_state"]) == 1){
+      std_msgs::Float64 msg;
+      msg.data = 0.3;
+      pub.publish(msg);
+    }
     
-//     else{
-//       std_msgs::Float64 msg;
-//       msg.data = 0.8;
-//       pub.publish(msg);
+    else{
+      std_msgs::Float64 msg;
+      msg.data = 0.8;
+      pub.publish(msg);
     
     
-//   }
-//   joint_group_positions_follow.clear();
+  }
+  joint_group_positions_follow.clear();
   
 
-//   }
+  }
 
-//   else{
+  else{
     
-//     move_group_interface.stop();
+    move_group_interface.stop();
 
-//   }
+  }
 
 
-// }
+}
 
 
 
