@@ -30,8 +30,8 @@ cylinder1:
   - attach: "1"
 
   #waypoint5
-  - x_cartesian: 0
-    y_cartesian: 0
+  - x_cartesian: 0.0
+    y_cartesian: 0.0
     z_cartesian: 0.1
 
   #waypoint6

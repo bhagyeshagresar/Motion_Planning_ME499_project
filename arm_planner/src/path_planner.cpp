@@ -72,11 +72,11 @@ static std::vector<double> joint_group_positions_follow;
 void cylinder_fn(XmlRpc::XmlRpcValue &cylinder, moveit::planning_interface::MoveGroupInterface& move_group_interface);
 void set_pose_target_fn(XmlRpc::XmlRpcValue &cylinder, int index, moveit::planning_interface::MoveGroupInterface& move_group_interface);
 void set_joint_target_fn(XmlRpc::XmlRpcValue &cylinder, int index, moveit::planning_interface::MoveGroupInterface& move_group_interface);
-void set_cartesian_fn(XmlRpc::XmlRpcValue &cylinder, int index);
+void set_cartesian_fn(XmlRpc::XmlRpcValue &cylinder, int index, moveit::planning_interface::MoveGroupInterface& move_group_interface);
 void set_attach_fn(XmlRpc::XmlRpcValue &cylinder, int index, moveit::planning_interface::MoveGroupInterface& move_group_interface, 
 moveit_msgs::CollisionObject collision_object1, moveit_msgs::CollisionObject collision_object2, moveit_msgs::CollisionObject collision_object3,
 moveit::planning_interface::PlanningSceneInterface planning_scene_interface);
-void set_detach_fn(XmlRpc::XmlRpcValue &cylinder, int index);
+void set_detach_fn(XmlRpc::XmlRpcValue &cylinder, int index, moveit::planning_interface::MoveGroupInterface& move_group_interface);
 
 
 
@@ -834,11 +834,11 @@ int main(int argc, char** argv)
     
     if(trigger_trajectory == true){
 
-      set_pose_target_fn(cylinder1, 0, move_group_interface);
-      set_joint_target_fn(cylinder1, 1, move_group_interface);
-      set_joint_target_fn(cylinder1, 2, move_group_interface);
-      set_attach_fn(cylinder1, 3, move_group_interface, collision_cylinder1, collision_cylinder2, collision_cylinder3, planning_scene_interface);
-      // set_cartesian_fn(cylinder1, 4, move_group_interface);
+      // set_pose_target_fn(cylinder1, 0, move_group_interface);
+      // set_joint_target_fn(cylinder1, 1, move_group_interface);
+      // set_joint_target_fn(cylinder1, 2, move_group_interface);
+      // set_attach_fn(cylinder1, 3, move_group_interface, collision_cylinder1, collision_cylinder2, collision_cylinder3, planning_scene_interface);
+      set_cartesian_fn(cylinder1, 4, move_group_interface);
       // set_cartesian_fn(cylinder1, 5, move_group_interface);
       // set_pose_target_fn(cylinder1, 6, move_group_interface);
       // set_detach_fn(cylinder1, 7, move_group_interface);
@@ -1034,46 +1034,57 @@ void set_joint_target_fn(XmlRpc::XmlRpcValue &cylinder, int index, moveit::plann
 
 
 
-// void set_cartesian_fn(XmlRpc::XmlRpcValue &cylinder, int index){
+void set_cartesian_fn(XmlRpc::XmlRpcValue &cylinder, int index, moveit::planning_interface::MoveGroupInterface& move_group_interface){
 
-//   geometry_msgs::PoseStamped current_pose_follow = move_group_interface.getCurrentPose();
-//   std::vector<double> current_rpy_follow = move_group_interface.getCurrentRPY();
+  geometry_msgs::PoseStamped current_pose_follow = move_group_interface.getCurrentPose();
+  std::vector<double> current_rpy_follow = move_group_interface.getCurrentRPY();
 
+  std::cout << "test current_rpy" << std::endl;
+  geometry_msgs::Pose cartesian_pose_follow;
+  tf2::Quaternion orient_pose3_follow;
+  orient_pose3_follow.setRPY(current_rpy_follow.at(0), current_rpy_follow.at(1), current_rpy_follow.at(2));
+  cartesian_pose_follow.orientation = tf2::toMsg(orient_pose3_follow);
+  cartesian_pose_follow.position.x = current_pose_follow.pose.position.x;
+  cartesian_pose_follow.position.y = current_pose_follow.pose.position.y;
+  cartesian_pose_follow.position.z = current_pose_follow.pose.position.z;
+  std::cout << "print stuff here" << std::endl;
+  // double temp1 = static_cast<double>(cylinder[index]["x_cartesian"]);
+  // double temp2 = static_cast<double>(cylinder[index]["y_cartesian"]);
+  // double temp3 = static_cast<double>(cylinder[index]["z_cartesian"]);
 
-//   geometry_msgs::Pose cartesian_pose_follow;
-//   tf2::Quaternion orient_pose3_follow;
-//   orient_pose3_follow.setRPY(current_rpy_follow.at(0), current_rpy_follow.at(1), current_rpy_follow.at(2));
-//   cartesian_pose_follow.orientation = tf2::toMsg(orient_pose3_follow);
-//   cartesian_pose_follow.position.x = current_pose_follow.pose.position.x;
-//   cartesian_pose_follow.position.y = current_pose_follow.pose.position.y;
-//   cartesian_pose_follow.position.z = current_pose_follow.pose.pose.position.z;
-    
-//   cartesian_pose_follow.position.x += cylinder[index]["x_cartesian"];
-//   cartesian_pose_follow.position.y += cylinder[index]["y_cartesian"];
-//   cartesian_pose_follow.position.z += cylinder[index]["z_cartesian"];
+  // std::cout << "test static: " << (cylinder[index]["x_cartesian"]) << std::endl;
 
+  double temp1 = cylinder[index]["x_cartesian"];
+  double temp2 = cylinder[index]["y_cartesian"];
+  double temp3 = cylinder[index]["z_cartesian"];
 
-//   std::vector<geometry_msgs::Pose> cartesian_waypoints_follow;
-//   cartesian_waypoints_follow.push_back(cartesian_pose_follow);
+  std::cout << "reached assigning temps complete" << std::endl;
+  cartesian_pose_follow.position.x += temp1;
+  cartesian_pose_follow.position.y += temp2;
+  cartesian_pose_follow.position.z += temp3;
 
-//   moveit_msgs::RobotTrajectory cartesian_traj_follow;
+  std::cout << "finished loading in cartesian" << std::endl;
+  std::vector<geometry_msgs::Pose> cartesian_waypoints_follow;
+  cartesian_waypoints_follow.push_back(cartesian_pose_follow);
 
-//   const double jump_thresh = 0.0;
-//   const double eef_step = 0.01;
-//   double fraction = move_group_interface.computeCartesianPath(cartesian_waypoints_follow, eef_step, jump_thresh, cartesian_traj_follow);
+  moveit_msgs::RobotTrajectory cartesian_traj_follow;
+
+  const double jump_thresh = 0.0;
+  const double eef_step = 0.01;
+  double fraction = move_group_interface.computeCartesianPath(cartesian_waypoints_follow, eef_step, jump_thresh, cartesian_traj_follow);
 
       
 
-//   if (fraction == 1.0) {
-//       move_group_interface.execute(cartesian_traj_follow);
-//   }
-//   else {
-//       std::cout << "cartesian plan failed" << std::endl;
-//       move_group_interface.stop();
-//   }
+  if (fraction == 1.0) {
+      move_group_interface.execute(cartesian_traj_follow);
+  }
+  else {
+      std::cout << "cartesian plan failed" << std::endl;
+      move_group_interface.stop();
+  }
 
 
-// }
+}
 
 
 
@@ -1124,21 +1135,21 @@ moveit::planning_interface::PlanningSceneInterface planning_scene_interface){
 
 
 
-// void set_detach_fn(XmlRpc::XmlRpcValue &cylinder, int index){
+void set_detach_fn(XmlRpc::XmlRpcValue &cylinder, int index, moveit::planning_interface::MoveGroupInterface& move_group_interface){
 
-//   moveit_msgs::CollisionObject detach_obj_follow;
+  moveit_msgs::CollisionObject detach_obj_follow;
 
-//   detach_obj_follow.id = cylinder[index]["detach"];
+  detach_obj_follow.id = static_cast<std::string>(cylinder[index]["detach"]);
 
-//   std_msgs::Float64 msg;
-//   msg.data = 0.7;
-//   std::cout << "gripper open" << std::endl;
-//   pub.publish(msg);
+  std_msgs::Float64 msg;
+  msg.data = 0.7;
+  std::cout << "gripper open" << std::endl;
+  pub.publish(msg);
 
-//   move_group_interface.detachObject(detach_obj_follow.id);
+  move_group_interface.detachObject(detach_obj_follow.id);
 
 
-// }
+}
 
 
 
