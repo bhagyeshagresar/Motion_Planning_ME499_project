@@ -9,21 +9,21 @@ cylinder1:
     gripper_state: 0
 
   #waypoint2
-  - j1: 0.23
-    j2: 0.5
-    j3: 0.8
-    j4: 0.7
-    j5: 0.9
-    j6: 0.1
+  - j1: -2.26
+    j2: 0.6366
+    j3: 0.711
+    j4: 2.4345
+    j5: -1.7388
+    j6: -1.7127
     gripper_state: 0
 
   #waypoint3
-  - j1: 0.23
-    j2: 0.2
-    j3: 0.1
-    j4: 0.67
-    j5: 0.89
-    j6: 0.91
+  - j1: -2.24
+    j2: 0.9656
+    j3: 0.04525
+    j4: 2.38311
+    j5: -1.997
+    j6: -1.942
     gripper_state: 0
 
   #attach obj
@@ -35,7 +35,7 @@ cylinder1:
     z_cartesian: 0.1
 
   #waypoint6
-  - x_cartesian: 0
+  - x_cartesian: 0.0
     y_cartesian: -0.2
     z_cartesian: 0.0
 

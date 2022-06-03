@@ -834,14 +834,21 @@ int main(int argc, char** argv)
     
     if(trigger_trajectory == true){
 
-      // set_pose_target_fn(cylinder1, 0, move_group_interface);
-      // set_joint_target_fn(cylinder1, 1, move_group_interface);
-      // set_joint_target_fn(cylinder1, 2, move_group_interface);
-      // set_attach_fn(cylinder1, 3, move_group_interface, collision_cylinder1, collision_cylinder2, collision_cylinder3, planning_scene_interface);
+      set_pose_target_fn(cylinder1, 0, move_group_interface);
+      ros::Duration(2).sleep();
+      set_joint_target_fn(cylinder1, 1, move_group_interface);
+      ros::Duration(2).sleep();
+      set_joint_target_fn(cylinder1, 2, move_group_interface);
+      ros::Duration(2).sleep();
+      set_attach_fn(cylinder1, 3, move_group_interface, collision_cylinder1, collision_cylinder2, collision_cylinder3, planning_scene_interface);
+      ros::Duration(2).sleep();
       set_cartesian_fn(cylinder1, 4, move_group_interface);
+      ros::Duration(2).sleep();
       // set_cartesian_fn(cylinder1, 5, move_group_interface);
-      // set_pose_target_fn(cylinder1, 6, move_group_interface);
-      // set_detach_fn(cylinder1, 7, move_group_interface);
+      // ros::Duration(2).sleep();
+      set_pose_target_fn(cylinder1, 6, move_group_interface);
+      ros::Duration(2).sleep();
+      set_detach_fn(cylinder1, 7, move_group_interface);
 
 
       trigger_trajectory = false;
@@ -986,12 +993,12 @@ void set_joint_target_fn(XmlRpc::XmlRpcValue &cylinder, int index, moveit::plann
 
 
   
-  if (static_cast<int>(cylinder1[index]["gripper_state"]) == 1){
-    joint_group_positions_follow[6] = 1.0;
-  }
-  else{
-    joint_group_positions_follow[6] = 0.0;
-  }
+  // if (static_cast<int>(cylinder1[index]["gripper_state"]) == 1){
+  //   joint_group_positions_follow.at(6) = 1.0;
+  // }
+  // else{
+  //   joint_group_positions_follow.at(6) = 0.0;
+  // }
   
   
   
