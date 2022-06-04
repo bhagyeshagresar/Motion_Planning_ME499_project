@@ -1,5 +1,5 @@
 cylinder1:
-  #waypoint1
+  #waypoint0
   - x: 0.0
     y: 0.2
     z: 0.4
@@ -8,7 +8,7 @@ cylinder1:
     yaw: 1.5707
     gripper_state: 0
 
-  #waypoint2
+  #waypoint1
   - j1: -2.26
     j2: 0.6366
     j3: 0.711
@@ -17,7 +17,7 @@ cylinder1:
     j6: -1.7127
     gripper_state: 0
 
-  #waypoint3
+  #waypoint2
   - j1: -2.24
     j2: 0.9656
     j3: 0.04525
@@ -26,20 +26,20 @@ cylinder1:
     j6: -1.942
     gripper_state: 0
 
-  #attach obj
+  #attach obj3
   - attach: "1"
 
-  #waypoint5
+  #waypoint4
   - x_cartesian: 0.0
     y_cartesian: 0.0
     z_cartesian: 0.1
 
-  #waypoint6
+  #waypoint5
   - x_cartesian: 0.0
-    y_cartesian: -0.2
+    y_cartesian: -0.12
     z_cartesian: 0.0
 
-  #waypoint7
+  #waypoint6
   - x: 0.422
     y: -0.045
     z: -0.1
@@ -48,7 +48,104 @@ cylinder1:
     yaw: 0.0
     gripper_state: 1
 
-  #detach obj
+  #detach obj7
   - detach: "1"
 
 
+
+cylinder2:
+  #waypoint0
+  - x: 0.0
+    y: 0.2
+    z: 0.4
+    roll: 0.0
+    pitch: 0.0
+    yaw: 1.5707
+    gripper_state: 0
+
+   #waypoint1
+  - j1: 1.4013
+    j2: -0.13039
+    j3: 0.8084
+    j4: 2.8763
+    j5: 0.6933
+    j6: 1.7756
+    gripper_state: 0
+
+    #waypoint2
+  - j1: -2.3961
+    j2: 1.1451
+    j3: -0.1871
+    j4: -0.9242
+    j5: 1.9712
+    j6: 1.0914
+    gripper_state: 0
+
+    #attach obj3
+  - attach: "2"
+
+    #waypoint4
+  - x_cartesian: 0.0
+    y_cartesian: 0.0
+    z_cartesian: 0.1
+
+
+    #waypoint5
+  - x_cartesian: 0.0
+    y_cartesian: -0.12
+    z_cartesian: 0.0
+
+
+    #waypoint6
+  - x: 0.422
+    y: -0.15
+    z: -0.1
+    roll: 0.0
+    pitch: -0.1
+    yaw: 0.0
+    gripper_state: 1
+
+    #detach obj7
+  - detach: "2"
+
+
+
+cylinder3:
+  #waypoint0
+  - x: 0.0
+    y: 0.2
+    z: 0.4
+    roll: 0.0
+    pitch: 0.0
+    yaw: 1.5707
+    gripper_state: 0
+
+  #waypoint1
+  - x: -0.15
+    y: 0.38
+    z: 0.5
+    roll: 0.0
+    pitch: 0.0
+    yaw: 1.5707
+    gripper_state: 0
+
+  #waypoint2
+  - x_cartesian: 0.0
+    y_cartesian: 0.0
+    z_cartesian: -0.12
+
+  #waypoint3
+  - attach: "3"
+
+  #waypoint4
+  - x: 0.417
+    y: -0.31
+    z: -0.1
+    roll: 0.0
+    pitch: -0.1
+    yaw: 0.0
+    gripper_state: 1
+
+  
+  #waypoint5
+  - detach: "3"

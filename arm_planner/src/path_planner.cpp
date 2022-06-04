@@ -62,22 +62,24 @@ static bool set_follow{false};
 static bool trigger_trajectory{false};
 static XmlRpc::XmlRpcValue cylinder1;
 static XmlRpc::XmlRpcValue cylinder2;
+static XmlRpc::XmlRpcValue cylinder3;
 static ros::Publisher pub;
 static double cylinder4;
 static double test_cylinder{0.0};
 static std::vector<double> joint_group_positions_follow;
-
+static std::vector <std::string> touch_links{"pincerfinger_left_link", "pincerfinger_right_link"};
+static bool attach_suc{false};
 
 
 void cylinder_fn(XmlRpc::XmlRpcValue &cylinder, moveit::planning_interface::MoveGroupInterface& move_group_interface);
 void set_pose_target_fn(XmlRpc::XmlRpcValue &cylinder, int index, moveit::planning_interface::MoveGroupInterface& move_group_interface);
 void set_joint_target_fn(XmlRpc::XmlRpcValue &cylinder, int index, moveit::planning_interface::MoveGroupInterface& move_group_interface);
 void set_cartesian_fn(XmlRpc::XmlRpcValue &cylinder, int index, moveit::planning_interface::MoveGroupInterface& move_group_interface);
-void set_attach_fn(XmlRpc::XmlRpcValue &cylinder, int index, moveit::planning_interface::MoveGroupInterface& move_group_interface, 
+void set_attach_fn(XmlRpc::XmlRpcValue &cylinder, int index, moveit::planning_interface::MoveGroupInterface& move_group_interface);
+void set_detach_fn(XmlRpc::XmlRpcValue &cylinder, int index, moveit::planning_interface::MoveGroupInterface& move_group_interface);
+void set_attach_fn2(XmlRpc::XmlRpcValue &cylinder, int index, moveit::planning_interface::MoveGroupInterface& move_group_interface2, 
 moveit_msgs::CollisionObject collision_object1, moveit_msgs::CollisionObject collision_object2, moveit_msgs::CollisionObject collision_object3,
 moveit::planning_interface::PlanningSceneInterface planning_scene_interface);
-void set_detach_fn(XmlRpc::XmlRpcValue &cylinder, int index, moveit::planning_interface::MoveGroupInterface& move_group_interface);
-
 
 
 bool reset_fn(arm_planner::Reset::Request &req, arm_planner::Reset::Response &res){
@@ -181,7 +183,7 @@ bool attach_obj_fn(arm_planner::Attach::Request &req, arm_planner::Attach::Respo
   
   attach_obj_val = true;
   cylinder_id = req.cylinder_name;
-
+  res.attach_success = true;
   return true;
 
 }
@@ -190,6 +192,7 @@ bool attach_obj_fn(arm_planner::Attach::Request &req, arm_planner::Attach::Respo
 bool detach_obj_fn(arm_planner::Detach::Request &req, arm_planner::Detach::Response &res){
   detach_obj_val = true;
   cylinder_id_2 = req.cylinder_name_2;
+  res.detach_success = true;
   return true;
 }
 
@@ -229,12 +232,14 @@ int main(int argc, char** argv)
   //add planning group "arm"
   static const std::string PLANNING_GROUP = "arm";
   moveit::planning_interface::MoveGroupInterface move_group_interface(PLANNING_GROUP);
+  moveit::planning_interface::MoveGroupInterface move_group_interface2(PLANNING_GROUP);
+
   moveit::planning_interface::PlanningSceneInterface planning_scene_interface;
 
   //add planning group "pincer"
   static const std::string PLANNING_GROUP_2 = "pincer";
-  moveit::planning_interface::MoveGroupInterface move_group_interface_2(PLANNING_GROUP_2);
-  moveit::planning_interface::PlanningSceneInterface planning_scene_interface_2;
+  moveit::planning_interface::MoveGroupInterface move_group_interface_3(PLANNING_GROUP_2);
+  moveit::planning_interface::PlanningSceneInterface planning_scene_interface_3;
   
   const moveit::core::JointModelGroup* joint_model_group =
       move_group_interface.getCurrentState()->getJointModelGroup(PLANNING_GROUP);
@@ -248,6 +253,9 @@ int main(int argc, char** argv)
   std::vector<moveit_msgs::CollisionObject> collision_objects;
 
   nh2.getParam("cylinder1", cylinder1);
+  nh2.getParam("cylinder2", cylinder2);
+  nh2.getParam("cylinder3", cylinder3);
+
  
   std::cout << "test cylinder: " << (cylinder1[0]["x"]) << std::endl;
   std::cout << "test cylinder: " << (cylinder1[0]["y"]) << std::endl;
@@ -504,9 +512,15 @@ int main(int argc, char** argv)
 
   std::vector <double> joints_check_1 = move_group_interface.getCurrentJointValues();
 
-  
+  // set_attach_fn(cylinder1, 3, move_group_interface, collision_cylinder1, collision_cylinder2, collision_cylinder3, planning_scene_interface);
+  // // ros::Duration(10).sleep();
+  // set_detach_fn(cylinder1, 7, move_group_interface);
+  // // ros::Duration(10).sleep();
+  // set_attach_fn2(cylinder2, 3, move_group_interface2, collision_cylinder1, collision_cylinder2, collision_cylinder3, planning_scene_interface);
+  // // ros::Duration(10).sleep();
+  // set_detach_fn(cylinder2, 7, move_group_interface);
 
-  ros::Rate r(120);
+  ros::Rate r(100);
 
   while(ros::ok()){
 
@@ -782,11 +796,11 @@ int main(int argc, char** argv)
       pub.publish(msg);
     
 
-      std::vector <std::string> touch_links;
-      std::string link1 = "pincerfinger_left_link";
-      std::string link2 = "pincerfinger_right_link";
-      touch_links.push_back(link1);
-      touch_links.push_back(link2);
+      // std::vector <std::string> touch_links;
+      // std::string link1 = "pincerfinger_left_link";
+      // std::string link2 = "pincerfinger_right_link";
+      // touch_links.push_back(link1);
+      // touch_links.push_back(link2);
       move_group_interface.attachObject(obj.id, "endpoint_link", touch_links);
 
 
@@ -834,21 +848,65 @@ int main(int argc, char** argv)
     
     if(trigger_trajectory == true){
 
-      set_pose_target_fn(cylinder1, 0, move_group_interface);
-      ros::Duration(2).sleep();
-      set_joint_target_fn(cylinder1, 1, move_group_interface);
-      ros::Duration(2).sleep();
-      set_joint_target_fn(cylinder1, 2, move_group_interface);
-      ros::Duration(2).sleep();
-      set_attach_fn(cylinder1, 3, move_group_interface, collision_cylinder1, collision_cylinder2, collision_cylinder3, planning_scene_interface);
-      ros::Duration(2).sleep();
-      set_cartesian_fn(cylinder1, 4, move_group_interface);
-      ros::Duration(2).sleep();
-      // set_cartesian_fn(cylinder1, 5, move_group_interface);
-      // ros::Duration(2).sleep();
-      set_pose_target_fn(cylinder1, 6, move_group_interface);
-      ros::Duration(2).sleep();
+      // set_pose_target_fn(cylinder1, 0, move_group_interface);
+      // ros::Duration(1).sleep();
+      // set_joint_target_fn(cylinder1, 1, move_group_interface);
+      // ros::Duration(1).sleep();
+      // set_joint_target_fn(cylinder1, 2, move_group_interface);
+      // ros::Duration(1).sleep();
+      std::cout << "calling attach fn on 1" << std::endl;
+      set_attach_fn(cylinder1, 3, move_group_interface);
+      ros::Duration(10).sleep();
+      // set_cartesian_fn(cylinder1, 4, move_group_interface);
+      // ros::Duration(1).sleep();
+      // // set_cartesian_fn(cylinder1, 5, move_group_interface);
+      // // ros::Duration(2).sleep();
+      // set_pose_target_fn(cylinder1, 6, move_group_interface);
+      // ros::Duration(1).sleep();
       set_detach_fn(cylinder1, 7, move_group_interface);
+
+    
+      ros::Duration(10).sleep();
+      std::cout << "calling attach_fn2" << std::endl;
+      set_attach_fn(cylinder2, 3, move_group_interface);
+      std::cout << "passed attach_fn2" << std::endl;
+
+      // ros::Duration(1).sleep();
+      // set_pose_target_fn(cylinder2, 0, move_group_interface);
+      // ros::Duration(1).sleep();
+      // set_joint_target_fn(cylinder2, 1, move_group_interface);
+      // ros::Duration(1).sleep();
+      // set_joint_target_fn(cylinder2, 2, move_group_interface);
+      
+      // ros::Duration(2).sleep();
+      // // set_cartesian_fn(cylinder2, 4, move_group_interface);
+      // // ros::Duration(1).sleep();
+      // // set_cartesian_fn(cylinder2, 5, move_group_interface);
+      // // ros::Duration(2).sleep();
+      // set_pose_target_fn(cylinder2, 6, move_group_interface);
+      ros::Duration(10).sleep();
+      set_detach_fn(cylinder2, 7, move_group_interface);
+
+
+
+      // ros::Duration(1).sleep();
+      // set_pose_target_fn(cylinder3, 0, move_group_interface);
+      // ros::Duration(1).sleep();
+      // set_pose_target_fn(cylinder3, 1, move_group_interface);
+      // ros::Duration(1).sleep();
+      // set_cartesian_fn(cylinder3, 2, move_group_interface);
+      // ros::Duration(1).sleep();
+      // set_attach_fn(cylinder3, 3, move_group_interface, collision_cylinder1, collision_cylinder2, collision_cylinder3, planning_scene_interface);
+      // ros::Duration(1).sleep();
+      // set_pose_target_fn(cylinder3, 4, move_group_interface);
+      // ros::Duration(1).sleep();
+      // set_detach_fn(cylinder3, 5, move_group_interface);
+
+
+      
+
+
+
 
 
       trigger_trajectory = false;
@@ -1097,15 +1155,14 @@ void set_cartesian_fn(XmlRpc::XmlRpcValue &cylinder, int index, moveit::planning
 
 
 
-void set_attach_fn(XmlRpc::XmlRpcValue &cylinder, int index, moveit::planning_interface::MoveGroupInterface& move_group_interface, 
-moveit_msgs::CollisionObject collision_cylinder1, moveit_msgs::CollisionObject collision_cylinder2, moveit_msgs::CollisionObject collision_cylinder3,
-moveit::planning_interface::PlanningSceneInterface planning_scene_interface){
+void set_attach_fn(XmlRpc::XmlRpcValue &cylinder, int index, moveit::planning_interface::MoveGroupInterface& move_group_interface){
 
-
+  std::cout << "set attached step reached: " << std::endl;
   moveit_msgs::CollisionObject obj_follow;
 
   obj_follow.id = static_cast<std::string>(cylinder[index]["attach"]);
 
+  std::cout << "obj_follow.id: " << obj_follow.id << std::endl;
   //define frame pose for the gripper
   obj_follow.header.frame_id = move_group_interface.getEndEffectorLink();
   
@@ -1115,29 +1172,80 @@ moveit::planning_interface::PlanningSceneInterface planning_scene_interface){
   std::cout << "gripper closed" << std::endl;
   pub.publish(msg);
 
+  ros::Duration(2).sleep();
 
-  std::vector <std::string> touch_links;
-  std::string link1 = "pincerfinger_left_link";
-  std::string link2 = "pincerfinger_right_link";
-  touch_links.push_back(link1);
-  touch_links.push_back(link2);
+  // std::vector <std::string> touch_links;
+  // std::cout << "touch links" << touch_links.size() << std::endl;
+  // std::string link1 = "pincerfinger_left_link";
+  // std::string link2 = "pincerfinger_right_link";
+  // touch_links.at(0) = link1;
+  // touch_links.at(1) = link2;
+  std::cout << "before fail" << std::endl;
   move_group_interface.attachObject(obj_follow.id, "endpoint_link", touch_links);
+  // touch_links.clear();
+  std::cout << "after fail" << std::endl;
+
+  // if(obj_follow.id == "4"){
+  //   std::vector<std::string> object_ids;
+
+  //   object_ids.push_back(collision_cylinder1.id);
+  //   object_ids.push_back(collision_cylinder2.id);
+  //   object_ids.push_back(collision_cylinder3.id);
+
+  //   planning_scene_interface.removeCollisionObjects(object_ids);
 
 
-  if(obj_follow.id == "4"){
-    std::vector<std::string> object_ids;
-
-    object_ids.push_back(collision_cylinder1.id);
-    object_ids.push_back(collision_cylinder2.id);
-    object_ids.push_back(collision_cylinder3.id);
-
-    planning_scene_interface.removeCollisionObjects(object_ids);
 
 
 
 }
 
+
+void set_attach_fn2(XmlRpc::XmlRpcValue &cylinder, int index, moveit::planning_interface::MoveGroupInterface& move_group_interface2, 
+moveit_msgs::CollisionObject collision_cylinder1, moveit_msgs::CollisionObject collision_cylinder2, moveit_msgs::CollisionObject collision_cylinder3,
+moveit::planning_interface::PlanningSceneInterface planning_scene_interface){
+
+  std::cout << "set attached step reached: " << std::endl;
+  moveit_msgs::CollisionObject obj_follow2;
+
+  // obj_follow2.id = static_cast<std::string>(cylinder[index]["attach"]);
+  obj_follow2.id = "2";
+
+  std::cout << "obj_follow.id: " << obj_follow2.id << std::endl;
+  //define frame pose for the gripper
+  // obj_follow2.header.frame_id = move_group_interface2.getEndEffectorLink();
+  
+  
+  std_msgs::Float64 msg;
+  msg.data = 0.3;
+  std::cout << "gripper closed" << std::endl;
+  pub.publish(msg);
+
+  ros::Duration(10).sleep();
+
+  // std::vector <std::string> touch_links;
+  // std::cout << "touch links" << touch_links.size() << std::endl;
+  // std::string link1 = "pincerfinger_left_link";
+  // std::string link2 = "pincerfinger_right_link";
+  // touch_links.at(0) = link1;
+  // touch_links.at(1) = link2;
+  move_group_interface2.attachObject(obj_follow2.id, "endpoint_link", touch_links);
+  // touch_links.clear();
+
+  // if(obj_follow2.id == "4"){
+  //   std::vector<std::string> object_ids;
+
+  //   object_ids.push_back(collision_cylinder1.id);
+  //   object_ids.push_back(collision_cylinder2.id);
+  //   object_ids.push_back(collision_cylinder3.id);
+
+  //   planning_scene_interface.removeCollisionObjects(object_ids);
+
+
+
 }
+
+
 
 
 

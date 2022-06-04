@@ -1,2 +1,3 @@
 string cylinder_name
 ---
+bool attach_success
