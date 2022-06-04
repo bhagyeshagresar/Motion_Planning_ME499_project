@@ -63,8 +63,11 @@ static bool trigger_trajectory{false};
 static XmlRpc::XmlRpcValue cylinder1;
 static XmlRpc::XmlRpcValue cylinder2;
 static XmlRpc::XmlRpcValue cylinder3;
+static XmlRpc::XmlRpcValue cylinder4;
+static XmlRpc::XmlRpcValue cylinder5;
+static XmlRpc::XmlRpcValue cylinder6;
+
 static ros::Publisher pub;
-static double cylinder4;
 static double test_cylinder{0.0};
 static std::vector<double> joint_group_positions_follow;
 static std::vector <std::string> touch_links{"pincerfinger_left_link", "pincerfinger_right_link"};
@@ -229,6 +232,9 @@ int main(int argc, char** argv)
   ros::ServiceServer detach_obj_service = nh.advertiseService("detach_obj", detach_obj_fn);
   ros::ServiceServer follow_service = nh.advertiseService("follow", follow_fn);
 
+
+  ros::ServiceClient reset_client =nh.serviceClient<arm_planner::Reset>("reset");
+
   //add planning group "arm"
   static const std::string PLANNING_GROUP = "arm";
   moveit::planning_interface::MoveGroupInterface move_group_interface(PLANNING_GROUP);
@@ -255,6 +261,10 @@ int main(int argc, char** argv)
   nh2.getParam("cylinder1", cylinder1);
   nh2.getParam("cylinder2", cylinder2);
   nh2.getParam("cylinder3", cylinder3);
+  nh2.getParam("cylinder4", cylinder4);
+  nh2.getParam("cylinder5", cylinder5);
+  nh2.getParam("cylinder6", cylinder6);
+
 
  
   std::cout << "test cylinder: " << (cylinder1[0]["x"]) << std::endl;
@@ -512,13 +522,111 @@ int main(int argc, char** argv)
 
   std::vector <double> joints_check_1 = move_group_interface.getCurrentJointValues();
 
-  // set_attach_fn(cylinder1, 3, move_group_interface, collision_cylinder1, collision_cylinder2, collision_cylinder3, planning_scene_interface);
-  // // ros::Duration(10).sleep();
+   //cylinder1
+  // arm_planner::Reset srv;
+  // srv.request.restart = true;
+  // reset_client.call(srv);
+  // set_pose_target_fn(cylinder1, 0, move_group_interface);
+  // ros::Duration(1).sleep();
+  // set_joint_target_fn(cylinder1, 1, move_group_interface);
+  // ros::Duration(1).sleep();
+  // set_joint_target_fn(cylinder1, 2, move_group_interface);
+  // ros::Duration(1).sleep();
+  // set_attach_fn(cylinder1, 3, move_group_interface);
+  // ros::Duration(1).sleep();
+  // set_cartesian_fn(cylinder1, 4, move_group_interface);
+  // // ros::Duration(1).sleep();
+  // // set_cartesian_fn(cylinder1, 5, move_group_interface);
+  // ros::Duration(1).sleep();
+  // set_pose_target_fn(cylinder1, 6, move_group_interface);
+  // ros::Duration(1).sleep();
   // set_detach_fn(cylinder1, 7, move_group_interface);
-  // // ros::Duration(10).sleep();
-  // set_attach_fn2(cylinder2, 3, move_group_interface2, collision_cylinder1, collision_cylinder2, collision_cylinder3, planning_scene_interface);
-  // // ros::Duration(10).sleep();
+
+
+     
+  // //cylinder2
+  // ros::Duration(1).sleep();
+  // set_pose_target_fn(cylinder2, 0, move_group_interface);
+  // ros::Duration(1).sleep();
+  // set_joint_target_fn(cylinder2, 1, move_group_interface);
+  // ros::Duration(1).sleep();
+  // set_joint_target_fn(cylinder2, 2, move_group_interface);
+  // ros::Duration(1).sleep();
+  // set_attach_fn(cylinder2, 3, move_group_interface);
+  // ros::Duration(1).sleep();
+  // set_cartesian_fn(cylinder2, 4, move_group_interface);
+  // ros::Duration(1).sleep();
+  // // set_cartesian_fn(cylinder2, 5, move_group_interface);
+  // // ros::Duration(1).sleep();
+  // set_pose_target_fn(cylinder2, 6, move_group_interface);
+  // ros::Duration(1).sleep();
   // set_detach_fn(cylinder2, 7, move_group_interface);
+
+
+  // //cylinder3
+  // ros::Duration(1).sleep();
+  // set_pose_target_fn(cylinder3, 0, move_group_interface);
+  // ros::Duration(1).sleep();
+  // set_pose_target_fn(cylinder3, 1, move_group_interface);
+  // ros::Duration(1).sleep();
+  // set_cartesian_fn(cylinder3, 2, move_group_interface);
+  // ros::Duration(1).sleep();
+  // set_attach_fn(cylinder3, 3, move_group_interface);
+  // ros::Duration(1).sleep();
+  // set_pose_target_fn(cylinder3, 4, move_group_interface);
+  // ros::Duration(1).sleep();
+  // set_detach_fn(cylinder3, 5, move_group_interface);
+
+  // //cylinder4
+  // ros::Duration(1).sleep();
+  // set_pose_target_fn(cylinder4, 0, move_group_interface);
+  // ros::Duration(1).sleep();
+  // set_pose_target_fn(cylinder4, 1, move_group_interface);
+  // ros::Duration(1).sleep();
+  // set_joint_target_fn(cylinder4, 2, move_group_interface);  
+  // ros::Duration(1).sleep();
+  // set_attach_fn(cylinder4, 3, move_group_interface);
+  // ros::Duration(1).sleep();
+  // set_pose_target_fn(cylinder4, 4, move_group_interface);
+  // ros::Duration(1).sleep();
+  // set_detach_fn(cylinder4, 5, move_group_interface);
+
+
+  // //cylinder5
+  // ros::Duration(1).sleep();
+  // set_pose_target_fn(cylinder5, 0, move_group_interface);
+  // ros::Duration(1).sleep();
+  // set_pose_target_fn(cylinder5, 1, move_group_interface);
+  // ros::Duration(1).sleep();
+  // set_cartesian_fn(cylinder5, 2, move_group_interface);
+  // ros::Duration(1).sleep();
+  // set_attach_fn(cylinder5, 3, move_group_interface);
+  // ros::Duration(1).sleep();
+  // set_pose_target_fn(cylinder5, 4, move_group_interface);
+  // ros::Duration(1).sleep();
+  // set_detach_fn(cylinder5, 5, move_group_interface);
+
+
+  // //cylinder6
+  // ros::Duration(1).sleep();
+  // set_pose_target_fn(cylinder6, 0, move_group_interface);
+  // ros::Duration(1).sleep();
+  // set_pose_target_fn(cylinder6, 1, move_group_interface);
+  // ros::Duration(1).sleep();
+  // set_cartesian_fn(cylinder6, 2, move_group_interface);
+  // ros::Duration(1).sleep();
+  // set_attach_fn(cylinder6, 3, move_group_interface);
+  // ros::Duration(1).sleep();
+  // set_pose_target_fn(cylinder6, 4, move_group_interface);
+  // ros::Duration(1).sleep();
+  // set_detach_fn(cylinder6, 5, move_group_interface);
+  // ros::Duration(1).sleep();
+  // set_pose_target_fn(cylinder6, 6, move_group_interface);
+
+ 
+
+
+
 
   ros::Rate r(100);
 
@@ -847,65 +955,103 @@ int main(int argc, char** argv)
      
     
     if(trigger_trajectory == true){
-
-      // set_pose_target_fn(cylinder1, 0, move_group_interface);
-      // ros::Duration(1).sleep();
-      // set_joint_target_fn(cylinder1, 1, move_group_interface);
-      // ros::Duration(1).sleep();
-      // set_joint_target_fn(cylinder1, 2, move_group_interface);
-      // ros::Duration(1).sleep();
-      std::cout << "calling attach fn on 1" << std::endl;
+      
+      set_pose_target_fn(cylinder1, 0, move_group_interface);
+      ros::Duration(2).sleep();
+      set_joint_target_fn(cylinder1, 1, move_group_interface);
+      ros::Duration(2).sleep();
+      set_joint_target_fn(cylinder1, 2, move_group_interface);
+      ros::Duration(2).sleep();
       set_attach_fn(cylinder1, 3, move_group_interface);
-      ros::Duration(10).sleep();
-      // set_cartesian_fn(cylinder1, 4, move_group_interface);
+      ros::Duration(2).sleep();
+      set_cartesian_fn(cylinder1, 4, move_group_interface);
       // ros::Duration(1).sleep();
-      // // set_cartesian_fn(cylinder1, 5, move_group_interface);
-      // // ros::Duration(2).sleep();
-      // set_pose_target_fn(cylinder1, 6, move_group_interface);
-      // ros::Duration(1).sleep();
+      // set_cartesian_fn(cylinder1, 5, move_group_interface);
+      ros::Duration(2).sleep();
+      set_pose_target_fn(cylinder1, 6, move_group_interface);
+      ros::Duration(2).sleep();
       set_detach_fn(cylinder1, 7, move_group_interface);
 
-    
-      ros::Duration(10).sleep();
-      std::cout << "calling attach_fn2" << std::endl;
-      set_attach_fn(cylinder2, 3, move_group_interface);
-      std::cout << "passed attach_fn2" << std::endl;
 
+     
+      //cylinder2
+      ros::Duration(2).sleep();
+      set_pose_target_fn(cylinder2, 0, move_group_interface);
+      ros::Duration(2).sleep();
+      set_joint_target_fn(cylinder2, 1, move_group_interface);
+      ros::Duration(2).sleep();
+      set_joint_target_fn(cylinder2, 2, move_group_interface);
+      ros::Duration(2).sleep();
+      set_attach_fn(cylinder2, 3, move_group_interface);
+      ros::Duration(2).sleep();
+      set_cartesian_fn(cylinder2, 4, move_group_interface);
+      ros::Duration(2).sleep();
+      // set_cartesian_fn(cylinder2, 5, move_group_interface);
       // ros::Duration(1).sleep();
-      // set_pose_target_fn(cylinder2, 0, move_group_interface);
-      // ros::Duration(1).sleep();
-      // set_joint_target_fn(cylinder2, 1, move_group_interface);
-      // ros::Duration(1).sleep();
-      // set_joint_target_fn(cylinder2, 2, move_group_interface);
-      
-      // ros::Duration(2).sleep();
-      // // set_cartesian_fn(cylinder2, 4, move_group_interface);
-      // // ros::Duration(1).sleep();
-      // // set_cartesian_fn(cylinder2, 5, move_group_interface);
-      // // ros::Duration(2).sleep();
-      // set_pose_target_fn(cylinder2, 6, move_group_interface);
-      ros::Duration(10).sleep();
+      set_pose_target_fn(cylinder2, 6, move_group_interface);
+      ros::Duration(2).sleep();
       set_detach_fn(cylinder2, 7, move_group_interface);
 
 
+      //cylinder3
+      ros::Duration(2).sleep();
+      set_pose_target_fn(cylinder3, 0, move_group_interface);
+      ros::Duration(2).sleep();
+      set_pose_target_fn(cylinder3, 1, move_group_interface);
+      ros::Duration(2).sleep();
+      set_cartesian_fn(cylinder3, 2, move_group_interface);
+      ros::Duration(2).sleep();
+      set_attach_fn(cylinder3, 3, move_group_interface);
+      ros::Duration(2).sleep();
+      set_pose_target_fn(cylinder3, 4, move_group_interface);
+      ros::Duration(2).sleep();
+      set_detach_fn(cylinder3, 5, move_group_interface);
 
+      //cylinder4
+      ros::Duration(2).sleep();
+      set_pose_target_fn(cylinder4, 0, move_group_interface);
+      ros::Duration(2).sleep();
+      // set_joint_target_fn(cylinder4, 1, move_group_interface);
       // ros::Duration(1).sleep();
-      // set_pose_target_fn(cylinder3, 0, move_group_interface);
-      // ros::Duration(1).sleep();
-      // set_pose_target_fn(cylinder3, 1, move_group_interface);
-      // ros::Duration(1).sleep();
-      // set_cartesian_fn(cylinder3, 2, move_group_interface);
-      // ros::Duration(1).sleep();
-      // set_attach_fn(cylinder3, 3, move_group_interface, collision_cylinder1, collision_cylinder2, collision_cylinder3, planning_scene_interface);
-      // ros::Duration(1).sleep();
-      // set_pose_target_fn(cylinder3, 4, move_group_interface);
-      // ros::Duration(1).sleep();
-      // set_detach_fn(cylinder3, 5, move_group_interface);
+      set_joint_target_fn(cylinder4, 2, move_group_interface);  
+      ros::Duration(2).sleep();
+      set_attach_fn(cylinder4, 3, move_group_interface);
+      ros::Duration(2).sleep();
+      set_pose_target_fn(cylinder4, 4, move_group_interface);
+      ros::Duration(2).sleep();
+      set_detach_fn(cylinder4, 5, move_group_interface);
 
 
-      
+      //cylinder5
+      ros::Duration(2).sleep();
+      set_pose_target_fn(cylinder5, 0, move_group_interface);
+      ros::Duration(2).sleep();
+      set_pose_target_fn(cylinder5, 1, move_group_interface);
+      ros::Duration(1).sleep();
+      set_cartesian_fn(cylinder5, 2, move_group_interface);
+      ros::Duration(2).sleep();
+      set_attach_fn(cylinder5, 3, move_group_interface);
+      ros::Duration(2).sleep();
+      set_pose_target_fn(cylinder5, 4, move_group_interface);
+      ros::Duration(2).sleep();
+      set_detach_fn(cylinder5, 5, move_group_interface);
 
 
+      //cylinder6
+      ros::Duration(1).sleep();
+      set_pose_target_fn(cylinder6, 0, move_group_interface);
+      ros::Duration(1).sleep();
+      set_pose_target_fn(cylinder6, 1, move_group_interface);
+      ros::Duration(1).sleep();
+      set_cartesian_fn(cylinder6, 2, move_group_interface);
+      ros::Duration(1).sleep();
+      set_attach_fn(cylinder6, 3, move_group_interface);
+      ros::Duration(1).sleep();
+      set_pose_target_fn(cylinder6, 4, move_group_interface);
+      ros::Duration(1).sleep();
+      set_detach_fn(cylinder6, 5, move_group_interface);
+      ros::Duration(1).sleep();
+      set_pose_target_fn(cylinder6, 6, move_group_interface);
 
 
 
