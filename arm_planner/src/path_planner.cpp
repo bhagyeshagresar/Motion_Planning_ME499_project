@@ -1,3 +1,38 @@
+/// \file
+/// \brief Node used to perform path-planning for the Adroit robot in order to pick 6 cylinders from the table and place
+/// on the floor in order to build a pyramid.
+
+
+
+
+/// Services:
+///   /reset - to bring the robot to home configuration
+///   /attach - to attach an object to the robot end-effector, cylinder in this case
+///   /detach - to detach the robot from the end-effector
+///   /gripper - to close or open the gripper
+///   /step - a service to move the robot to a particular configuration based on joint angles
+///   /steppos - a service to move the robot to a particular configuration based on the position specified for the end-effector
+///   /follow - a service which follows a set of waypoints which are specified in the config.yaml file
+
+/// Publisher:
+///   /pincer_joint_position_controller/command - publish pincer position on this topic, message type: std_msgs/Float64
+
+
+/// Parameters:
+/// cylinders1 - cylinders6 : Lists containing waypoints. Each list contains waypoints the robot arm will follow for that particular arm.
+/// The robot arm does a combination of 3 different types of planning for each cylinder: end-effectorpose_planning, joint_space_planning,
+/// and cartesian planning
+
+
+
+
+/*****************
+
+Include all the necessary libraries
+
+*****************/
+
+
 #include <moveit/move_group_interface/move_group_interface.h>
 #include <moveit/planning_scene_interface/planning_scene_interface.h>
 #include <moveit_msgs/DisplayRobotState.h>
@@ -25,7 +60,11 @@
 #include "XmlRpcValue.h"
 #include "arm_planner/Follow.h"
 
+/*****************
 
+Static Global Variables
+
+*******************/
 
 static int flag{0};
 static bool reset_val{false};
@@ -60,6 +99,8 @@ static std::string cylinder_id;
 static std::string cylinder_id_2;
 static bool set_follow{false};
 static bool trigger_trajectory{false};
+
+
 static XmlRpc::XmlRpcValue cylinder1;
 static XmlRpc::XmlRpcValue cylinder2;
 static XmlRpc::XmlRpcValue cylinder3;
@@ -80,11 +121,12 @@ void set_joint_target_fn(XmlRpc::XmlRpcValue &cylinder, int index, moveit::plann
 void set_cartesian_fn(XmlRpc::XmlRpcValue &cylinder, int index, moveit::planning_interface::MoveGroupInterface& move_group_interface);
 void set_attach_fn(XmlRpc::XmlRpcValue &cylinder, int index, moveit::planning_interface::MoveGroupInterface& move_group_interface);
 void set_detach_fn(XmlRpc::XmlRpcValue &cylinder, int index, moveit::planning_interface::MoveGroupInterface& move_group_interface);
-void set_attach_fn2(XmlRpc::XmlRpcValue &cylinder, int index, moveit::planning_interface::MoveGroupInterface& move_group_interface2, 
-moveit_msgs::CollisionObject collision_object1, moveit_msgs::CollisionObject collision_object2, moveit_msgs::CollisionObject collision_object3,
-moveit::planning_interface::PlanningSceneInterface planning_scene_interface);
 
 
+
+/// \brief function to bring the robot to home configuration
+/// \param req - request message takes a boolean value, true takes robot to home configuration
+/// \param res - empty response message
 bool reset_fn(arm_planner::Reset::Request &req, arm_planner::Reset::Response &res){
 
   reset_val = req.restart;
@@ -104,7 +146,9 @@ bool reset_fn(arm_planner::Reset::Request &req, arm_planner::Reset::Response &re
 
 
 
-
+/// \brief function to open or close the gripper
+/// \param req - request messages takes a boolean value, true opens the gripper and false closes the gripper
+/// \param res - empty response message
 bool gripper_fn(arm_planner::Gripper::Request &req, arm_planner::Gripper::Response &res){
 
   if(req.state == true){
@@ -121,8 +165,9 @@ bool gripper_fn(arm_planner::Gripper::Request &req, arm_planner::Gripper::Respon
   return true;
 }
 
-
-
+/// \brief A test function to check the moveit plan and execute functions
+/// \param req - empty request message
+/// \param res - empty response message
 bool test_fn(arm_planner::Test::Request &req, arm_planner::Test::Response &res){
   test_val = true;
 
@@ -131,8 +176,9 @@ bool test_fn(arm_planner::Test::Request &req, arm_planner::Test::Response &res){
 }
 
 
-
-
+/// \brief Function to make Adroit achieve a particular configuration of joint angles
+/// \param req - request message takes 6 float64 joint values and a boolean gripper status
+/// \param res - empty response message
 bool step_fn(arm_planner::Step::Request &req, arm_planner::Step::Response &res){
   step_val = true;
   joint1 = req.j1;
@@ -151,7 +197,9 @@ bool step_fn(arm_planner::Step::Request &req, arm_planner::Step::Response &res){
 
 }
 
-
+/// \brief Function to make Adroit achieve a particular position of end-effector
+/// \param req - request message takes 6 float64 values: x, y, z, roll, pitch, yaw, boolean gripper status
+/// \param res - empty response message
 bool step_pos_fn(arm_planner::StepPos::Request &req, arm_planner::StepPos::Response &res){
   step_pos_val = true;
   x_pos = req.x;
@@ -171,6 +219,10 @@ bool step_pos_fn(arm_planner::StepPos::Request &req, arm_planner::StepPos::Respo
 }
 
 
+
+/// \brief Function to make adroit do cartesian motion
+/// \param req - request message takes 3 float64 values: x_delta, y_delta and z_delta
+/// \param res - empty response message
 bool cartesian_pos_fn(arm_planner::Cartesian::Request &req, arm_planner::Cartesian::Response &res){
 
   cartesian_val = true;
@@ -182,6 +234,9 @@ bool cartesian_pos_fn(arm_planner::Cartesian::Request &req, arm_planner::Cartesi
 
 }
 
+/// \brief Function to attach cylinder to the robot end-effector
+/// \param req - request message takes std_msgs/String cylinder_name
+/// \param res - response message is a boolean to indicate success or failure
 bool attach_obj_fn(arm_planner::Attach::Request &req, arm_planner::Attach::Response &res){
   
   attach_obj_val = true;
@@ -192,6 +247,10 @@ bool attach_obj_fn(arm_planner::Attach::Request &req, arm_planner::Attach::Respo
 }
 
 
+
+/// \brief Function to detach cylinder from the robot end-effector
+/// \param req - request message takes std_msgs/String cylinder_name
+/// \param res - response message is a boolean to indicate success or failure
 bool detach_obj_fn(arm_planner::Detach::Request &req, arm_planner::Detach::Response &res){
   detach_obj_val = true;
   cylinder_id_2 = req.cylinder_name_2;
@@ -200,7 +259,9 @@ bool detach_obj_fn(arm_planner::Detach::Request &req, arm_planner::Detach::Respo
 }
 
 
-
+/// \brief Function to follow a sequence of waypoints specified the config.yaml file
+/// \param req - empty request message
+/// \param res - empty response message
 bool follow_fn(arm_planner::Follow::Request &req, arm_planner::Follow::Response &res){
   trigger_trajectory = true;
 
@@ -212,16 +273,24 @@ bool follow_fn(arm_planner::Follow::Request &req, arm_planner::Follow::Response 
 
 int main(int argc, char** argv)
 {
+  //initialise ros node
   ros::init(argc, argv, "path_planner");
+
+  //initialise ros nodehandle
   ros::NodeHandle nh;
+
+  //initialise private nodehandle for private node parameters
   ros::NodeHandle nh2("~");
 
   ros::AsyncSpinner spinner(1);
   spinner.start();
 
+
+  //ros publisher - publish a value between 0 and 0.9 to control the opening and closing of the gripper. 0 is fully closed and 0.9 is fully open
   pub = nh.advertise<std_msgs::Float64>("/pincer_joint_position_controller/command", 10);
   
 
+  // ros Service servers
   ros::ServiceServer gripper_service = nh.advertiseService("gripper", gripper_fn);
   ros::ServiceServer reset_service = nh.advertiseService("reset", reset_fn);
   ros::ServiceServer step_service = nh.advertiseService("step", step_fn);
@@ -232,20 +301,23 @@ int main(int argc, char** argv)
   ros::ServiceServer detach_obj_service = nh.advertiseService("detach_obj", detach_obj_fn);
   ros::ServiceServer follow_service = nh.advertiseService("follow", follow_fn);
 
-
+  //ros Service Client 
   ros::ServiceClient reset_client =nh.serviceClient<arm_planner::Reset>("reset");
 
   //add planning group "arm"
   static const std::string PLANNING_GROUP = "arm";
-  moveit::planning_interface::MoveGroupInterface move_group_interface(PLANNING_GROUP);
-  moveit::planning_interface::MoveGroupInterface move_group_interface2(PLANNING_GROUP);
 
+  //create planning_interface::MoveGroupInterface move_group_interface object for arm
+  moveit::planning_interface::MoveGroupInterface move_group_interface(PLANNING_GROUP);
+
+  //create planning_interface::PlanningSceneInterface object
   moveit::planning_interface::PlanningSceneInterface planning_scene_interface;
 
   //add planning group "pincer"
   static const std::string PLANNING_GROUP_2 = "pincer";
-  moveit::planning_interface::MoveGroupInterface move_group_interface_3(PLANNING_GROUP_2);
-  moveit::planning_interface::PlanningSceneInterface planning_scene_interface_3;
+
+  //create planning_interface::MoveGroupInterface move_group_interface object for pincer
+  moveit::planning_interface::MoveGroupInterface move_group_interface_2(PLANNING_GROUP_2);
   
   const moveit::core::JointModelGroup* joint_model_group =
       move_group_interface.getCurrentState()->getJointModelGroup(PLANNING_GROUP);
@@ -254,10 +326,10 @@ int main(int argc, char** argv)
   
   std::string default_planner_id = move_group_interface.getPlannerId();
 
-  std::cout << "default planner id: " << default_planner_id << std::endl;
 
   std::vector<moveit_msgs::CollisionObject> collision_objects;
 
+  //Get parameters from config.yaml file
   nh2.getParam("cylinder1", cylinder1);
   nh2.getParam("cylinder2", cylinder2);
   nh2.getParam("cylinder3", cylinder3);
@@ -265,12 +337,13 @@ int main(int argc, char** argv)
   nh2.getParam("cylinder5", cylinder5);
   nh2.getParam("cylinder6", cylinder6);
 
+  /********************
 
+  Add objects to planning scene in rviz
+
+  *********************/
  
-  std::cout << "test cylinder: " << (cylinder1[0]["x"]) << std::endl;
-  std::cout << "test cylinder: " << (cylinder1[0]["y"]) << std::endl;
-  std::cout << "test cylinder: " << (cylinder1[1]["j1"]) << std::endl;
-
+  
 
  
   //Add stand
@@ -295,13 +368,6 @@ int main(int argc, char** argv)
   collision.primitives.push_back(stand);
   collision.operation = collision.ADD;
   collision_objects.push_back(collision);
-
-
-
-
-
-
-
 
 
   //table
@@ -399,8 +465,6 @@ int main(int argc, char** argv)
 
   //cylinder3
   moveit_msgs::CollisionObject collision_cylinder3;
-  
-
   collision_cylinder3.header.frame_id = "base_link";
   collision_cylinder3.id = "3";
   shape_msgs::SolidPrimitive cylinder_primitive3;
@@ -522,109 +586,7 @@ int main(int argc, char** argv)
 
   std::vector <double> joints_check_1 = move_group_interface.getCurrentJointValues();
 
-   //cylinder1
-  // arm_planner::Reset srv;
-  // srv.request.restart = true;
-  // reset_client.call(srv);
-  // set_pose_target_fn(cylinder1, 0, move_group_interface);
-  // ros::Duration(1).sleep();
-  // set_joint_target_fn(cylinder1, 1, move_group_interface);
-  // ros::Duration(1).sleep();
-  // set_joint_target_fn(cylinder1, 2, move_group_interface);
-  // ros::Duration(1).sleep();
-  // set_attach_fn(cylinder1, 3, move_group_interface);
-  // ros::Duration(1).sleep();
-  // set_cartesian_fn(cylinder1, 4, move_group_interface);
-  // // ros::Duration(1).sleep();
-  // // set_cartesian_fn(cylinder1, 5, move_group_interface);
-  // ros::Duration(1).sleep();
-  // set_pose_target_fn(cylinder1, 6, move_group_interface);
-  // ros::Duration(1).sleep();
-  // set_detach_fn(cylinder1, 7, move_group_interface);
-
-
-     
-  // //cylinder2
-  // ros::Duration(1).sleep();
-  // set_pose_target_fn(cylinder2, 0, move_group_interface);
-  // ros::Duration(1).sleep();
-  // set_joint_target_fn(cylinder2, 1, move_group_interface);
-  // ros::Duration(1).sleep();
-  // set_joint_target_fn(cylinder2, 2, move_group_interface);
-  // ros::Duration(1).sleep();
-  // set_attach_fn(cylinder2, 3, move_group_interface);
-  // ros::Duration(1).sleep();
-  // set_cartesian_fn(cylinder2, 4, move_group_interface);
-  // ros::Duration(1).sleep();
-  // // set_cartesian_fn(cylinder2, 5, move_group_interface);
-  // // ros::Duration(1).sleep();
-  // set_pose_target_fn(cylinder2, 6, move_group_interface);
-  // ros::Duration(1).sleep();
-  // set_detach_fn(cylinder2, 7, move_group_interface);
-
-
-  // //cylinder3
-  // ros::Duration(1).sleep();
-  // set_pose_target_fn(cylinder3, 0, move_group_interface);
-  // ros::Duration(1).sleep();
-  // set_pose_target_fn(cylinder3, 1, move_group_interface);
-  // ros::Duration(1).sleep();
-  // set_cartesian_fn(cylinder3, 2, move_group_interface);
-  // ros::Duration(1).sleep();
-  // set_attach_fn(cylinder3, 3, move_group_interface);
-  // ros::Duration(1).sleep();
-  // set_pose_target_fn(cylinder3, 4, move_group_interface);
-  // ros::Duration(1).sleep();
-  // set_detach_fn(cylinder3, 5, move_group_interface);
-
-  // //cylinder4
-  // ros::Duration(1).sleep();
-  // set_pose_target_fn(cylinder4, 0, move_group_interface);
-  // ros::Duration(1).sleep();
-  // set_pose_target_fn(cylinder4, 1, move_group_interface);
-  // ros::Duration(1).sleep();
-  // set_joint_target_fn(cylinder4, 2, move_group_interface);  
-  // ros::Duration(1).sleep();
-  // set_attach_fn(cylinder4, 3, move_group_interface);
-  // ros::Duration(1).sleep();
-  // set_pose_target_fn(cylinder4, 4, move_group_interface);
-  // ros::Duration(1).sleep();
-  // set_detach_fn(cylinder4, 5, move_group_interface);
-
-
-  // //cylinder5
-  // ros::Duration(1).sleep();
-  // set_pose_target_fn(cylinder5, 0, move_group_interface);
-  // ros::Duration(1).sleep();
-  // set_pose_target_fn(cylinder5, 1, move_group_interface);
-  // ros::Duration(1).sleep();
-  // set_cartesian_fn(cylinder5, 2, move_group_interface);
-  // ros::Duration(1).sleep();
-  // set_attach_fn(cylinder5, 3, move_group_interface);
-  // ros::Duration(1).sleep();
-  // set_pose_target_fn(cylinder5, 4, move_group_interface);
-  // ros::Duration(1).sleep();
-  // set_detach_fn(cylinder5, 5, move_group_interface);
-
-
-  // //cylinder6
-  // ros::Duration(1).sleep();
-  // set_pose_target_fn(cylinder6, 0, move_group_interface);
-  // ros::Duration(1).sleep();
-  // set_pose_target_fn(cylinder6, 1, move_group_interface);
-  // ros::Duration(1).sleep();
-  // set_cartesian_fn(cylinder6, 2, move_group_interface);
-  // ros::Duration(1).sleep();
-  // set_attach_fn(cylinder6, 3, move_group_interface);
-  // ros::Duration(1).sleep();
-  // set_pose_target_fn(cylinder6, 4, move_group_interface);
-  // ros::Duration(1).sleep();
-  // set_detach_fn(cylinder6, 5, move_group_interface);
-  // ros::Duration(1).sleep();
-  // set_pose_target_fn(cylinder6, 6, move_group_interface);
-
- 
-
+  
 
 
 
@@ -637,7 +599,6 @@ int main(int argc, char** argv)
     if (flag == 1){
       std_msgs::Float64 msg;
       msg.data = 0.3;
-      std::cout << "gripper closed" << std::endl;
       pub.publish(msg);
       flag = 0;
 
@@ -647,15 +608,12 @@ int main(int argc, char** argv)
     if (flag == 2){
       std_msgs::Float64 msg;
       msg.data = 0.8;
-      std::cout << "gripper open" << std::endl;
       pub.publish(msg);
       flag = 0;
     }
 
     //reset service - return to start configuration
     if(reset_val == true){
-        std::cout << "reset waypoints: " << waypoints.size() << std::endl;
-        // nh.setParam("/waypoints", waypoints);
         move_group_interface.setMaxVelocityScalingFactor(1.0);
         move_group_interface.setMaxAccelerationScalingFactor(1.0);
 
@@ -668,22 +626,18 @@ int main(int argc, char** argv)
 
     //step service for joint goals
     if(step_val == true){
-      std::cout << "outside the service fn" << std::endl;
 
 
       joint_group_positions = move_group_interface.getCurrentJointValues();
       move_group_interface.setStartStateToCurrentState();
       move_group_interface.setMaxVelocityScalingFactor(0.8);
-      std::cout << "joint group positions size: " << joint_group_positions.size() << std::endl;
-      std::cout << "step value reached" << std::endl;
+      
       joint_group_positions[0] = (joint1*M_PI)/180.0;
-      std::cout << "filled first joint state" << std::endl;
       joint_group_positions[1] = (joint2*M_PI)/180.0;
       joint_group_positions[2] = (joint3*M_PI)/180.0;
       joint_group_positions[3] = (joint4*M_PI)/180.0;
       joint_group_positions[4] = (joint5*M_PI)/180.0;
       joint_group_positions[5] = (joint6*M_PI)/180.0;
-      // set_gripper = gripper_req;
       if (gripper_req == true){
         joint_group_positions[6] = 1.0;
       }
@@ -700,21 +654,18 @@ int main(int argc, char** argv)
 
       
       if(success == true){
-        std::cout << "success reached" << std::endl;
         move_group_interface.execute(my_plan);
         
        
         if(gripper_req == true){
           std_msgs::Float64 msg;
           msg.data = 0.3;
-          std::cout << "gripper closed" << std::endl;
           pub.publish(msg);
         }
         
         else{
           std_msgs::Float64 msg;
           msg.data = 0.8;
-          std::cout << "gripper open" << std::endl;
           pub.publish(msg);
         
         
@@ -801,12 +752,10 @@ int main(int argc, char** argv)
       move_group_interface.setPoseTarget(target_pose);
       moveit::planning_interface::MoveGroupInterface::Plan my_plan2;
       bool success = (move_group_interface.plan(my_plan2) == moveit::planning_interface::MoveItErrorCode::SUCCESS);
-      std::cout << "pos goal success: " << success << std::endl;
 
      
 
       if(success == true){
-        std::cout << "pos success reached" << std::endl;
         move_group_interface.execute(my_plan2);
       
 
@@ -814,14 +763,12 @@ int main(int argc, char** argv)
         if(gripper_pos_req == true){
             std_msgs::Float64 msg;
             msg.data = 0.3;
-            std::cout << "gripper closed" << std::endl;
             pub.publish(msg);
           }
           
         else{
             std_msgs::Float64 msg;
             msg.data = 0.8;
-            std::cout << "gripper open" << std::endl;
             pub.publish(msg);
           
           
@@ -875,7 +822,6 @@ int main(int argc, char** argv)
           move_group_interface.execute(cartesian_traj);
       }
       else {
-          std::cout << "cartesian plan failed" << std::endl;
           move_group_interface.stop();
       }
 
@@ -888,6 +834,8 @@ int main(int argc, char** argv)
 
     }
 
+
+    //attach service
     if(attach_obj_val == true){
       
       moveit_msgs::CollisionObject obj;
@@ -904,11 +852,7 @@ int main(int argc, char** argv)
       pub.publish(msg);
     
 
-      // std::vector <std::string> touch_links;
-      // std::string link1 = "pincerfinger_left_link";
-      // std::string link2 = "pincerfinger_right_link";
-      // touch_links.push_back(link1);
-      // touch_links.push_back(link2);
+     
       move_group_interface.attachObject(obj.id, "endpoint_link", touch_links);
 
 
@@ -932,7 +876,7 @@ int main(int argc, char** argv)
 
     }
 
-
+    //detach service
     if(detach_obj_val == true){
 
       moveit_msgs::CollisionObject detach_obj;
@@ -953,9 +897,10 @@ int main(int argc, char** argv)
 
     
      
-    
+    //follow service
     if(trigger_trajectory == true){
       
+      //Trajectory of robot arm for cylinder1
       set_pose_target_fn(cylinder1, 0, move_group_interface);
       ros::Duration(2).sleep();
       set_joint_target_fn(cylinder1, 1, move_group_interface);
@@ -974,7 +919,7 @@ int main(int argc, char** argv)
 
 
      
-      //cylinder2
+      //Trajectory of robot arm for cylinder2
       ros::Duration(2).sleep();
       set_pose_target_fn(cylinder2, 0, move_group_interface);
       ros::Duration(2).sleep();
@@ -993,7 +938,7 @@ int main(int argc, char** argv)
       set_detach_fn(cylinder2, 7, move_group_interface);
 
 
-      //cylinder3
+      //Trajectory of robot arm for cylinder3
       ros::Duration(2).sleep();
       set_pose_target_fn(cylinder3, 0, move_group_interface);
       ros::Duration(2).sleep();
@@ -1007,7 +952,7 @@ int main(int argc, char** argv)
       ros::Duration(2).sleep();
       set_detach_fn(cylinder3, 5, move_group_interface);
 
-      //cylinder4
+      //Trajectory of robot arm for cylinder4
       ros::Duration(2).sleep();
       set_pose_target_fn(cylinder4, 0, move_group_interface);
       ros::Duration(2).sleep();
@@ -1022,7 +967,7 @@ int main(int argc, char** argv)
       set_detach_fn(cylinder4, 5, move_group_interface);
 
 
-      //cylinder5
+      //Trajectory of robot arm for cylinder5
       ros::Duration(2).sleep();
       set_pose_target_fn(cylinder5, 0, move_group_interface);
       ros::Duration(2).sleep();
@@ -1037,7 +982,7 @@ int main(int argc, char** argv)
       set_detach_fn(cylinder5, 5, move_group_interface);
 
 
-      //cylinder6
+      //Trajectory of robot arm for cylinder6
       ros::Duration(1).sleep();
       set_pose_target_fn(cylinder6, 0, move_group_interface);
       ros::Duration(1).sleep();
@@ -1132,15 +1077,12 @@ void set_pose_target_fn(XmlRpc::XmlRpcValue &cylinder, int index, moveit::planni
   move_group_interface.setPoseTarget(target_pose_follow);
   moveit::planning_interface::MoveGroupInterface::Plan my_plan2_follow;
   bool success_follow = (move_group_interface.plan(my_plan2_follow) == moveit::planning_interface::MoveItErrorCode::SUCCESS);
-  std::cout << "pos goal success: " << success_follow << std::endl;
 
   
-  std::cout << "test cylinder: " << cylinder << std::endl;
-  std::cout << "first x: " << (cylinder[index]["x"]) << std::endl;
+ 
 
 
   if(success_follow == true){
-    std::cout << "pos success reached" << std::endl;
     move_group_interface.execute(my_plan2_follow);
   
 
@@ -1175,19 +1117,13 @@ void set_joint_target_fn(XmlRpc::XmlRpcValue &cylinder, int index, moveit::plann
   move_group_interface.setStartStateToCurrentState();
   move_group_interface.setMaxVelocityScalingFactor(0.8);
 
-  std::cout << "first joint angle: " << (cylinder[index]["j1"]) << std::endl;
-
-  std::cout << "before first" << std::endl;
-  std::cout << "size: " << joint_group_positions_follow.size() << std::endl;
-  // double test = static_cast<double>(cylinder[index]["j1"]);
-  std::cout << "test 1: " << cylinder[index]["j2"] << std::endl;
+  
 
   double test = static_cast<double>(cylinder[index]["j1"]);
 
   std::cout << test << std::endl;
 
   joint_group_positions_follow.at(0) = static_cast<double>(cylinder[index]["j1"]);
-  // std::cout << "added test inside " << std::endl;
   joint_group_positions_follow.at(1) = static_cast<double>(cylinder[index]["j2"]);
   joint_group_positions_follow.at(2) = static_cast<double>(cylinder[index]["j3"]);
   joint_group_positions_follow.at(3) = static_cast<double>(cylinder[index]["j4"]);
@@ -1197,12 +1133,7 @@ void set_joint_target_fn(XmlRpc::XmlRpcValue &cylinder, int index, moveit::plann
 
 
   
-  // if (static_cast<int>(cylinder1[index]["gripper_state"]) == 1){
-  //   joint_group_positions_follow.at(6) = 1.0;
-  // }
-  // else{
-  //   joint_group_positions_follow.at(6) = 0.0;
-  // }
+ 
   
   
   
@@ -1250,7 +1181,6 @@ void set_cartesian_fn(XmlRpc::XmlRpcValue &cylinder, int index, moveit::planning
   geometry_msgs::PoseStamped current_pose_follow = move_group_interface.getCurrentPose();
   std::vector<double> current_rpy_follow = move_group_interface.getCurrentRPY();
 
-  std::cout << "test current_rpy" << std::endl;
   geometry_msgs::Pose cartesian_pose_follow;
   tf2::Quaternion orient_pose3_follow;
   orient_pose3_follow.setRPY(current_rpy_follow.at(0), current_rpy_follow.at(1), current_rpy_follow.at(2));
@@ -1258,23 +1188,16 @@ void set_cartesian_fn(XmlRpc::XmlRpcValue &cylinder, int index, moveit::planning
   cartesian_pose_follow.position.x = current_pose_follow.pose.position.x;
   cartesian_pose_follow.position.y = current_pose_follow.pose.position.y;
   cartesian_pose_follow.position.z = current_pose_follow.pose.position.z;
-  std::cout << "print stuff here" << std::endl;
-  // double temp1 = static_cast<double>(cylinder[index]["x_cartesian"]);
-  // double temp2 = static_cast<double>(cylinder[index]["y_cartesian"]);
-  // double temp3 = static_cast<double>(cylinder[index]["z_cartesian"]);
-
-  // std::cout << "test static: " << (cylinder[index]["x_cartesian"]) << std::endl;
+  
 
   double temp1 = cylinder[index]["x_cartesian"];
   double temp2 = cylinder[index]["y_cartesian"];
   double temp3 = cylinder[index]["z_cartesian"];
 
-  std::cout << "reached assigning temps complete" << std::endl;
   cartesian_pose_follow.position.x += temp1;
   cartesian_pose_follow.position.y += temp2;
   cartesian_pose_follow.position.z += temp3;
 
-  std::cout << "finished loading in cartesian" << std::endl;
   std::vector<geometry_msgs::Pose> cartesian_waypoints_follow;
   cartesian_waypoints_follow.push_back(cartesian_pose_follow);
 
@@ -1290,7 +1213,6 @@ void set_cartesian_fn(XmlRpc::XmlRpcValue &cylinder, int index, moveit::planning
       move_group_interface.execute(cartesian_traj_follow);
   }
   else {
-      std::cout << "cartesian plan failed" << std::endl;
       move_group_interface.stop();
   }
 
@@ -1303,97 +1225,29 @@ void set_cartesian_fn(XmlRpc::XmlRpcValue &cylinder, int index, moveit::planning
 
 void set_attach_fn(XmlRpc::XmlRpcValue &cylinder, int index, moveit::planning_interface::MoveGroupInterface& move_group_interface){
 
-  std::cout << "set attached step reached: " << std::endl;
   moveit_msgs::CollisionObject obj_follow;
 
   obj_follow.id = static_cast<std::string>(cylinder[index]["attach"]);
 
-  std::cout << "obj_follow.id: " << obj_follow.id << std::endl;
   //define frame pose for the gripper
   obj_follow.header.frame_id = move_group_interface.getEndEffectorLink();
   
   
   std_msgs::Float64 msg;
   msg.data = 0.3;
-  std::cout << "gripper closed" << std::endl;
   pub.publish(msg);
 
   ros::Duration(2).sleep();
 
-  // std::vector <std::string> touch_links;
-  // std::cout << "touch links" << touch_links.size() << std::endl;
-  // std::string link1 = "pincerfinger_left_link";
-  // std::string link2 = "pincerfinger_right_link";
-  // touch_links.at(0) = link1;
-  // touch_links.at(1) = link2;
-  std::cout << "before fail" << std::endl;
+  
   move_group_interface.attachObject(obj_follow.id, "endpoint_link", touch_links);
-  // touch_links.clear();
-  std::cout << "after fail" << std::endl;
-
-  // if(obj_follow.id == "4"){
-  //   std::vector<std::string> object_ids;
-
-  //   object_ids.push_back(collision_cylinder1.id);
-  //   object_ids.push_back(collision_cylinder2.id);
-  //   object_ids.push_back(collision_cylinder3.id);
-
-  //   planning_scene_interface.removeCollisionObjects(object_ids);
+  
 
 
 
 
 
 }
-
-
-void set_attach_fn2(XmlRpc::XmlRpcValue &cylinder, int index, moveit::planning_interface::MoveGroupInterface& move_group_interface2, 
-moveit_msgs::CollisionObject collision_cylinder1, moveit_msgs::CollisionObject collision_cylinder2, moveit_msgs::CollisionObject collision_cylinder3,
-moveit::planning_interface::PlanningSceneInterface planning_scene_interface){
-
-  std::cout << "set attached step reached: " << std::endl;
-  moveit_msgs::CollisionObject obj_follow2;
-
-  // obj_follow2.id = static_cast<std::string>(cylinder[index]["attach"]);
-  obj_follow2.id = "2";
-
-  std::cout << "obj_follow.id: " << obj_follow2.id << std::endl;
-  //define frame pose for the gripper
-  // obj_follow2.header.frame_id = move_group_interface2.getEndEffectorLink();
-  
-  
-  std_msgs::Float64 msg;
-  msg.data = 0.3;
-  std::cout << "gripper closed" << std::endl;
-  pub.publish(msg);
-
-  ros::Duration(10).sleep();
-
-  // std::vector <std::string> touch_links;
-  // std::cout << "touch links" << touch_links.size() << std::endl;
-  // std::string link1 = "pincerfinger_left_link";
-  // std::string link2 = "pincerfinger_right_link";
-  // touch_links.at(0) = link1;
-  // touch_links.at(1) = link2;
-  move_group_interface2.attachObject(obj_follow2.id, "endpoint_link", touch_links);
-  // touch_links.clear();
-
-  // if(obj_follow2.id == "4"){
-  //   std::vector<std::string> object_ids;
-
-  //   object_ids.push_back(collision_cylinder1.id);
-  //   object_ids.push_back(collision_cylinder2.id);
-  //   object_ids.push_back(collision_cylinder3.id);
-
-  //   planning_scene_interface.removeCollisionObjects(object_ids);
-
-
-
-}
-
-
-
-
 
 
 void set_detach_fn(XmlRpc::XmlRpcValue &cylinder, int index, moveit::planning_interface::MoveGroupInterface& move_group_interface){
@@ -1404,7 +1258,6 @@ void set_detach_fn(XmlRpc::XmlRpcValue &cylinder, int index, moveit::planning_in
 
   std_msgs::Float64 msg;
   msg.data = 0.7;
-  std::cout << "gripper open" << std::endl;
   pub.publish(msg);
 
   move_group_interface.detachObject(detach_obj_follow.id);

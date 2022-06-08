@@ -138,7 +138,7 @@ cylinder3:
   - attach: "3"
 
   #waypoint4
-  - x: 0.417
+  - x: 0.422
     y: -0.31
     z: -0.1
     roll: 0.0
@@ -188,7 +188,7 @@ cylinder4:
   #waypoint4
   - x: 0.422
     y: -0.123
-    z: 0.17459
+    z: 0.16459
     roll: 0.0
     pitch: -0.1
     yaw: 0.0
@@ -231,7 +231,7 @@ cylinder5:
   #waypoint4
   - x: 0.422
     y: -0.222
-    z: 0.17459
+    z: 0.16459
     roll: 0.0
     pitch: -0.1
     yaw: 0.0
@@ -273,7 +273,7 @@ cylinder6:
   - attach: "6"
 
   #waypoint4
-  - x: 0.422
+  - x: 0.420
     y: -0.18
     z: 0.5
     roll: 0.0
