@@ -9,6 +9,7 @@ The planning scene consists of a table with 6 cylinders place in sequence. The t
 1) Install ROS Noetic - http://wiki.ros.org/noetic/Installation/Ubuntu
 
 2) Make a Catkin workspace as follows:
+
     `mkdir -p catkin_ws/src`
 
     `cd catkin_ws/src`
@@ -16,7 +17,7 @@ The planning scene consists of a table with 6 cylinders place in sequence. The t
     `git clone git@github.com:bhagyeshagresar/me499_project.git`
 
     `cd catkin_ws`
-    
+
     `catkin_make`
 
 3) Make sure moveit is installed on the machine:
