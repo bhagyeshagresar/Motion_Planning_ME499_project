@@ -18,6 +18,7 @@ This node provides a tutorial to use the Adroit arm. This will show you 3 follow
     1) joint control of the arm
     2) pose control of the arm
     3) pincer control
+Source - hdt_arm repository dk-noetic branch
 """
 
 # Let's start with constructing a class

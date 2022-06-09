@@ -1,4 +1,6 @@
 <launch>
+
+    <!-- launch the path_planner node, launch the hdt_arm_bringup1.launch  -->
     <arg name="run_sim" default="false" />
     <arg name="controller" default="xbox"/>
 
