@@ -72,6 +72,9 @@
   <exec_depend>rqt_gui</exec_depend>
   <exec_depend>controller_manager</exec_depend>
   <exec_depend>hdt_6dof_a24_pincer_bringup</exec_depend>
+  <exec_depend>apriltag_ros</exec_depend>
+  <exec_depend>usb_cam</exec_depend>
+
 
 
 
